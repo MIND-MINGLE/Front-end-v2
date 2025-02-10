@@ -1,0 +1,78 @@
+.contactCard {
+    border-radius: 5px;
+    border: 0.75px solid var(--neutral-CED4DA, #ced4da);
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-bottom: -1px;
+    padding: 9px 1px 33px;
+    font: 16px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .contactCard {
+      margin-top: 40px;
+      padding-bottom: 100px;
+    }
+  }
+  
+  .contactOwner {
+    color: var(--primary-0077B6, #0077b6);
+    font-weight: 500;
+  }
+  
+  .divider {
+    width: 100%;
+    stroke-width: 0.5px;
+    stroke: var(--neutral-CED4DA, #ced4da);
+    align-self: stretch;
+    margin-top: 8px;
+  }
+  
+  .ownerAvatar {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 60px;
+    border-radius: 49px;
+    margin-top: 10px;
+  }
+  
+  .ownerName {
+    color: var(--neutral-212529, #212529);
+    font-weight: 300;
+    margin-top: 6px;
+  }
+  
+  .ratingStars {
+    aspect-ratio: 5.49;
+    object-fit: contain;
+    object-position: center;
+    width: 77px;
+    margin-top: 5px;
+  }
+  
+  .contactButtons {
+    display: flex;
+    max-width: 223px;
+    flex-direction: column;
+  }
+  
+  .buttonRow {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 13px;
+  }
+  
+  .contactButton {
+    aspect-ratio: 2;
+    object-fit: contain;
+    object-position: center;
+    width: 84px;
+  }

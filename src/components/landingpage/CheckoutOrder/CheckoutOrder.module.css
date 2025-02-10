@@ -1,0 +1,22 @@
+.checkoutOrder {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+}
+
+.checkoutInformation {
+  flex: 3;
+  padding-right: 20px;
+}
+
+.orderSummary {
+  flex: 1;
+  padding-left: 20px;
+}

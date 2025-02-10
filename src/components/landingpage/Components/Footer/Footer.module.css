@@ -1,0 +1,294 @@
+.footer {
+  justify-content: center;
+  align-items: flex-start;
+  background: var(--Gray-900, #191c1f);
+  display: flex;
+  min-height: 460px;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding: 78px 150px;
+}
+
+@media (max-width: 991px) {
+  .footer {
+    padding: 0 20px;
+  }
+}
+
+.companyInfo {
+  display: flex;
+  min-width: 240px;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 312px;
+}
+
+.logo {
+  aspect-ratio: 2.83;
+  object-fit: contain;
+  object-position: center;
+  width: 255px;
+  max-width: 100%;
+}
+
+.description {
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-top: 24px;
+  font: 400 16px/23px Poppins, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.contactInfo {
+  display: flex;
+  margin-top: 24px;
+  max-width: 100%;
+  width: 312px;
+  flex-direction: column;
+  font-family: Public Sans, sans-serif;
+  justify-content: flex-start;
+}
+
+.phoneNumber {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.customerSupport {
+  color: var(--Gray-500, #77878f);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.phoneNumberText {
+  color: var(--Gray-00, #fff);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.address {
+  color: var(--Gray-300, #adb7bc);
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 12px;
+}
+
+.email {
+  color: var(--Gray-00, #fff);
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+.categorySection {
+  display: flex;
+  flex-direction: column;
+  font-family: Public Sans, sans-serif;
+  font-weight: 500;
+  justify-content: flex-start;
+  width: 200px;
+}
+
+.sectionTitle {
+  color: var(--Gray-00, #fff);
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.categoryList {
+  align-self: flex-start;
+  display: flex;
+  margin-top: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 14px;
+  color: var(--Gray-400, #929fa5);
+  line-height: 1;
+  justify-content: flex-start;
+}
+
+.categoryItem {
+  align-self: stretch;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 6px 0;
+}
+
+@media (max-width: 991px) {
+  .categoryItem {
+    white-space: initial;
+  }
+}
+
+.activeItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--Gray-00, #fff);
+  white-space: nowrap;
+  justify-content: flex-start;
+  padding: 6px 0;
+}
+
+@media (max-width: 991px) {
+  .activeItem {
+    white-space: initial;
+  }
+}
+
+.activeDivider {
+  background-color: #ebc80c;
+  align-self: stretch;
+  width: 24px;
+  height: 2px;
+  margin: auto 0;
+  border: 2px solid rgba(235, 200, 12, 1);
+}
+
+.browseAllButton {
+  align-items: center;
+  background: var(--Gray-900, #191c1f);
+  align-self: stretch;
+  display: flex;
+  padding: 6px 0;
+  gap: var(--Space-200, 8px);
+  color: var(--Warning-500, #ebc80c);
+  justify-content: flex-start;
+}
+
+.browseAllText {
+  align-self: stretch;
+  margin: auto 0;
+}
+
+.browseAllIcon {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 20px;
+  align-self: stretch;
+  margin: auto 0;
+}
+
+.downloadSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 200px;
+}
+
+.downloadTitle {
+  color: var(--Gray-00, #fff);
+  text-transform: uppercase;
+  font: 500 16px Public Sans, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+.appLinks {
+  align-self: flex-start;
+  display: flex;
+  margin-top: 18px;
+  flex-direction: column;
+  font-family: Inter, sans-serif;
+  color: #fff;
+  justify-content: flex-start;
+}
+
+.appButton {
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  background: var(--Gray-800, #303639);
+  display: flex;
+  padding: var(--Space-400, 16px) 20px;
+  gap: var(--Space-400, 16px);
+}
+
+.appIcon {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 32px;
+  align-self: stretch;
+  margin: auto 0;
+}
+
+.appInfo {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 88px;
+  margin: auto 0;
+}
+
+.getItNow {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.storeName {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.tagSection {
+  display: flex;
+  min-width: 240px;
+  flex-direction: column;
+  font-family: Public Sans, sans-serif;
+  color: var(--Gray-00, #fff);
+  font-weight: 500;
+  justify-content: flex-start;
+  width: 312px;
+}
+
+.tagTitle {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.tagContainer {
+  align-self: flex-start;
+  display: flex;
+  margin-top: 18px;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 1;
+  justify-content: flex-start;
+}
+
+.tagRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+.tag {
+  align-self: stretch;
+  border-radius: 2px;
+  border: 1px solid var(--Gray-800, #303639);
+  padding: 6px var(--Space-300, 12px);
+}
+
+.activeTag {
+  align-self: stretch;
+  border-radius: 2px;
+  border: 1px solid var(--Gray-00, #fff);
+  background: var(--Gray-800, #303639);
+  padding: 6px var(--Space-300, 12px);
+  white-space: nowrap;
+}
+
+@media (max-width: 991px) {
+  .activeTag {
+    white-space: initial;
+  }
+}

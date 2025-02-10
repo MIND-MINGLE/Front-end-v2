@@ -1,0 +1,88 @@
+.officeCard {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    display: flex;
+    gap: 31px;
+    overflow: hidden;
+    font-family: Roboto, sans-serif;
+    padding: 14px;
+    margin-bottom: 4px;
+  }
+  
+  .officeCardContent {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+  }
+  
+  .officeImage {
+    width: 81px;
+    height: 75px;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+  
+  .officeDetails {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .officeName {
+    color: #0077b6;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 13px;
+  }
+  
+  .officeAddress {
+    color: #212529;
+    font-size: 10px;
+    font-weight: 300;
+    margin: 0 0 14px;
+  }
+  
+  .officeSpecs {
+    display: flex;
+    gap: 23px;
+    font-size: 16px;
+    color: #6c757d;
+  }
+  
+  .specItem {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .specIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .favoriteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .favoriteIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  @media (max-width: 991px) {
+    .officeCard {
+      gap: 20px;
+    }
+  
+    .officeAddress {
+      margin-right: 10px;
+    }
+  
+    .officeSpecs {
+      flex-wrap: wrap;
+    }
+  }

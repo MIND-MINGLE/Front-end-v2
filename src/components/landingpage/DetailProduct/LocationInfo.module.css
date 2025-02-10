@@ -1,0 +1,57 @@
+.mapContainer {
+    display: flex;
+    margin-top: 26px;
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+  }
+  
+  .mapText {
+    color: #0077b6;
+    font-size: 16px;
+    align-self: flex-start;
+  }
+  
+  .locationInfo {
+    display: flex;
+    margin-top: 9px;
+    gap: 5px;
+    font-size: 14px;
+    color: #212529;
+  }
+  
+  .locationIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 24px;
+  }
+  
+  .locationAddress {
+    flex-grow: 1;
+    width: 353px;
+    flex-basis: auto;
+    margin: auto 0;
+  }
+
+  .imageWrapper {
+    aspect-ratio: 2.08;
+    width: 100%;
+    max-width: 1028px;
+    margin-top: 5px;
+    align-self: center;
+  }
+  
+  .responsiveImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 10px;
+  }
+  
+  @media (max-width: 991px) {
+    .imageWrapper {
+      max-width: 100%;
+    }
+  }

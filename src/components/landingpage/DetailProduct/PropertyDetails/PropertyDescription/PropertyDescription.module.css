@@ -1,0 +1,42 @@
+.descriptionContainer {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+    color: var(--primary-0077B6, #0077b6);
+    font: 500 16px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .descriptionContainer {
+      max-width: 100%;
+      margin-top: 40px;
+    }
+  }
+  
+  .descriptionText {
+    color: var(--neutral-212529, #212529);
+    text-align: justify;
+    font-size: 14px;
+    font-weight: 300;
+    align-self: stretch;
+    margin-top: 17px;
+  }
+  
+  @media (max-width: 991px) {
+    .descriptionText {
+      max-width: 100%;
+    }
+  }
+  
+  .facilitiesTitle {
+    margin-top: 24px;
+  }
+  
+  .facilitiesList {
+    display: flex;
+    margin-top: 26px;
+    gap: 27px;
+    font-size: 10px;
+    color: #6c757d;
+  }

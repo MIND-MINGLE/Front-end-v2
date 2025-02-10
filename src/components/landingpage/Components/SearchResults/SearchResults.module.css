@@ -1,0 +1,85 @@
+.searchResults {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .resultsContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 0 80px;
+    margin-top: 21px;
+    width: 100%;
+  }
+  
+  .resultsHeading {
+    align-self: start;
+    display: flex;
+    margin-left: 16px;
+    gap: 5px;
+    color: var(--primary-0077B6, #0077b6);
+    flex-wrap: wrap;
+    font: 500 20px Roboto, sans-serif;
+  }
+
+  .searchButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .searchIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .resultsText {
+    flex-grow: 1;
+  }
+  
+  .resultsCount {
+    color: rgba(173,181,189,1);
+  }
+  
+  .propertyGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .seeAllProperties {
+    color: var(--neutral-CED4DA, #ced4da);
+    align-self: center;
+    font: 500 14px Roboto, sans-serif;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .arrowIcon {
+    width: 16px;
+    height: 16px;
+    margin: 0 5px;
+  }
+  
+  @media (max-width: 991px) {
+    .resultsContainer {
+      padding: 0 20px;
+    }
+  
+    .propertyGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .propertyGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  

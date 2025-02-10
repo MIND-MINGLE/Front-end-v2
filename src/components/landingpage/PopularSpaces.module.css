@@ -1,0 +1,65 @@
+.popularSpaces {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .sectionTitle {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    margin: 0;
+    font-weight: 700;
+    color: #0077b6;
+  }
+  
+  .popularIcon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+  
+  .seeAllButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #0077b6;
+  }
+  
+  .arrowIcon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+  }
+  
+  .spaceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .sectionHeader {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .seeAllButton {
+      margin-top: 10px;
+    }
+  
+    .spaceGrid {
+      grid-template-columns: 1fr;
+    }
+  }

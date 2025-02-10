@@ -1,0 +1,40 @@
+.container {
+  gap: 20px;
+  display: flex;
+}
+
+@media (max-width: 991px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+}
+
+.descriptionColumn {
+  display: flex;
+  flex-direction: column;
+  line-height: normal;
+  width: 63%;
+  margin-left: 0;
+}
+
+@media (max-width: 991px) {
+  .descriptionColumn {
+    width: 100%;
+  }
+}
+
+.contactColumn {
+  display: flex;
+  flex-direction: column;
+  line-height: normal;
+  width: 37%;
+  margin-left: 20px;
+}
+
+@media (max-width: 991px) {
+  .contactColumn {
+    width: 100%;
+  }
+}
