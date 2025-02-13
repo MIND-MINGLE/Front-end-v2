@@ -1,10 +1,8 @@
 
-import styles from './css/NotFound.module.css';
+import styles from './css/notfound.module.css';
 import {useNavigate } from 'react-router';
 import CopyrightFooter from '../landingpage/Components/CopyrightFooter/CopyrightFooter';
 import Footer from '../landingpage/Components/Footer/Footer';
-
-
 export default function NotFound() {
     const nav  = useNavigate()
     const onNavigate = () =>{
