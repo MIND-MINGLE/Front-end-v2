@@ -25,8 +25,8 @@ import {
     Fade,
     Backdrop,
 } from "@mui/material";
-import React, { useState } from "react";
-import AddCard from "@/app/LandingPage/PersonalInformation/AddCard";
+import { useState } from "react";
+import AddCard from "../../landingpage/PersonalInformation/AddCard";
 
 export const Frame = () => {
     const [open, setOpen] = useState(false);

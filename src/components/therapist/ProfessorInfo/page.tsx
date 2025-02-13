@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./ProfessorInformation.module.css";
 import HeaderProf from "../ProfessorWorkshop/Header";
-import Frame from "@/app/ProfessorPage/ProfessorInfo";
-import Footer from "@/app/LandingPage/Components/Footer/Footer";
-import CopyrightFooter from "@/app/LandingPage/Components/CopyrightFooter/CopyrightFooter";
+import Frame from "./index";
+import Footer from "../../landingpage/Components/Footer/Footer";
+import CopyrightFooter from "../../landingpage/Components/CopyrightFooter/CopyrightFooter";
 
 const PersonalInformation: React.FC = () => {
   return (

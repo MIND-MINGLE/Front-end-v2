@@ -10,15 +10,15 @@ import {
 import NavigationRail from "../../NavBar";
 import {useEffect,useState,useRef} from "react";
 import RightComponents from "./component";
-import Link from "next/link";
-import {VideoCall} from '@/api/Twilio/TwilioApi';
+import {Link} from "react-router";
+import {VideoCall} from '../../../../api/Twilio/TwilioApi';
 import Video from "twilio-video";
 
 const TherapyChatPage: React.FC = () => {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [room, setRoom] = useState(null);
     const [participants, setParticipants] = useState([]);
-    const localAudioRef = useRef();
+    //const localAudioRef = useRef();
   
    useEffect(()=>{
           const fetchTwilio = async () => {
@@ -28,40 +28,8 @@ const TherapyChatPage: React.FC = () => {
               });
               // result is a token sent from the server
               var token = response.data.result
-              //console.log(data)
-              const newRoom = await Video.connect(token, {
-                room: 1,
-                audio: true,
-                video: !audioOnly // Disable video if audioOnly is true
-            });
-            setRoom(newRoom);
-                setParticipants([...newRoom.participants.values()]);
-
-                // Add event listeners for new participants
-                newRoom.on("participantConnected", participant => {
-                    setParticipants(prev => [...prev, participant]);
-                });
-
-                newRoom.on("participantDisconnected", participant => {
-                    setParticipants(prev => prev.filter(p => p !== participant));
-                });
-
-                // Get user audio track and attach to audio element
-                const localTracks = await Video.createLocalTracks({ audio: true, video: !audioOnly });
-                localTracks.forEach(track => newRoom.localParticipant.publishTrack(track));
-
-                if (audioOnly && localTracks.length > 0) {
-                    localAudioRef.current.srcObject = new MediaStream(
-                        localTracks.map(track => track.mediaStreamTrack)
-                    );
-                }
-            return () => {
-                  if (room) {
-                      room.disconnect();
-                      setRoom(null);
-                  }
-              };
-
+              console.log(token)
+              
           }
           fetchTwilio()
       },[])
@@ -132,7 +100,7 @@ const TherapyChatPage: React.FC = () => {
           mb: 2,
         }}
       >
-        <Link href="/SeekerPage/TherapyChat/CallNoVideo" passHref>
+        <Link to="/SeekerPage/TherapyChat/CallNoVideo">
           <IconButton
             sx={{
               backgroundColor: "#27ae60",

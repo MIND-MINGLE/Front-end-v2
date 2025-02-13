@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import styles from './EventView.module.css';
-import Link from 'next/link';
+import {Link} from 'react-router';
 
 const TopAppBar: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const TopAppBar: React.FC = () => {
       <div className={styles.leadingTrailingIcons}>
         <button className={styles.leadingIcon} aria-label="Menu">
           <div className={styles.container}>
-            <Link href="/SeekerPage">
+            <Link to="/seeker">
               <div className={styles.stateLayer}>
                 <img src="/topappbar1.svg" alt="" className={styles.iconImage} />
               </div>

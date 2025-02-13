@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-export const AddCard = (): JSX.Element => {
+export const AddCard = (): React.JSX.Element => {
     return (
         <Box display="flex" justifyContent="center" width="100%" bgcolor="white">
             <Box width={447} height={369} bgcolor="white" p={2} boxShadow={1}>

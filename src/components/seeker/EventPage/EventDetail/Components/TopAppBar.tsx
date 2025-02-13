@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import styles from './TopAppBar.module.css';
-import Link from 'next/link';
+import {Link} from 'react-router';
 
 const TopAppBar: React.FC = () => {
   return (
     <header className={styles.topAppBar}>
       <div className={styles.leadingTrailingIcons}>
-        <Link href="/SeekerPage/EventPage">
+        <Link to="/SeekerPage/EventPage">
             <button className={styles.leadingIcon} aria-label="Menu">
             <img src="/topappbar1.svg" alt="" className={styles.iconImage} />
             </button>
