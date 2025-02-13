@@ -1,0 +1,29 @@
+.professorWorkshop {
+    background-color: #dff6ff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .bannerContainer {
+    position: relative;
+    width: 100vw; 
+    height: 100vh; 
+    overflow: hidden;
+    margin-bottom: 150px;
+  }
+  
+  .bannerImage {
+    aspect-ratio: 2.26;
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+    border-radius: 0;
+    margin-bottom: 150px;
+  }
+  
+  @media (max-width: 991px) {
+    .bannerImage {
+      max-width: 100%;
+    }
+  }

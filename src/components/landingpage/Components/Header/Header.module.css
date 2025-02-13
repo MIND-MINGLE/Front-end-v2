@@ -1,0 +1,91 @@
+.header {
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  width: 100%;
+  padding: 0 80px;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  aspect-ratio: 2.9;
+  object-fit: contain;
+  width: 200px;
+  max-width: 100%;
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.navButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  position: relative;
+}
+
+.navMenu {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.navButton img, .navMenu img {
+  object-fit: contain;
+  width: 30px;
+  max-width: 100%;
+}
+
+.navButton:hover img, .navMenu:hover img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.dropdown {
+  position: absolute; 
+  top: 40px; 
+  left: 0;
+  min-width: 500px;
+  max-width: 1000px;
+  max-height: 400px;
+  background: #fff; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  z-index: 10; 
+  padding: 10px; 
+  border-radius: 5px; 
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 991px) {
+  .header {
+    padding: 0 20px;
+  }
+}

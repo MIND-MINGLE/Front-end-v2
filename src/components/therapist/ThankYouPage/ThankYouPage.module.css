@@ -1,0 +1,87 @@
+.thankYouPage {
+    background-color: #fff;
+    display: flex;
+    padding-bottom: 271px;
+    flex-direction: column;
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .headerWrapper {
+    width: 100%;
+  }
+  
+  @media (max-width: 991px) {
+    .thankYouPage {
+      padding-bottom: 100px;
+    }
+  }
+  
+  .confirmationIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    width: 100px;
+    margin-top: 155px;
+    max-width: 100%;
+  }
+  
+  @media (max-width: 991px) {
+    .confirmationIcon {
+      margin-top: 40px;
+    }
+  }
+  
+  .confirmationTitle {
+    color: #272727;
+    text-align: center;
+    letter-spacing: -0.9px;
+    margin-top: 24px;
+    font: 500 26px/2 Poppins, sans-serif;
+  }
+  
+  .orderNumber {
+    color: #2d89b9;
+    text-align: center;
+    margin-top: 13px;
+    font: 400 14px/1 Helvetica, -apple-system, Roboto, Helvetica, sans-serif;
+  }
+  
+  .confirmationDescription {
+    color: #656565;
+    margin-top: 26px;
+    font: 300 14px/16px Roboto, -apple-system, Roboto, Helvetica, sans-serif;
+    max-width: 600px;
+    text-align: center;
+  }
+  
+  @media (max-width: 991px) {
+    .confirmationDescription {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+  
+  .homeButton {
+    border-radius: 4px;
+    background: #2d89b9;
+    margin-top: 44px;
+    padding: 8px 44px;
+    color: #fff;
+    text-align: center;
+    font: 500 21px Roboto, sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .homeButton:hover {
+    background-color: #236d94;
+  }
+  
+  @media (max-width: 991px) {
+    .homeButton {
+      margin-top: 40px;
+      padding: 8px 20px;
+    }
+  }
+  

@@ -1,0 +1,132 @@
+.notification {
+  background-color: #fff;
+  display: flex;
+  max-width: 484px;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Roboto, sans-serif;
+  padding: 22px 15px;
+}
+
+.sectionHeader {
+  display: flex;
+  gap: 20px;
+  font-weight: 500;
+  justify-content: space-between;
+}
+
+@media (max-width: 991px) {
+  .sectionHeader {
+    max-width: 100%;
+    margin-right: 3px;
+  }
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 991px) {
+  .headerLeft {
+    white-space: initial;
+  }
+}
+
+.headerNav {
+  display: flex;
+  gap: 7px;
+}
+
+@media (max-width: 991px) {
+  .headerNav {
+    white-space: initial;
+  }
+}
+
+.headerButton {
+  border-radius: 3px;
+  border: 0.75px solid var(--neutral-CED4DA, #ced4da);
+  overflow: hidden;
+  padding: 4px 10px;
+  background: none;
+  cursor: pointer;
+}
+
+.headerButton:first-child {
+  color: var(--primary-0077B6, #0077b6);
+}
+
+.headerButton:last-child {
+  color: var(--neutral-6C757D, #6c757d);
+}
+
+@media (max-width: 991px) {
+  .headerButton {
+    white-space: initial;
+  }
+}
+
+.headerTitle {
+  color: var(--neutral-212529, #212529);
+  align-self: start;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.seeAllButton {
+  color: var(--neutral-ADB5BD, #adb5bd);
+  font-size: 10px;
+  align-self: end;
+  margin-top: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.notificationItem {
+  display: flex;
+  margin-top: 10px;
+  gap: 11px;
+}
+
+.profileImage {
+  aspect-ratio: 1;
+  object-fit: contain;
+  object-position: center;
+  width: 40px;
+  border-radius: 50%;
+  margin: auto 0;
+}
+
+.notificationContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 0;
+  width: fit-content;
+}
+
+.notificationMessage {
+  color: var(--neutral-212529, #212529);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.notificationTime {
+  color: var(--neutral-ADB5BD, #adb5bd);
+  font-size: 10px;
+  font-weight: 500;
+  align-self: start;
+  margin-top: 7px;
+}
+
+.divider {
+  border-radius: 4px;
+  background: var(--neutral-DEE2E6, #dee2e6);
+  width: 100%;
+  height: 1px;
+  margin-top: 10px;
+}

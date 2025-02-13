@@ -1,0 +1,133 @@
+.similarProperties {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .sectionTitle {
+    color: #0077b6;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .seeAllButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #adb5bd;
+    font-size: 10px;
+    cursor: pointer;
+  }
+  
+  .arrowIcon {
+    width: 16px;
+    height: 16px;
+    margin-left: 3px;
+  }
+  
+  .propertyGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  
+  .propertyCard {
+    border-radius: 10px;
+    box-shadow: 0px 4px 17px rgba(0, 0, 0, 0.1);
+    padding: 14px;
+    background-color: #fff;
+  }
+  
+  .propertyImage {
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+    aspect-ratio: 1.5;
+    object-fit: cover;
+  }
+  
+  .propertyInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  
+  .propertyTitle {
+    color: #0077b6;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  .favoriteIcon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .propertyAddress {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    color: #212529;
+    font-weight: 300;
+    margin-top: 6px;
+  }
+  
+  .propertyPrice {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #f88b00;
+    margin-top: 6px;
+  }
+  
+  .icon {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+  }
+  
+  .facilityList {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  
+  .facilityItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 10px;
+    color: #6c757d;
+  }
+  
+  .facilityIcon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 4px;
+  }
+  
+  @media (max-width: 1200px) {
+    .propertyGrid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .propertyGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .propertyGrid {
+      grid-template-columns: 1fr;
+    }
+  }

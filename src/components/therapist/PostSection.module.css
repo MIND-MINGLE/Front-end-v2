@@ -1,0 +1,15 @@
+.postSection {
+    align-self: center;
+    display: flex;
+    width: 881px;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: start;
+    margin: 51px 0 0 48px;
+  }
+  
+  @media (max-width: 991px) {
+    .postSection {
+      margin-top: 40px;
+    }
+  }

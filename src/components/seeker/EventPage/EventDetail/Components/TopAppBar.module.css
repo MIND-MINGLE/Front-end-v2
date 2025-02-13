@@ -1,0 +1,59 @@
+.topAppBar {
+    background-color: #dff6ff;
+    display: flex;
+    width: 100%;
+    padding-bottom: 24px;
+    flex-direction: column;
+  }
+  
+  .leadingTrailingIcons {
+    display: flex;
+    width: 100%;
+    align-items: start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 8px 12px 0;
+  }
+  
+  .leadingIcon {
+    display: flex;
+    min-height: 48px;
+    width: 48px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .iconImage {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .logo {
+    width: 144px;
+    height: 48px;
+    object-fit: contain;
+  }
+  
+  .headline {
+    margin-top: 4px;
+    width: 100%;
+    color: var(--M3-sys-light-on-surface, #1d1b20);
+    letter-spacing: 0;
+    padding: 0 24px;
+    font: 400 24px/32px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .topAppBar,
+    .leadingTrailingIcons,
+    .headline {
+      max-width: 100%;
+    }
+  
+    .headline {
+      padding: 0 20px;
+    }
+  }

@@ -1,0 +1,45 @@
+.chatItemWrapper {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.chatItemContent {
+  display: flex;
+  gap: 10px;
+}
+
+.avatar {
+  aspect-ratio: 0.98;
+  object-fit: contain;
+  object-position: center;
+  width: 60px;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  margin: auto 0;
+}
+
+.userName {
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+  align-self: start;
+}
+
+.messagePreview {
+  color: #212529;
+  font-size: 14px;
+  font-weight: 300;
+  margin-top: 5px;
+}
+
+.timestamp {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+  margin: auto 0;
+}

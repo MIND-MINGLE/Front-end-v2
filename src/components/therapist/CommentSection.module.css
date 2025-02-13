@@ -1,0 +1,134 @@
+.commentSection {
+    width: 100%;
+    max-width: 900px;
+    margin: 2px auto;
+    padding: 15px;
+    background-color: #f9f9f9; 
+    border-radius: 10px;
+  }
+
+  .moreComments {
+    font-size: 18px;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .comment {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 15px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  }
+
+  .commenterAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .commentContent {
+    background-color: #e1f7ff;
+    border-radius: 15px;
+    padding: 12px;
+    flex-grow: 1;
+    max-width: 90%;
+  }
+
+  .commenterName {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .commentText {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .commentActions {
+    display: flex;
+    gap: 20px;
+    color: #65676b;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .actionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    color: inherit;
+    padding: 0;
+    transition: color 0.3s;
+  }
+  
+  .actionButton:hover {
+    color: #007bff;
+  }
+
+  .commentTime {
+    font-weight: normal;
+    font-size: 13px;
+    color: #888;
+  }
+
+  .commentForm {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .userAvatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .commentInput {
+    flex-grow: 1;
+    padding: 12px 18px;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    background-color: #f1f1f1;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    transition: background-color 0.3s;
+  }
+  
+  .commentInput:focus {
+    background-color: #fff;
+    border-color: #007bff;
+  }
+  
+  @media (max-width: 768px) {
+    .comment {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .commentContent {
+      max-width: 100%;
+    }
+  
+    .commentActions {
+      margin-top: 10px;
+      justify-content: flex-start;
+    }
+  
+    .commentInput {
+      padding: 10px 15px;
+    }
+  }
+  

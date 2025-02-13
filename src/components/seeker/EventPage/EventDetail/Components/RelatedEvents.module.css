@@ -1,0 +1,113 @@
+.relatedEvents {
+    display: flex;
+    min-height: 472px;
+    width: 100%;
+    padding-bottom: 32px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .titleHeader {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 24px;
+  }
+  
+  .title {
+    color: var(--M3-sys-light-on-surface, #1d1b20);
+    letter-spacing: 0;
+    font: 400 24px/32px Roboto, sans-serif;
+  }
+  
+  .iconButton {
+    display: flex;
+    min-height: 48px;
+    width: 48px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .iconImage {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .eventList {
+    list-style-type: none;
+    padding: 0 24px;
+    margin: 0;
+  }
+  
+  .eventItem {
+    display: flex;
+    width: 100%;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .eventImage {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+  
+  .eventContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
+  .eventTitle {
+    color: var(--M3-sys-light-on-surface, #1d1b20);
+    letter-spacing: 0;
+    font: 400 22px/28px Roboto, sans-serif;
+    margin: 0 0 4px;
+  }
+  
+  .eventDescription {
+    color: var(--M3-sys-light-on-surface-variant, #49454f);
+    letter-spacing: 0.25px;
+    font: 400 14px/20px Roboto, sans-serif;
+    margin: 0 0 4px;
+  }
+  
+  .eventMeta {
+    display: flex;
+    align-items: center;
+    color: var(--M3-sys-light-on-surface-variant, #49454f);
+    letter-spacing: 0.4px;
+    font: 400 12px/16px Roboto, sans-serif;
+    margin-top: auto;
+  }
+  
+  .metaIcon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+  }
+  
+  .metaSeparator {
+    margin: 0 4px;
+  }
+  
+  @media (max-width: 991px) {
+    .relatedEvents,
+    .titleHeader,
+    .eventList {
+      max-width: 100%;
+    }
+  
+    .titleHeader {
+      padding: 8px 20px;
+    }
+  
+    .eventList {
+      padding: 0 20px;
+    }
+  }

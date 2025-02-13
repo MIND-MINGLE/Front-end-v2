@@ -1,0 +1,40 @@
+.savedOffices {
+    background-color: #fff;
+    max-width: 493px;
+    padding: 12px 25px 24px;
+  }
+  
+  .savedOfficesTitle {
+    color: #212529;
+    font: 500 16px Roboto, sans-serif;
+    margin-bottom: 18px;
+  }
+  
+  .officePreview {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #fff;
+    display: flex;
+    gap: 11px;
+    overflow: hidden;
+    padding: 13px 11px 0;
+    margin-top: 4px;
+  }
+  
+  .officePreviewImage {
+    width: 81px;
+    border-radius: 5px;
+    object-fit: contain;
+  }
+  
+  .officePreviewTitle {
+    color: #0077b6;
+    font: 500 14px Roboto, sans-serif;
+    flex-grow: 1;
+  }
+  
+  @media (max-width: 991px) {
+    .savedOffices {
+      padding: 0 20px;
+    }
+  }

@@ -1,0 +1,83 @@
+.searchBarContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 900px; 
+    background-color: #f9f9f9;
+    border-radius: 20px;
+    padding: 12px 15px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    font: 600 15px 'Segoe UI', sans-serif;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .searchLabel {
+    font-size: 18px;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .searchInput {
+    border-radius: 30px;
+    background-color: #e9f1f7; 
+    flex-grow: 1;
+    width: 100%;
+    max-width: 800px;
+    padding: 12px 15px;
+    border: 2px solid #c3d6e4;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .searchInput:focus {
+    border-color: #6c9fc9;
+    box-shadow: 0 0 10px rgba(108, 159, 201, 0.4);
+  }
+  
+  .searchButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .searchButton:hover {
+    transform: scale(1.1); 
+  }
+
+  .searchIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 25px;
+    height: 25px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .searchButton:hover .searchIcon {
+    transform: rotate(90deg); 
+  }
+
+  @media (max-width: 991px) {
+    .searchBarContainer {
+      padding: 10px;
+      max-width: 100%;
+    }
+  
+    .searchInput {
+      max-width: 100%;
+      padding-right: 40px;
+    }
+  
+    .searchButton {
+      margin-left: 5px;
+    }
+  }
+  
