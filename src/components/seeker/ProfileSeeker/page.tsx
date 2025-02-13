@@ -4,7 +4,7 @@ import React from 'react';
 import NavigationRail from '../NavBar';
 import Frame from './index';
 
-const SeekerPage = (): JSX.Element => {
+const SeekerPage = (): React.JSX.Element => {
     return (
         <Box
             width="100%"

@@ -2,7 +2,7 @@
 import React from 'react';
 import styles from './ThankYouPage.module.css';
 import HeaderProf from '../ProfessorWorkshop/Header';
-import Link from 'next/link';
+import {Link} from 'react-router';
 
 const ThankYouPage: React.FC = () => {
   return (
@@ -25,7 +25,7 @@ const ThankYouPage: React.FC = () => {
         Now that your order is confirmed it will be ready to ship in 2 days. 
         Please check your inbox in the future for your order updates.
       </p>
-        <Link href="/ProfessorPage">
+        <Link to="/doctor">
             <button className={styles.homeButton}>
                 Back to Home
             </button>

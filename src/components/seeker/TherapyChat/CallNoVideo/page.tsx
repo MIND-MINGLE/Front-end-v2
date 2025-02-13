@@ -10,7 +10,7 @@ import {
 import NavigationRail from "../../NavBar";
 import React from "react";
 import RightComponents from "./component";
-import Link from "next/link";
+import {Link} from "react-router";
 
 const TherapyChatPage: React.FC = () => {
   return (
@@ -95,7 +95,7 @@ const TherapyChatPage: React.FC = () => {
           mb: 2,
         }}
       >
-        <Link href="/SeekerPage/TherapyChat/CallVideo" passHref>
+        <Link to="/SeekerPage/TherapyChat/CallVideo">
           <IconButton
             sx={{
               backgroundColor: "#27ae60",

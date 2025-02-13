@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import React from "react";
-import Link from "next/link";
+import {Link} from "react-router";
 
 const GradientButton = styled(MuiButton)({
     width: "100%",
@@ -52,15 +52,15 @@ export const Frame = () => {
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <Link href="/ProfessorPage/ThankYouPage">
+                    <Link to="/ProfessorPage/ThankYouPage">
                         <GradientButton>Book a workspace</GradientButton>
                     </Link>
 
-                    <Link href="/ProfessorPage/ProfessorCalendar" passHref>
+                    <Link to="/ProfessorPage/ProfessorCalendar" >
                         <GradientButton>Create an appointment</GradientButton>
                     </Link>
 
-                    <Link href="/ProfessorPage/ProfessorWorkshop" passHref>
+                    <Link to="/ProfessorPage/ProfessorWorkshop" >
                         <GradientButton>Create a workshop</GradientButton>
                     </Link>
                 </Grid>
@@ -75,7 +75,7 @@ export const Frame = () => {
                             position: "relative",
                         }}
                     >
-                        <Link href="/ProfessorPage/ThankYouPage">
+                        <Link to="/ProfessorPage/ThankYouPage">
                             <Box
                                 component="img"
                                 sx={{

@@ -8,8 +8,8 @@ import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Settings"; 
 import { Avatar, Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material";
-import Link from "next/link";
-import React from "react";
+import {Link} from "react-router";
+
 
 const RightComponents = () => {
   return (
@@ -123,19 +123,19 @@ const RightComponents = () => {
                 <Icon1 />
               </IconButton>
 
-              <Link href="/SeekerPage/TherapyChat/CallNoVideo">
+              <Link to="/SeekerPage/TherapyChat/CallNoVideo">
                 <IconButton>
                     <Icon2 />
                 </IconButton>
               </Link>
 
-              <Link href="/SeekerPage/TherapyChat/CallVideo">
+              <Link to="/SeekerPage/TherapyChat/CallVideo">
                 <IconButton>
                     <Icon3 />
                 </IconButton>
               </Link>
 
-              <Link href="/SeekerPage/TherapyChat">
+              <Link to="/SeekerPage/TherapyChat">
                 <IconButton>
                     <Icon4 />
                 </IconButton>

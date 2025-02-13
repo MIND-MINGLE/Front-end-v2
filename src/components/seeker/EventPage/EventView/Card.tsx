@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import styles from './EventView.module.css';
-import Link from 'next/link';
+import {Link} from 'react-router';
 
 export interface CardProps {
   imageSrc: string;
@@ -12,7 +12,7 @@ export interface CardProps {
 const Card: React.FC<CardProps> = ({ imageSrc, title, date }) => {
   return (
     <article className={styles.card}>
-    <Link href="/SeekerPage/EventPage/EventDetail">
+    <Link to="/SeekerPage/EventPage/EventDetail">
       <img src={imageSrc} alt={title} className={styles.cardImage} />
       <div className={styles.cardContent}>
         <h2 className={styles.cardTitle}>{title}</h2>
