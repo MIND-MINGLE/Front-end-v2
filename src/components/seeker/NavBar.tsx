@@ -39,7 +39,7 @@ export const NavigationRail = (): JSX.Element => {
             <Stack direction="column" alignItems="center" gap={3} width="100%"> 
 
                 <Stack direction="column" alignItems="center" gap={1} width="100%"> 
-                    <Link to="/SeekerPage">
+                <Link to="/seeker">
                         <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}> 
                             <HomeIcon sx={{ color: "black", fontSize: 24 }} /> 
                         </Avatar>
@@ -59,7 +59,7 @@ export const NavigationRail = (): JSX.Element => {
                 </Stack> 
 
                 <Stack direction="column" alignItems="center" gap={1} width="100%"> 
-                    <Link to="/SeekerPage/TherapyChat">
+                <Link to="/seeker/therapy-chat">
                         <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}> 
                             <HealingIcon sx={{ color: "black", fontSize: 24 }} /> 
                         </Avatar> 
@@ -70,7 +70,7 @@ export const NavigationRail = (): JSX.Element => {
                 </Stack> 
 
                 <Stack direction="column" alignItems="center" gap={1} width="100%"> 
-                    <Link to="/SeekerPage/HistoryPage">
+                <Link to="/seeker/history">
                         <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}> 
                             <HistoryIcon sx={{ color: "black", fontSize: 24 }} /> 
                         </Avatar> 
@@ -81,7 +81,7 @@ export const NavigationRail = (): JSX.Element => {
                 </Stack>
 
                 <Stack direction="column" alignItems="center" gap={1} width="100%"> 
-                    <Link to="/SeekerPage/EventPage">
+                <Link to="/seeker/events">
                         <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}> 
                             <EventIcon sx={{ color: "black", fontSize: 24 }} /> 
                         </Avatar> 
@@ -92,7 +92,7 @@ export const NavigationRail = (): JSX.Element => {
                 </Stack> 
 
                 <Stack direction="column" alignItems="center" gap={1} width="100%"> 
-                    <Link to="/SeekerPage/ProfileSeeker">
+                <Link to="/seeker/profile">
                         <Avatar sx={{ bgcolor: "transparent", width: 48, height: 48 }}> 
                             <PersonIcon sx={{ color: "black", fontSize: 24 }} /> 
                         </Avatar> 

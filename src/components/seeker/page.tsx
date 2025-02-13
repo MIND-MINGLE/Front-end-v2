@@ -4,8 +4,8 @@
 import { Box, Divider, Typography } from '@mui/material';
 import { JSX, useState } from 'react';
 import NavigationRail from './NavBar';
-import Footer from '../landingpage/Components/Footer/Footer';
-import CopyrightFooter from '../landingpage/Components/CopyrightFooter/CopyrightFooter';
+import Footer from '../coworking/Components/Footer/Footer';
+import CopyrightFooter from '../coworking/Components/CopyrightFooter/CopyrightFooter';
 import TherapyMatchingForm from './TherapyMatchingForm/TherapyMatchingForm';
 import TherapistConnector from './Connector/Connector';
 import {Link} from 'react-router';

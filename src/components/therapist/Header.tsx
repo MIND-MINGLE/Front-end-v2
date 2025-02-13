@@ -2,10 +2,10 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Header.module.css";
-import TransactionList from "../landingpage/Components/TransactionList/TransactionList";
-import NotificationComponent from "../landingpage/Components/NotificationModule/NotificationComponent";
-import ChatList from "../landingpage/Components/ChatNoti/ChatList";
-import SavedOffices from "../landingpage/Components/SavedOffices/SavedOffices";
+import TransactionList from "../coworking/Components/TransactionList/TransactionList";
+import NotificationComponent from "../coworking/Components/NotificationModule/NotificationComponent";
+import ChatList from "../coworking/Components/ChatNoti/ChatList";
+import SavedOffices from "../coworking/Components/SavedOffices/SavedOffices";
 import {Link} from "react-router";
 
 const Header: React.FC = () => {

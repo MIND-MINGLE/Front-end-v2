@@ -123,19 +123,19 @@ const RightComponents = () => {
                 <Icon1 />
               </IconButton>
 
-              <Link to="/SeekerPage/TherapyChat/CallNoVideo">
+              <Link to="/seeker/therapy-chat/call-no-video">
                 <IconButton>
                     <Icon2 />
                 </IconButton>
               </Link>
 
-              <Link to="/SeekerPage/TherapyChat/CallVideo">
+              <Link to="/seeker/therapy-chat/call-video">
                 <IconButton>
                     <Icon3 />
                 </IconButton>
               </Link>
 
-              <Link to="/SeekerPage/TherapyChat/MusicSelect">
+              <Link to="/seeker/therapy-chat/music-select">
                 <IconButton>
                     <Icon4 />
                 </IconButton>

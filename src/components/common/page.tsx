@@ -7,8 +7,8 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import Footer from "../landingpage/Components/Footer/Footer";
-import CopyrightFooter from "../landingpage/Components/CopyrightFooter/CopyrightFooter";
+import Footer from "../coworking/Components/Footer/Footer";
+import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
 import {Link} from "react-router";
 
 const roles = [

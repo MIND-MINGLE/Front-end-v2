@@ -26,7 +26,7 @@ import {
     Backdrop,
 } from "@mui/material";
 import { useState } from "react";
-import AddCard from "../PersonalInformation/AddCard";
+import AddCard from "./AddCard";
 
 export const Frame = () => {
     const [open, setOpen] = useState(false);

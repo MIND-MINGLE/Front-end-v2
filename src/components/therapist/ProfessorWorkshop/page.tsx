@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import styles from './ProfessorWorkshop.module.css';
-import Footer from '../../landingpage/Components/Footer/Footer';
-import CopyrightFooter from '../../landingpage/Components/CopyrightFooter/CopyrightFooter';
+import Footer from '../../coworking/Components/Footer/Footer';
+import CopyrightFooter from '../../coworking/Components/CopyrightFooter/CopyrightFooter';
 import HeaderProf from './Header';
 
 const ProfessorWorkshop: React.FC = () => {

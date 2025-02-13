@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './PropertyDetails.module.css';
-import PropertyDescription from '../PropertyDetails/PropertyDescription/PropertyDescription';
-import OwnerContactCard from '../PropertyDetails/OwnerContactCard/OwnerContactCard';
+import PropertyDescription from './PropertyDescription/PropertyDescription';
+import OwnerContactCard from './OwnerContactCard/OwnerContactCard';
 
 const PropertyDetails: React.FC = () => {
   const description = "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequa Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequa";

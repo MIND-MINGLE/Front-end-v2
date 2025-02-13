@@ -2,8 +2,8 @@ import React from "react";
 import styles from "./ProfessorCalender.module.css";
 import HeaderProf from "../ProfessorWorkshop/Header";
 import Frame from "./index";
-import Footer from "../../landingpage/Components/Footer/Footer";
-import CopyrightFooter from "../../landingpage/Components/CopyrightFooter/CopyrightFooter";
+import Footer from "../../coworking/Components/Footer/Footer";
+import CopyrightFooter from "../../coworking/Components/CopyrightFooter/CopyrightFooter";
 
 const PersonalInformation: React.FC = () => {
   return (

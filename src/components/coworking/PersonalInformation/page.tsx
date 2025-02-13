@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./PersonalInformation.module.css";
 import Header from "../Components/Header/Header";
-import Frame from "../PersonalInformation";
+import Frame from ".";
 import Footer from "../Components/Footer/Footer";
 import CopyrightFooter from "../Components/CopyrightFooter/CopyrightFooter";
 
