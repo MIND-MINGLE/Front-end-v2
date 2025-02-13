@@ -1,4 +1,3 @@
-
 import { Route,Routes } from 'react-router-dom'
 import CoWorkingSpace from '../components/landingpage/page'
 import NotFound from '../components/defaults/notfound'
@@ -15,7 +14,6 @@ export default function AppRoutes() {
       <Route path='/seeker/' element={<SeekerPage/>}/>
       <Route path='/doctor/' element={<TherapistPage/>} />
       <Route path="*" element={<NotFound />}/>
-
     </Routes>
   )
 }
