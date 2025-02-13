@@ -9,7 +9,7 @@ interface VideoCallProps{
 const videocallURL = "https://localhost:7252/api/Twilio/CallRoomToken?"
 
   async function VideoCall({ userId, roomNum }: VideoCallProps) {
-    const response = await axios.get(videocallURL+`identity=${userId}&room=${roomNum}`,{headers: {'Content-Type': 'application/json'}})
+    const response = await axios.get(videocallURL+`identity=${userId}&room=${roomNum}`,{headers: headers})
     console.log(response.data.result)
     return response
 }

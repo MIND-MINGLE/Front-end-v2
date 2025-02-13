@@ -8,16 +8,16 @@ import {
   Typography,
 } from "@mui/material";
 import NavigationRail from "../../NavBar";
-import {useEffect,useState,useRef} from "react";
+import {useEffect} from "react";
 import RightComponents from "./component";
 import {Link} from "react-router";
 import {VideoCall} from '../../../../api/Twilio/TwilioApi';
-import Video from "twilio-video";
+//import Video from "twilio-video";
 
 const TherapyChatPage: React.FC = () => {
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [room, setRoom] = useState(null);
-    const [participants, setParticipants] = useState([]);
+  // const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  // const [room, setRoom] = useState(null);
+  //   const [participants, setParticipants] = useState([]);
     //const localAudioRef = useRef();
   
    useEffect(()=>{

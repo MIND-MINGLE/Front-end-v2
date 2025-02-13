@@ -9,7 +9,7 @@ import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Settings"; 
 import { Avatar, Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material";
 import {Link} from "react-router";
-import React from "react";
+
 
 const RightComponents = () => {
   return (

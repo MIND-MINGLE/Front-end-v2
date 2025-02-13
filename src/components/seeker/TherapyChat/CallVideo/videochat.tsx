@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import Video, { Room, Participant, Track } from "twilio-video";
+import Video, { Room, Participant } from "twilio-video";
 
 interface VideoChatProps {
     userName: string;
@@ -102,24 +102,24 @@ const RemoteParticipant: React.FC<RemoteParticipantProps> = ({ participant, audi
     const mediaRef = useRef<HTMLVideoElement | HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        participant.tracks.forEach(publication => {
-            if (publication.isSubscribed) {
-                attachTrack(publication.track);
-            }
-        });
+    //     participant.tracks.forEach(publication => {
+    //         if (publication.isSubscribed) {
+    //             attachTrack(publication.track);
+    //         }
+    //     });
 
-        participant.on("trackSubscribed", track => attachTrack(track));
+    //     participant.on("trackSubscribed", track => attachTrack(track));
 
-        return () => {
-            participant.removeAllListeners();
-        };
-    }, [participant]);
+    //     return () => {
+    //         participant.removeAllListeners();
+    //     };
+    // }, [participant]);
 
-    const attachTrack = (track: Track) => {
-        if (mediaRef.current && track.kind === (audioOnly ? "audio" : "video")) {
-            (mediaRef.current as HTMLMediaElement).srcObject = new MediaStream([track.mediaStreamTrack]);
-        }
-    };
+    // const attachTrack = (track: Track) => {
+    //     if (mediaRef.current && track.kind === (audioOnly ? "audio" : "video")) {
+    //         (mediaRef.current as HTMLMediaElement).srcObject = new MediaStream([track.mediaStreamTrack]);
+    //     }
+    });
 
     return (
         <div className="media-box">
