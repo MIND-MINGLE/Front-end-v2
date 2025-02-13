@@ -1,0 +1,218 @@
+.websiteLink {
+    display: flex;
+    min-height: 20px;
+    width: 315px;
+    max-width: 100%;
+    align-items: center;
+    gap: 15px;
+    font-size: 13px;
+    color: rgba(101, 103, 107, 1);
+    font-weight: 400;
+    white-space: nowrap;
+    line-height: 2;
+    justify-content: center;
+  }
+  
+  @media (max-width: 991px) {
+    .websiteLink {
+      white-space: initial;
+    }
+  }
+  
+  .websiteIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 16px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .websiteUrl {
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  @media (max-width: 991px) {
+    .websiteUrl {
+      white-space: initial;
+    }
+  }
+  
+  .detailsContainer {
+    align-self: end;
+    display: flex;
+    margin-top: 9px;
+    width: 893px;
+    max-width: 100%;
+    flex-direction: column;
+    align-items: start;
+  }
+  
+  .nameContainer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 28px;
+    color: rgba(5, 5, 5, 1);
+    font-weight: 700;
+    line-height: 1;
+    justify-content: start;
+  }
+  
+  .companyName {
+    align-self: stretch;
+    min-width: 240px;
+    min-height: 23px;
+    margin: auto 0;
+  }
+  
+  .verifiedIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 14px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .additionalInfo {
+    display: flex;
+    margin-top: 9px;
+    align-items: center;
+    gap: 12px;
+    font-size: 17px;
+    color: rgba(101, 103, 107, 1);
+    font-weight: 400;
+    line-height: 1;
+    justify-content: start;
+  }
+  
+  .username {
+    align-self: stretch;
+    white-space: nowrap;
+    margin: auto 0;
+  }
+  
+  @media (max-width: 991px) {
+    .username {
+      white-space: initial;
+    }
+  }
+  
+  .followersIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 16px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .followersCount {
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .companyType {
+    align-self: stretch;
+    white-space: nowrap;
+    margin: auto 0;
+  }
+  
+  @media (max-width: 991px) {
+    .companyType {
+      white-space: initial;
+    }
+  }
+  
+  .actionButtons {
+    align-self: stretch;
+    display: flex;
+    width: 100%;
+    align-items: start;
+    gap: 20px;
+    font-weight: 600;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  @media (max-width: 991px) {
+    .actionButtons {
+      max-width: 100%;
+    }
+  }
+  
+  .buttonGroup {
+    display: flex;
+    margin-top: 13px;
+    gap: 23px;
+    font-size: 15px;
+  }
+  
+  .followButton {
+    border-radius: 6px;
+    background-color: rgba(231, 243, 255, 1);
+    color: rgba(24, 119, 242, 1);
+    white-space: nowrap;
+    padding: 12px 50px;
+    min-height: 35px;
+    max-width: 147px;
+  }
+  
+  @media (max-width: 991px) {
+    .followButton {
+      white-space: initial;
+      padding: 0 20px;
+    }
+  }
+  
+  .messageButton {
+    border-radius: 6px;
+    background-color: rgba(228, 230, 235, 1);
+    display: flex;
+    gap: 3px;
+    color: rgba(0, 0, 0, 1);
+    padding: 9px 18px;
+    min-height: 35px;
+    max-width: 128px;
+  }
+  
+  .messageIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 17px;
+    align-self: start;
+  }
+  
+  .ctaButton {
+    border-radius: 6px;
+    background-color: rgba(0, 134, 190, 1);
+    display: flex;
+    max-width: 252px;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    justify-content: center;
+    font: 600 17px/1 Segoe UI, -apple-system, Roboto, Helvetica, sans-serif;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .ctaButton:hover,
+  .ctaButton:focus {
+    background-color: rgba(0, 114, 170, 1);
+  }
+  
+  .ctaIcon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+  
+  .ctaText {
+    align-self: stretch;
+    margin: 0;
+  }

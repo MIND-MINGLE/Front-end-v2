@@ -14,7 +14,7 @@ import {Link} from "react-router";
 const roles = [
   {
     title: "Therapist Seeker",
-    image: "/Ellipse 27.svg",
+    image: "/Ellipse 30.svg",
     link: "/seeker/",
   },
   { title: "Therapist", 
@@ -22,7 +22,7 @@ const roles = [
     link: "/doctor/"
   },
   { title: "Co-working Space Agent", 
-    image: "/Ellipse 27.svg", 
+    image: "/Ellipse 33.svg", 
     link: "/agent/" 
   },
 ];
@@ -35,12 +35,12 @@ const GradientAvatar = styled(Avatar)(({ theme }) => ({
     "linear-gradient(180deg, rgba(2, 127, 193, 0.84) 0%, rgba(0, 180, 216, 0.66) 46.35%, rgba(0, 180, 216, 0.61) 74.48%, rgba(27, 157, 240, 0.66) 94.27%)",
 }));
 
-const FirstPage = () => {
+const LandingPage = () => {
   return (
     <Box
       sx={{
         background: "linear-gradient(180deg, #DFF6FF 100%, #FFFFFF 100%)",
-        width: "100%",
+        width: "100vw",
         minHeight: "100vh",
         position: "relative",
         padding: "16px",
@@ -121,4 +121,4 @@ const FirstPage = () => {
   );
 };
 
-export default FirstPage;
+export default LandingPage;

@@ -1,0 +1,76 @@
+.navigationContainer {
+    display: flex;
+    width: 368px;
+    max-width: 100%;
+    align-items: start;
+    gap: 38px;
+    font-size: 15px;
+    color: rgba(101, 103, 107, 1);
+    font-weight: 600;
+    white-space: nowrap;
+    text-align: center;
+    margin: 22px 0 0 45px;
+  }
+  
+  @media (max-width: 991px) {
+    .navigationContainer {
+      margin-left: 10px;
+      white-space: initial;
+    }
+  }
+  
+  .navItems {
+    display: flex;
+    align-items: start;
+    gap: 28px;
+    flex-grow: 1;
+    flex-basis: auto;
+  }
+  
+  @media (max-width: 991px) {
+    .navItems {
+      white-space: initial;
+    }
+  }
+  
+  .activeNavItem {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    color: rgba(0, 134, 190, 1);
+  }
+  
+  @media (max-width: 991px) {
+    .activeNavItem {
+      white-space: initial;
+    }
+  }
+  
+  .activeNavText {
+    align-self: center;
+  }
+  
+  .activeIndicator {
+    background-color: rgba(0, 134, 190, 1);
+    display: flex;
+    margin-top: 19px;
+    height: 3px;
+  }
+  
+  .moreContainer {
+    display: flex;
+    gap: 7px;
+  }
+  
+  @media (max-width: 991px) {
+    .moreContainer {
+      white-space: initial;
+    }
+  }
+  
+  .moreIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 12px;
+  }

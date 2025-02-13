@@ -1,0 +1,141 @@
+.post {
+    width: 100%;
+    max-width: 900px;
+    background-color: #f9f9f9; 
+    border-radius: 10px;
+    overflow: hidden; 
+    margin: 2px auto;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .postHeader {
+    display: flex;
+    gap: 20px;
+    margin: 20px;
+    align-items: center;
+  }
+  
+  .profilePicture {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff; 
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2); 
+  }
+  
+  .postInfo {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .authorName {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .postMeta {
+    display: flex;
+    gap: 15px;
+    color: #65676b;
+    font-size: 14px;
+  }
+  
+  .postDate {
+    margin: auto 0;
+  }
+  
+  .visibilityIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Image styling */
+  .postImage {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    margin: 20px 0;
+    border-radius: 12px;
+  }
+  
+  /* Post statistics section */
+  .postStats {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    color: #65676b;
+    font-size: 14px;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  .reactions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .reactionCount {
+    font-weight: bold;
+  }
+  
+  .comments, .saves {
+    font-size: 14px;
+  }
+  
+  /* Post actions section */
+  .postActions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    gap: 15px;
+  }
+  
+  .actionButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #65676b;
+    font-size: 14px;
+  }
+  
+  .actionIcon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .actionButton:hover {
+    color: #007BFF; /* Blue hover color */
+  }
+  
+  /* Responsive styling */
+  @media (max-width: 991px) {
+    .post {
+      padding: 15px;
+    }
+  
+    .postHeader {
+      flex-direction: column;
+      margin: 10px 0;
+      align-items: center;
+    }
+  
+    .postImage {
+      width: 100%;
+    }
+  
+    .postStats {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .postActions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+  

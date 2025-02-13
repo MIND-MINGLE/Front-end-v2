@@ -1,0 +1,50 @@
+.navigationTabs {
+    display: flex;
+    width: 368px;
+    max-width: 100%;
+    align-items: start;
+    gap: 38px;
+    font-size: 15px;
+    color: #65676b;
+    font-weight: 600;
+    text-align: center;
+    margin: 22px 0 0 45px;
+  }
+  
+  .tab {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+    padding: 0;
+  }
+  
+  .activeTab {
+    color: #0086be;
+  }
+  
+  .activeTab::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #0086be;
+    margin-top: 19px;
+  }
+  
+  .moreIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 12px;
+    margin-left: 7px;
+  }
+  
+  @media (max-width: 991px) {
+    .navigationTabs {
+      margin-left: 10px;
+      white-space: initial;
+    }
+  }

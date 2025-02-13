@@ -23,7 +23,7 @@ const SeekerPage = (): JSX.Element => {
             sx={{
                 display: "flex",
                 height: "100%",
-                width: "100%",
+                width: "100vw",
             }}
         >
             {/* Part 1: Navigation Rail */}

@@ -1,12 +1,21 @@
-import React from 'react'
-import { Route } from 'react-router-dom'
-import LandingPage from '../components/landingpage/page'
 
-export default function routes() {
+import { Route,Routes } from 'react-router-dom'
+import CoWorkingSpace from '../components/landingpage/page'
+import NotFound from '../components/defaults/notfound'
+import SeekerPage from '../components/seeker/page'
+import LandingPage from '../components/common/page'
+import TherapistPage from '../components/therapist/page'
+
+
+export default function AppRoutes() {
   return (
-    <div>
-      routes
+    <Routes>
       <Route path="/" element={<LandingPage />} />
-    </div>
+      <Route path="/agent/" element={<CoWorkingSpace />} />
+      <Route path='/seeker/' element={<SeekerPage/>}/>
+      <Route path='/doctor/' element={<TherapistPage/>} />
+      <Route path="*" element={<NotFound />}/>
+
+    </Routes>
   )
 }
