@@ -1,0 +1,274 @@
+.content {
+    background: #fff;
+    display: flex;
+    min-height: 737px;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-grow: 1;
+    flex-basis: 0;
+    width: fit-content;
+  }
+  
+  @media (max-width: 991px) {
+    .content {
+      max-width: 100%;
+    }
+  }
+  
+  .topAppBar {
+    background-color: rgba(223, 246, 255, 1);
+    display: flex;
+    width: 100%;
+    padding-bottom: 24px;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  @media (max-width: 991px) {
+    .topAppBar {
+      max-width: 100%;
+    }
+  }
+  
+  .leadingTrailingIcons {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 40px 100px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 8px 12px 0;
+  }
+  
+  @media (max-width: 991px) {
+    .leadingTrailingIcons {
+      max-width: 100%;
+    }
+  }
+  
+  .leadingIcon {
+    display: flex;
+    min-height: 48px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .container {
+    border-radius: 100px;
+    display: flex;
+    width: 100%;
+    max-width: 40px;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+    justify-content: center;
+  }
+  
+  .stateLayer {
+    align-self: stretch;
+    display: flex;
+    width: 40px;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+    margin: auto 0;
+    padding: 8px;
+    color:#1d1b20;
+  }
+  
+  .iconImage {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 24px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .logo {
+    aspect-ratio: 3;
+    object-fit: contain;
+    object-position: center;
+    width: 144px;
+  }
+  
+  .headline {
+    margin-top: 4px;
+    width: 100%;
+    gap: 10px;
+    color: #1d1b20;
+    white-space: nowrap;
+    letter-spacing: 0;
+    padding: 0 24px;
+    font: 400 24px/32px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .headline {
+      max-width: 100%;
+      white-space: initial;
+      padding: 0 20px;
+    }
+  }
+  
+  .filterChipsCarousel {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 4px;
+    overflow: hidden;
+    color: #49454f;
+    white-space: nowrap;
+    text-align: center;
+    letter-spacing: 0.1px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 16px 24px;
+    font: 500 14px/20px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .filterChipsCarousel {
+      max-width: 100%;
+      white-space: initial;
+      padding: 0 20px;
+    }
+  }
+  
+  .filterChip {
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid #cac4d0;
+    display: flex;
+    min-height: 32px;
+    overflow: hidden;
+    background: none;
+    cursor: pointer;
+    width: fit-content;
+  }
+  
+  .filterChipActive {
+    background: #e8def8;
+    color: #4a4459;
+    border: none;
+  }
+  
+  @media (max-width: 991px) {
+    .filterChip {
+      white-space: initial;
+    }
+  }
+  
+  .stateLayer {
+    align-self: stretch;
+    min-height: 32px;
+    gap: 8px;
+    margin: auto 0;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+  }
+  
+  @media (max-width: 991px) {
+    .stateLayer {
+      white-space: initial;
+    }
+  }
+  
+  .chipIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 18px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .labelText {
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .cardGrid {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    gap: 16px 24px;
+    white-space: nowrap;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 0 24px 32px;
+  }
+  
+  @media (max-width: 991px) {
+    .cardGrid {
+      max-width: 100%;
+      white-space: initial;
+      padding: 0 20px;
+    }
+  }
+  
+  .card {
+    display: flex;
+    min-width: 120px;
+    min-height: 160px;
+    max-width: 220px;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 1;
+    flex-basis: 0%;
+  }
+  
+  @media (max-width: 991px) {
+    .card {
+      white-space: initial;
+    }
+  }
+  
+  .cardImage {
+    aspect-ratio: 1.02;
+    object-fit: contain;
+    object-position: center;
+    width: 123px;
+    border-radius: 16px;
+  }
+  
+  .cardContent {
+    display: flex;
+    margin-top: 4px;
+    width: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  @media (max-width: 991px) {
+    .cardContent {
+      white-space: initial;
+    }
+  }
+  
+  .cardTitle {
+    color: #1d1b20;
+    text-overflow: ellipsis;
+    letter-spacing: 0.1px;
+    font: 500 14px/20px Roboto, sans-serif;
+  }
+  
+  .cardDate {
+    color: #49454f;
+    text-overflow: ellipsis;
+    letter-spacing: 0.4px;
+    font: 400 12px/16px Roboto, sans-serif;
+  }
+  
+  @media (max-width: 991px) {
+    .cardDate {
+      white-space: initial;
+    }
+  }

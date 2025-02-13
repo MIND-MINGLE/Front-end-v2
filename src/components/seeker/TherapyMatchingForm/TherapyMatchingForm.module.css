@@ -1,0 +1,119 @@
+.container {
+    background-color: #fff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    display: flex;
+    width: 684px;
+    max-width: 100%;
+    flex-direction: column;
+    color: #000;
+    letter-spacing: 0;
+    margin: 34px 0 0 49px;
+    padding: 22px 0 2px;
+    font: 400 22px/28px Roboto;
+  }
+  
+  .content {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 44px;
+  }
+  
+  @media (max-width: 991px) {
+    .content {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+  
+  .title {
+    text-align: center;
+    margin-left: 11px;
+  }
+  
+  .divider {
+    margin-top: 17px;
+    width: 590px;
+    max-width: 100%;
+    height: 1px;
+    border: 1px solid #000;
+  }
+  
+  .subtitle {
+    text-align: center;
+    margin-top: 38px;
+  }
+  
+  .optionButton {
+    border-radius: 100px;
+    background-color: #8edfff;
+    align-self: stretch;
+    margin-top: 38px;
+    padding: 23px 33px;
+  }
+  
+  @media (max-width: 991px) {
+    .optionButton {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+  
+  .infoBox {
+    background-color: #dff6ff;
+    display: flex;
+    width: 501px;
+    max-width: 100%;
+    gap: 7px;
+    color: #0077a6;
+    flex-wrap: wrap;
+    margin: 52px 0 0 11px;
+    padding: 20px 14px;
+  }
+  
+  @media (max-width: 991px) {
+    .infoBox {
+      margin-top: 40px;
+    }
+  }
+  
+  .infoIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 40px;
+    align-self: start;
+  }
+  
+  .infoText {
+    flex-grow: 1;
+    width: 418px;
+    flex-basis: auto;
+  }
+  
+  @media (max-width: 991px) {
+    .infoText {
+      max-width: 100%;
+    }
+  }
+  
+  .logo {
+    aspect-ratio: 4.42;
+    object-fit: contain;
+    object-position: center;
+    width: 248px;
+    max-width: 100%;
+  }
+  
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }

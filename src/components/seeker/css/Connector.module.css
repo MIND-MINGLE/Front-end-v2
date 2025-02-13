@@ -1,0 +1,121 @@
+.container {
+    background-color: #fff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    display: flex;
+    margin-top: 30px;
+    width: 684px;
+    max-width: 100%;
+    flex-direction: column;
+    letter-spacing: 0;
+    padding: 22px 0 3px;
+    font: 400 22px/28px Roboto, sans-serif;
+  }
+  
+  .content {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 49px;
+  }
+  
+  @media (max-width: 991px) {
+    .content {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+  
+  .title {
+    color: #000;
+    text-align: center;
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .divider {
+    align-self: stretch;
+    margin-top: 41px;
+    height: 1px;
+    border: 1px solid #000;
+  }
+  
+  @media (max-width: 991px) {
+    .divider {
+      max-width: 100%;
+      margin-top: 40px;
+    }
+  }
+  
+  .therapistImage {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 260px;
+    max-width: 100%;
+    margin: 55px 0 0 13px;
+  }
+  
+  @media (max-width: 991px) {
+    .therapistImage {
+      margin-top: 40px;
+    }
+  }
+  
+  .notificationBox {
+    background-color: #dff6ff;
+    display: flex;
+    width: 501px;
+    max-width: 100%;
+    gap: 8px;
+    color: #0077a6;
+    flex-wrap: wrap;
+    margin: 119px 0 0 11px;
+    padding: 20px 14px;
+  }
+  
+  @media (max-width: 991px) {
+    .notificationBox {
+      margin-top: 40px;
+    }
+  }
+  
+  .notificationIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 40px;
+    align-self: start;
+  }
+  
+  .notificationText {
+    flex-grow: 1;
+    width: 417px;
+    flex-basis: auto;
+  }
+  
+  @media (max-width: 991px) {
+    .notificationText {
+      max-width: 100%;
+    }
+  }
+  
+  .logo {
+    aspect-ratio: 4.5;
+    object-fit: contain;
+    object-position: center;
+    width: 248px;
+    max-width: 100%;
+  }
+  
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }

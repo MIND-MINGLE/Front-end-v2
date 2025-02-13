@@ -1,11 +1,17 @@
-import React from 'react'
+
 import { Route, Routes } from 'react-router-dom'
-import LandingPage from '../src/components/landingpage/page'
+import CoWorkingSpace from './components/landingpage/page'
+import NotFound from './components/defaults/notfound'
+import SeekerPage from './components/seeker/page'
+
+
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/agent/" element={<CoWorkingSpace />} />
+      <Route path='/seeker/' element={<SeekerPage/>}/>
+      <Route path="*" element={<NotFound />}/>
     </Routes>
   )
 }
