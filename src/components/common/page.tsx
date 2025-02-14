@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
   Grid,
@@ -9,7 +10,9 @@ import {
 } from "@mui/material";
 import Footer from "../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
-import {Link} from "react-router";
+import { useEffect } from "react";
+import { LoginAccount } from "../../api/Account/Account";
+import { useNavigate } from "react-router";
 
 const roles = [
   {
@@ -36,6 +39,27 @@ const GradientAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 const LandingPage = () => {
+const nav = useNavigate()
+const naviagate =(url:string)=>{
+  nav(url)
+}
+  useEffect(()=>{
+    const login = async()=>{
+      const res = {
+        email:"string",
+        accountName: "6666xxx",
+        password: "123"
+      }
+      const data = await LoginAccount(res)
+      console.log(data)
+      if(data.statusCode === 200) {
+        console.log(data.result)
+      }else{
+        console.log(data.errorMessage)
+      }
+    }
+    login()
+  })
   return (
     <Box
       sx={{
@@ -79,7 +103,9 @@ const LandingPage = () => {
       >
         {roles.map((role, index) => (
           <Grid item key={index}>
-            <Link to={role.link}>
+            <Button
+              onClick={() => naviagate(role.link)}
+            >
               <Card
                 sx={{
                   width: 304,
@@ -111,7 +137,7 @@ const LandingPage = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Link>
+            </Button>
           </Grid>
         ))}
       </Grid>

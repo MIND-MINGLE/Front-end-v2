@@ -1,9 +1,43 @@
 // import React from 'react'
 
-// const baseURL = "www"
+import { baseUrl,headers } from "../Url"
+import { axiosLoginAccount } from "../AxiosCRUD"
 
-function GetAllAccount() {
+const loginUrl = baseUrl + "/Auth/login"
 
+interface loginProps{
+    email: string,
+    accountName: string,
+    password: string
 }
 
-export {GetAllAccount}
+
+const GetAllAccount = async()=> {
+    return await null
+}
+
+const LoginAccount = async(data:loginProps)=> {
+    const props = {
+        data: data,
+        url: loginUrl,
+        headers: headers
+    }
+    const result = await axiosLoginAccount(props)
+    if(result.success) {
+       localStorage.setItem('token', result.data.result)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return result.error
+    }
+    
+}
+
+
+const LoginGoogle = async()=> {
+    return await null
+}
+
+
+export {GetAllAccount, LoginAccount, LoginGoogle}

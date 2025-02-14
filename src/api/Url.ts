@@ -1,4 +1,4 @@
-const baseUrl = "https://kdosdreapiservice.azurewebsites.net/api";
+const baseUrl = "https://mindmingle.azurewebsites.net/api";
 const localhostUrl = "https://localhost:7250/api";
 
 const getJwtToken = () => {
@@ -9,7 +9,7 @@ const getJwtToken = () => {
 const headers = {
   "Content-Type": "application/json",
   // Add headers such as Authorization if required
-  // 'Authorization': 'Bearer your-token',
+   'Authorization': getJwtToken(),
 };
 
 
