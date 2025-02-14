@@ -1,13 +1,8 @@
-"use client";
-import {
-  AddCircle,
-} from "@mui/icons-material";
 
 import {
   Avatar,
   Box,
   Divider,
-  IconButton,
   List,
   ListItem,
   ListItemAvatar,
@@ -19,21 +14,23 @@ import React from "react";
 import RightComponents from "./component";
 
 const TherapyChatPage: React.FC = () => {
+  interface ChatTab{
+    name: string;
+    content: string;
+  }
   
   return (
     <Box
-      width="100%"
+      width="100vw"
       height="100vh"
-      border={8}
-      borderColor="#cac4d0"
       overflow="hidden"
       position="relative"
       display="flex"
     >
       {/* Sidebar */}
       <Box
-        width="291px"
-        height="649px"
+        width="12vw"
+        height="100%"
         display="flex"
         flexDirection="column"
         position="absolute"
@@ -50,14 +47,9 @@ const TherapyChatPage: React.FC = () => {
           bgcolor="#0077b6"
         >
           <Typography variant="h6" color="white">
-            {" "}
-            Therapy Message{" "}
+            Therapy Message
           </Typography>
-          <IconButton onClick={() => console.log("Add Therapy Button Clicked")}>
-            <AddCircle style={{ color: "white" }} />
-          </IconButton>
         </Box>
-
         <List>
           {Array.from({ length: 9 }).map((_, index) => (
             <React.Fragment key={index}>
@@ -65,6 +57,8 @@ const TherapyChatPage: React.FC = () => {
                 component="button"
                 onClick={() => console.log(`Therapist ${index + 1} Clicked`)}
                 sx={{
+                  borderRadius:"0",
+                  height:"15vh",
                   backgroundColor: "#dff6ff",
                   "&:hover": {
                     backgroundColor: "#c1e7f9",
@@ -100,33 +94,17 @@ const TherapyChatPage: React.FC = () => {
 
       {/* Main Content */}
       <Box
-        width="calc(100vw - 379px)"
-        height="99vh"
+        height="100vh"
         position="absolute"
         top={0}
-        left="379px"
+        left="17vw"
         display="flex"
         flexDirection="column"
       >
         <RightComponents />
       </Box>
       {/* Navigation Sidebar */}
-      <Box
-        width="88px"
-        height="2015px"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        gap={2}
-        pt={2}
-        pb={2}
-        position="absolute"
-        top={0}
-        left={0}
-        bgcolor="white"
-      >
         <NavigationRail />
-      </Box>
     </Box>
   );
 };

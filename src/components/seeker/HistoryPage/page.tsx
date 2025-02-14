@@ -9,7 +9,7 @@ import HistoryView from "./HistoryView/HistoryView";
 const HistoryPage: React.FC = () => {
   return (
     <Box
-      width="100%"
+      width="100vw"
       height="100vh"
       border={8}
       borderColor="#cac4d0"

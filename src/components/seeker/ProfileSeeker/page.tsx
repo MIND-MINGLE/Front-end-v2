@@ -7,7 +7,7 @@ import Frame from './index';
 const SeekerPage = (): React.JSX.Element => {
     return (
         <Box
-            width="100%"
+            width="100vw"
             height="100vh"
             overflow="hidden"
             position="relative"
