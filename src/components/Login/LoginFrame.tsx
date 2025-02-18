@@ -14,6 +14,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google"; 
 import VisibilityIcon from "@mui/icons-material/Visibility"; 
 import { LoginAccount } from "../../api/Account/Account";
+import { useNavigate } from "react-router";
 
 type LoginFrameProps = {
   onForgotPassword: () => void; 
@@ -23,6 +24,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const nav = useNavigate();
 
   const login = async () => {
     setErrorMessage(""); 
@@ -35,8 +37,8 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
 
       if (data.statusCode === 200) {
         console.log("Login Success:", data.result);
-        localStorage.setItem("user", JSON.stringify(data.result)); // Store user info
-        window.location.reload(); // Refresh or navigate user
+        localStorage.setItem("token", JSON.stringify(data.result)); // Store jwt info
+        nav(-1) // return to role select page
       } else {
         setErrorMessage(data.errorMessage || "Login failed. Please try again.");
       }

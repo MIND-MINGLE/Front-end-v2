@@ -15,9 +15,9 @@ export default function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login/*" element={<LoginRoutes />} />
       <Route path="/register/*" element={<RegisterRoutes />} />
-      <Route path="/agent/*" element={<CoWorkingRoute />} />
-      <Route path='/seeker/*' element={<SeekerRoute/>}/>
-      <Route path='/doctor/*' element={<TherapistRoute/>} />
+        <Route path="/agent/*" element={<CoWorkingRoute />} />
+        <Route path='/seeker/*' element={<SeekerRoute/>}/>
+        <Route path='/doctor/*' element={<TherapistRoute/>} />
       <Route path="*" element={<NotFound />}/>
     </Routes>
   )

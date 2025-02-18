@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useNavigate } from 'react-router'
 import SeekerPage from './page'
 import EventPage from './EventPage/page'
 import HistoryPage from './HistoryPage/page'
@@ -7,9 +7,20 @@ import TherapyChatPage from './TherapyChat/page'
 import CallNoVideoPage from './TherapyChat/CallNoVideo/page'
 import CallVideoPage from './TherapyChat/CallVideo/page'
 import MusicSelectPage from './TherapyChat/MusicSelect/page'
-import ProtectedRoutes from '../../routes/protectedroutes'
+import ProtectedRoutes, { RoleProtectedRoute } from '../../routes/protectedroutes'
+import { useEffect } from 'react'
 
 export default function SeekerRoute() {
+  const nav = useNavigate()
+  useEffect(()=>{
+    const checkRole = () =>{
+      const role = RoleProtectedRoute()
+      if(role !== "seeker"){
+        nav("/login",{replace:true})
+      }
+    }
+    checkRole();
+  },[])
   return (
     <Routes>
       <Route element={<ProtectedRoutes/>}>

@@ -1,11 +1,11 @@
 import { AppBar, Box, Button, Toolbar } from "@mui/material";
 import { JSX } from "react";
-import {Link, useNavigate} from "react-router";
+import { Link, useNavigate } from 'react-router';
 
 const HeaderLogin = (): JSX.Element => {
     const nav = useNavigate()
     const naviagate =()=>{
-        nav("/")
+        nav("/",{replace: true})
     }
     return (
         <AppBar position="static" sx={{ backgroundColor: "white", boxShadow: "none" }}>
@@ -18,11 +18,12 @@ const HeaderLogin = (): JSX.Element => {
                 }}
             >
                 <Box
+                    style={{cursor: "pointer"}}
                     onClick={()=>naviagate()}
                     component="img"
                     src="/Logo.png"
                     alt="Logo"
-                    sx={{ width: 203, height: 63 }}
+                    sx={{ width: 300, height: 100 }}
                 />
                 <Box 
                     sx={{ display: "flex", alignItems: "center" }}
