@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import Footer from "../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
-import { useEffect } from "react";
-import { LoginAccount } from "../../api/Account/Account";
 import { useNavigate } from "react-router";
 
 const roles = [
@@ -43,23 +41,6 @@ const nav = useNavigate()
 const naviagate =(url:string)=>{
   nav(url)
 }
-  useEffect(()=>{
-    const login = async()=>{
-      const res = {
-        email:"string",
-        accountName: "6666xxx",
-        password: "123"
-      }
-      const data = await LoginAccount(res)
-      console.log(data)
-      if(data.statusCode === 200) {
-        console.log(data.result)
-      }else{
-        console.log(data.errorMessage)
-      }
-    }
-    login()
-  })
   return (
     <Box
       sx={{
@@ -67,7 +48,6 @@ const naviagate =(url:string)=>{
         width: "100vw",
         minHeight: "100vh",
         position: "relative",
-        padding: "16px",
       }}
     >
       <Box
@@ -78,7 +58,7 @@ const naviagate =(url:string)=>{
           left: "50%",
           transform: "translateX(-50%)",
           width: "80%",
-          maxWidth: "1266px",
+          maxWidth: "700px",
           height: "auto",
           objectFit: "cover",
           marginBottom: 5,

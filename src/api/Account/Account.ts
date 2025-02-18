@@ -6,8 +6,7 @@ import { axiosLoginAccount } from "../AxiosCRUD"
 const loginUrl = baseUrl + "/Auth/login"
 
 interface loginProps{
-    email: string,
-    accountName: string,
+    emailOrAccountName: string,
     password: string
 }
 
@@ -24,6 +23,7 @@ const LoginAccount = async(data:loginProps)=> {
     }
     const result = await axiosLoginAccount(props)
     if(result.success) {
+        console.log(result.data)
        localStorage.setItem('token', result.data.result)
         return result.data
     }

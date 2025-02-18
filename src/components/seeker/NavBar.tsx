@@ -16,7 +16,7 @@ export const NavigationRail = (): JSX.Element => {
             sx={{ 
                 display: "flex", 
                 flexDirection: "column", 
-                width: 88, 
+                width: "5vw", 
                 alignItems: "center", 
                 gap: 2.5, 
                 pt: 11, 

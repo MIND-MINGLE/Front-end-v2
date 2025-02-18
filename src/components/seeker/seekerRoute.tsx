@@ -7,18 +7,21 @@ import TherapyChatPage from './TherapyChat/page'
 import CallNoVideoPage from './TherapyChat/CallNoVideo/page'
 import CallVideoPage from './TherapyChat/CallVideo/page'
 import MusicSelectPage from './TherapyChat/MusicSelect/page'
+import ProtectedRoutes from '../../routes/protectedroutes'
 
 export default function SeekerRoute() {
   return (
     <Routes>
-      <Route path='/' element={<SeekerPage />} />
-      <Route path='/events' element={<EventPage />} />
-      <Route path='/history' element={<HistoryPage />} />
-      <Route path='/profile' element={<ProfileSeekerPage />} />
-      <Route path='/therapy-chat' element={<TherapyChatPage />} />
-      <Route path='/therapy-chat/call-no-video' element={<CallNoVideoPage />} />
-      <Route path='/therapy-chat/call-video' element={<CallVideoPage />} />
-      <Route path='/therapy-chat/music-select' element={<MusicSelectPage />} />
+      <Route element={<ProtectedRoutes/>}>
+          <Route path='/' element={<SeekerPage />} />
+          <Route path='/events' element={<EventPage />} />
+          <Route path='/history' element={<HistoryPage />} />
+          <Route path='/profile' element={<ProfileSeekerPage />} />
+          <Route path='/therapy-chat' element={<TherapyChatPage />} />
+          <Route path='/therapy-chat/call-no-video' element={<CallNoVideoPage />} />
+          <Route path='/therapy-chat/call-video' element={<CallVideoPage />} />
+          <Route path='/therapy-chat/music-select' element={<MusicSelectPage />} />
+      </Route>
     </Routes>
   )
 }

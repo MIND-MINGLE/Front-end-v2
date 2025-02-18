@@ -19,24 +19,18 @@ const SeekerPage = (): JSX.Element => {
         setIsClicked(true);
     };
     return (
+        <>
         <Box
             sx={{
                 display: "flex",
-                height: "100%",
+                height: "auto",
                 width: "100vw",
+                flexDirection: "row",
+                
             }}
         >
             {/* Part 1: Navigation Rail */}
-            <Box 
-                sx={{
-                    display: "flex",
-                    minHeight: "100%",
-                    backgroundColor: "white",
-                }}
-            >
-                <NavigationRail />
-            </Box>
-
+            <NavigationRail />
             {/* Part 2: Main Content */}
             <Box
                 sx={{
@@ -46,28 +40,38 @@ const SeekerPage = (): JSX.Element => {
                     flexDirection: "column",
                     alignItems: "center",
                     padding: "20px",
-                    height: "calc(100% - 100px)",
+                    height: "auto",
+                    left:"5vw",
+                    alignContent: "center",
                 }}
             >
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        height: "auto",
+                        padding: "20px",
+                    }}
+                >
                 {/* Image at the top */}
                 <Link to="/">
                     <Box
                         component="img"
                         src="/LogoWhite.png"
-                        alt="Untitled"
+                        alt="Mind_Mingle_Logo"
                         sx={{
-                            width: "272px",
-                            height: "87px",
+                            width: "20vw",
+                            height: "8vh",
                             objectFit: "cover",
                             marginBottom: "20px",
                         }}
                     />
                 </Link>
-
                 {/* Title Typography */}
                 <Box width="100%" justifyItems="center" alignItems="center" ml={8} mb={2}>
                     <Typography 
-                        variant="h4" 
+                        variant="h5" 
                         align="center" 
                         sx={{ 
                             fontFamily: "Roboto-Medium, Helvetica", 
@@ -80,7 +84,7 @@ const SeekerPage = (): JSX.Element => {
                         <Box component="span" color="#dff6ff">MindMingle</Box>
                     </Typography>
                 </Box>
-
+                </Box>
                 {/* Horizontal Divider */}
                 <Divider sx={{ width: "80%", mb: 2 }} />
 
@@ -110,14 +114,11 @@ const SeekerPage = (): JSX.Element => {
                         )}
                     </AnimatePresence>
                 </Box>
-
-                {/* Footer Components */}
-                <Box width="100%" >
-                    <Footer />
-                    <CopyrightFooter />
-                </Box>
             </Box>
         </Box>
+         <Footer />
+         <CopyrightFooter />
+         </>
     );
 };
 
