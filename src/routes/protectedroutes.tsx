@@ -11,8 +11,7 @@ const isAuthenticated = (): boolean => {
   }
   else{
     var token = jwtDecode<AccountProps>(user||"");
-    localStorage.setItem("account", JSON.stringify(token));
-    console.log(token);
+    sessionStorage.setItem("account", JSON.stringify(token));
     return true; 
   }
 };
@@ -24,7 +23,7 @@ export default function ProtectedRoutes() {
 }
 
 export function RoleProtectedRoute() {
-  const data = localStorage.getItem("account");
+  const data = sessionStorage.getItem("account");
   if (!data) {
     console.error("No account found in localStorage. DIRTY LITTLE HACKER");
     return null; // Handle missing account case. DIRTY LITTLE HACKER

@@ -17,6 +17,7 @@ export const NavigationRail = (): JSX.Element => {
                 display: "flex", 
                 flexDirection: "column", 
                 width: "5vw", 
+                minWidth:"60px",
                 alignItems: "center", 
                 gap: 2.5, 
                 pt: 11, 

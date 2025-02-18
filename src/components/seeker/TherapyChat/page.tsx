@@ -14,11 +14,6 @@ import React from "react";
 import RightComponents from "./component";
 
 const TherapyChatPage: React.FC = () => {
-  interface ChatTab{
-    name: string;
-    content: string;
-  }
-  
   return (
     <Box
       width="100vw"
@@ -30,6 +25,7 @@ const TherapyChatPage: React.FC = () => {
       {/* Sidebar */}
       <Box
         width="12vw"
+        minWidth="100px"
         height="100%"
         display="flex"
         flexDirection="column"
@@ -40,6 +36,7 @@ const TherapyChatPage: React.FC = () => {
       >
         <Box
           display="flex"
+          minWidth="100px"
           alignItems="center"
           justifyContent="space-between"
           px={2}
@@ -59,6 +56,7 @@ const TherapyChatPage: React.FC = () => {
                 sx={{
                   borderRadius:"0",
                   height:"15vh",
+                  minWidth:"100px",
                   backgroundColor: "#dff6ff",
                   "&:hover": {
                     backgroundColor: "#c1e7f9",
@@ -77,8 +75,7 @@ const TherapyChatPage: React.FC = () => {
                   }
                   secondary={
                     <Typography sx={{ color: "black", fontSize: "0.875rem" }}>
-                      Supporting line text lorem ipsum dolor sit amet,
-                      consectetur.
+                      Desciption Go Here...
                     </Typography>
                   }
                 />
