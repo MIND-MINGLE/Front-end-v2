@@ -96,3 +96,17 @@
     align-items: center;
   }
 }
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.therapistImage {
+  scale: 75%;
+  animation: spin 2s linear infinite; /* Adjust duration and timing as needed */
+}

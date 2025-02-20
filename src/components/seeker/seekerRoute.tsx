@@ -4,9 +4,7 @@ import EventPage from './EventPage/page'
 import HistoryPage from './HistoryPage/page'
 import ProfileSeekerPage from './ProfileSeeker/page'
 import TherapyChatPage from './TherapyChat/page'
-import CallNoVideoPage from './TherapyChat/CallNoVideo/page'
-import CallVideoPage from './TherapyChat/CallVideo/page'
-import MusicSelectPage from './TherapyChat/MusicSelect/page'
+
 import ProtectedRoutes, { RoleProtectedRoute } from '../../routes/protectedroutes'
 import { useEffect } from 'react'
 
@@ -22,6 +20,8 @@ export default function SeekerRoute() {
     checkRole();
   },[])
   return (
+    <>
+  
     <Routes>
       <Route element={<ProtectedRoutes/>}>
           <Route path='/' element={<SeekerPage />} />
@@ -29,10 +29,8 @@ export default function SeekerRoute() {
           <Route path='/history' element={<HistoryPage />} />
           <Route path='/profile' element={<ProfileSeekerPage />} />
           <Route path='/therapy-chat' element={<TherapyChatPage />} />
-          <Route path='/therapy-chat/call-no-video' element={<CallNoVideoPage />} />
-          <Route path='/therapy-chat/call-video' element={<CallVideoPage />} />
-          <Route path='/therapy-chat/music-select' element={<MusicSelectPage />} />
       </Route>
     </Routes>
+    </>
   )
 }

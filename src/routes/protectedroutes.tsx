@@ -2,9 +2,19 @@ import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { AccountProps } from "../interface/IAccount";
 // Function to check if user is authenticated (modify as needed)
+//TODO - draft
+// const refreshToken = async() =>{
+//   const storedAccount = localStorage.getItem("token")
+//   if(storedAccount){
+//     var token = jwtDecode<AccountProps>(storedAccount||"");
+//     const res = {
+      
+//     }
+//   }
+// }
+
 const isAuthenticated = (): boolean => {
-  
-  const user = localStorage.getItem("token"); // Example: Store user token or object
+  const user = localStorage.getItem("token"); // Store user token in local. Don't worry it expired
   if(!user){
     console.error("No account found");
     return false; 

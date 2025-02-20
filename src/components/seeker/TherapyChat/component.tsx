@@ -1,3 +1,4 @@
+import { useState } from "react";
 import IconComponentNode from "@mui/icons-material/AccountCircle"; 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Icon2 from "@mui/icons-material/Mic"; 
@@ -8,144 +9,107 @@ import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Settings"; 
 import { Avatar, Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material";
-import {Link} from "react-router";
+import MusicPlaylist from "./MusicSelect";
+import CallPage from "./CallPage";
 
 const RightComponents = () => {
+  const [showExtraComponent, setShowExtraComponent] = useState("");
+  const [shrink,setShrink] = useState(false)
+  const [format, setFormat] = useState("video")
+  const shrinkPage = () =>{
+    setShrink(true)
+  }
   return (
-    <Box display="flex" justifyContent="start" width="100vw" height="100vh" bgcolor="transparent">
-      <Box width="80%"  height="100%">
-        <Box position="relative" height="100%" bgcolor="white">
-          <Box position="absolute" width="100%" height="100%" top={200} left={0}>
-            <Paper
-              elevation={0}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                justifyContent: "center",
-                pt: 0,
-                pb: 4,
-                px: 0,
-                bgcolor: "white",
-              }}
-            >
-              <Box display="flex" flexDirection="column" height="80px" justifyContent="end" gap={1} px={6} py={2} bgcolor="white">
-                <Box display="flex" flexDirection="column" gap={1.5} p={3} borderRadius="16px" sx={{ background: "linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%)" }}>
-                  <Box
-                    width="200px"
-                    height="176px"
-                    borderRadius="8px"
-                    sx={{ backgroundImage: "url(/List.png)", backgroundSize: "cover", backgroundPosition: "center" }}
-                  />
-                  <Box width="200px">
-                    <Typography
-                      variant="body1"
-                      color="white"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: "vertical",
-                      }}
-                    >
-                      Homemade Dumplings
-                    </Typography>
-                    <Typography
-                      variant="body1"
-                      color="white"
-                      sx={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 1,
-                        WebkitBoxOrient: "vertical",
-                        textDecoration: "underline",
-                      }}
-                    >
-                      everydumplingever.com
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box display="flex" alignItems="center" px={4} py={2} borderRadius="20px 20px 8px 20px" sx={{ background: "linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%)" }}>
-                  <Typography variant="body1" color="white">Can you help me?</Typography>
-                </Box>
+    <Box display="flex" width="90%" height="100%" position="relative" bgcolor="white">
+      {shrink && (
+        <Box width="50%" bgcolor="#f0f0f0" height="100%">
+          {showExtraComponent === "music" && <MusicPlaylist/> }
+          {showExtraComponent === "call" && <CallPage format={format} />}
+        </Box>
+      )}
+      <Box width={shrink ? "50%" : "100%"} height="100%" position="relative" bgcolor="white">
+        <Box position="absolute" width="100%" height="100%"left={0}>
+          <Paper
+            elevation={0}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              justifyContent: "center",
+              pt: 0,
+              pb: 4,
+              px: 0,
+              bgcolor: "white",
+            }}
+          >
+            <Box display="flex" flexDirection="column" gap={2} px={{ xs: 2, md: 4 }} py={2}>
+              <Box display="flex" alignSelf="flex-end" flexDirection="column" gap={1} p={2} borderRadius="16px" sx={{ background: "#0077b6" }}>
+                <Box
+                  width={120}
+                  height={120}
+                  borderRadius="8px"
+                  sx={{ backgroundImage: "url(/List.png)", backgroundSize: "cover", backgroundPosition: "center" }}
+                />
+                <Typography variant="body2" color="white">Homemade Dumplings</Typography>
+                <Typography variant="body2" color="white" sx={{ textDecoration: "underline" }}>
+                  everydumplingever.com
+                </Typography>
               </Box>
-              <Box display="flex" alignItems="center" gap={2} px={6} py={2} bgcolor="white">
-                <Avatar src="/image-2.png" sx={{ width: 36, height: 36 }} />
-                <Box display="flex" alignItems="center" px={4} py={2} borderRadius="20px 20px 20px 8px" border="1px solid #0077b6" bgcolor="white">
-                  <Typography variant="body1" color="#0077b6">I am here for you! Tell me about yourself.</Typography>
-                </Box>
+              <Box display="flex" alignSelf="flex-end" px={3} py={2} borderRadius="16px 16px 8px 16px" sx={{ background: "#0077b6" }}>
+                <Typography variant="body1" color="white">Can you help me?</Typography>
               </Box>
-              <Box display="flex" justifyContent="end" gap={2} pt={4} px={6} bgcolor="white">
-                <Box display="flex" alignItems="center" px={4} py={2} borderRadius="20px 20px 8px 20px" sx={{ background: "linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%)" }}>
-                  <Typography variant="body1" color="white">Let’s do it</Typography>
-                </Box>
-              </Box>
-            </Paper>
-          </Box>
-          <Box display="flex" alignItems="center" justifyContent="center" gap={4} px={6} py={3} position="absolute" top="90%" left={0} width="100%">
-            <IconButton>
-              <AddCircleIcon />
-            </IconButton>
-            <IconButton>
-              <MoodIcon />
-            </IconButton>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Text messages here"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconComponentNode />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SendIcon />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ borderRadius: "10px", border: "2px solid #0077b6" }}
-            />
-          </Box>
-          <Box display="flex" alignItems="center" gap={1} px={3} py={2} position="absolute" top={0} left={0} width="100%" height="55px" bgcolor="#dff6ff" boxShadow="0px 4px 4px #00000040">
-            <IconButton>
-              <IconComponentNode />
-            </IconButton>
-            <Typography variant="h6" color="#1d1b20" flex={1}>
-              Name
-            </Typography>
-            <Box display="flex" gap={3}>
-              <IconButton>
-                <Icon1 />
-              </IconButton>
-
-              <Link to="/seeker/therapy-chat/call-no-video">
-                <IconButton>
-                    <Icon2 />
-                </IconButton>
-              </Link>
-
-              <Link to="/seeker/therapy-chat/call-video">
-                <IconButton>
-                    <Icon3 />
-                </IconButton>
-              </Link>
-
-              <Link to="/seeker/therapy-chat/music-select">
-                <IconButton>
-                    <Icon4 />
-                </IconButton>
-              </Link>
-
-              <IconButton>
-                <Icon5 />
-              </IconButton>
-
             </Box>
+            <Box display="flex" alignItems="center" gap={2} px={{ xs: 2, md: 4 }} py={2}>
+              <Avatar src="/image-2.png" sx={{ width: 36, height: 36 }} />
+              <Box display="flex" px={3} py={2} borderRadius="16px 16px 16px 8px" border="1px solid #0077b6" bgcolor="white">
+                <Typography variant="body1" color="#0077b6">I am here for you! Tell me about yourself.</Typography>
+              </Box>
+            </Box>
+            <Box display="flex" justifyContent="end" px={{ xs: 2, md: 4 }} pt={4}>
+              <Box px={3} py={2} borderRadius="16px 16px 8px 16px" sx={{ background: "#0077b6" }}>
+                <Typography variant="body1" color="white">Let’s do it</Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Box>
+        <Box display="flex" alignItems="center" justifyContent="space-between" px={3} py={2} position="absolute" top={0} left={0} width="100%" bgcolor="#dff6ff" boxShadow="0px 4px 4px #00000040">
+          <IconButton>
+            <IconComponentNode />
+          </IconButton>
+          <Typography variant="h6" color="#1d1b20" flex={1}>Name</Typography>
+          <Box display="flex" gap={2}>
+            <IconButton><Icon1 /></IconButton>
+            <IconButton onClick={() => {shrinkPage();setShowExtraComponent("call");setFormat("call")}}><Icon2 /></IconButton>
+            <IconButton onClick={() => {shrinkPage();setShowExtraComponent("call");setFormat("video")}}><Icon3 /></IconButton>
+            <IconButton onClick={() => {shrinkPage();setShowExtraComponent("music")}}><Icon4 /></IconButton>
+            <IconButton><Icon5 /></IconButton>
           </Box>
+        </Box>
+        <Box display="flex" alignItems="center" justifyContent="center" gap={2} px={{ xs: 2, md: 4 }} py={3} position="absolute" bottom={0} left={0} width="100%">
+          <IconButton>
+            <AddCircleIcon />
+          </IconButton>
+          <IconButton>
+            <MoodIcon />
+          </IconButton>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Text messages here"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconComponentNode />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SendIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ borderRadius: "10px", border: "2px solid #0077b6" }}
+          />
         </Box>
       </Box>
     </Box>

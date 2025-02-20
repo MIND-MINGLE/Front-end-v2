@@ -18,7 +18,7 @@ const TherapyMatchingForm: React.FC<TherapyMatchingFormProps> = ({ onClick }) =>
     <section className={styles.container} onClick={onClick}>
       <div className={styles.content}>
         <h1 className={styles.title}>
-          Help us match the right therapist <br /> For You!
+          Help us match the right therapist
         </h1>
         <hr className={styles.divider} />
         <h2 className={styles.subtitle}>

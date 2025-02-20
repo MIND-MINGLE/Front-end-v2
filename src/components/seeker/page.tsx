@@ -20,29 +20,15 @@ const SeekerPage = (): JSX.Element => {
     };
     return (
         <>
-        <Box
-            sx={{
-                display: "flex",
-                height: "auto",
-                width: "100vw",
-                flexDirection: "row",
-                
-            }}
-        >
-            {/* Part 1: Navigation Rail */}
-            <NavigationRail />
-            {/* Part 2: Main Content */}
+         <NavigationRail />
             <Box
                 sx={{
-                    flex: 1,
                     background: "linear-gradient(180deg, #0077B6 0%, #1B9DF0 50%, #DFF6FF 100%)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    padding: "20px",
-                    height: "auto",
-                    left:"5vw",
                     alignContent: "center",
+                    padding: "20px",
                 }}
             >
                 <Box
@@ -51,7 +37,6 @@ const SeekerPage = (): JSX.Element => {
                         flexDirection: "column",
                         alignItems: "center",
                         height: "auto",
-                        padding: "20px",
                     }}
                 >
                 {/* Image at the top */}
@@ -69,7 +54,7 @@ const SeekerPage = (): JSX.Element => {
                     />
                 </Link>
                 {/* Title Typography */}
-                <Box width="100%" justifyItems="center" alignItems="center" ml={8} mb={2}>
+                <Box width="auto" justifyItems="center" alignItems="center" >
                     <Typography 
                         variant="h5" 
                         align="center" 
@@ -86,10 +71,10 @@ const SeekerPage = (): JSX.Element => {
                 </Box>
                 </Box>
                 {/* Horizontal Divider */}
-                <Divider sx={{ width: "80%", mb: 2 }} />
+                <Divider sx={{ width: "80vw", mb: 2 }} />
 
                 {/* Conditional rendering of TherapyMatchingForm or TherapistConnector */}
-                <Box alignItems="center" justifyItems="center" width="100%" mb={4}>
+                <Box alignItems="center" justifyItems="center" width="auto">
                     <AnimatePresence mode="wait">
                         {!isClicked ? (
                         <motion.div
@@ -115,7 +100,6 @@ const SeekerPage = (): JSX.Element => {
                     </AnimatePresence>
                 </Box>
             </Box>
-        </Box>
          <Footer />
          <CopyrightFooter />
          </>
