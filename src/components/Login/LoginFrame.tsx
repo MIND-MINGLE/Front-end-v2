@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import FacebookIcon from "@mui/icons-material/Facebook"; 
 import GoogleIcon from "@mui/icons-material/Google"; 
 import VisibilityIcon from "@mui/icons-material/Visibility"; 
@@ -25,6 +26,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading,setLoading] = useState(false)
   const nav = useNavigate();
 
@@ -91,14 +93,16 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
             placeholder="Enter your password"
             variant="outlined"
             size="small"
-            type="password"
+            type={showPassword?"text":"password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton edge="end">
-                    <VisibilityIcon />
+                  <IconButton 
+                    onClick={()=>setShowPassword(!showPassword)}
+                  edge="end">
+                 {showPassword?<VisibilityOffIcon/>:<VisibilityIcon />}
                   </IconButton>
                 </InputAdornment>
               ),
