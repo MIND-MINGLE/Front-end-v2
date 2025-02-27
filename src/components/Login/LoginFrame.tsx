@@ -15,6 +15,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import VisibilityIcon from "@mui/icons-material/Visibility"; 
 import { LoginAccount } from "../../api/Account/Account";
 import { useNavigate } from "react-router";
+import LoadingScreen from "../common/LoadingScreen";
 
 type LoginFrameProps = {
   onForgotPassword: () => void; 
@@ -24,11 +25,13 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading,setLoading] = useState(false)
   const nav = useNavigate();
 
   const login = async () => {
     setErrorMessage(""); 
     try {
+      setLoading(true)
       const res = { 
         emailOrAccountName: account, 
         accountName: "", 
@@ -46,9 +49,13 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
       console.error("Login Error:", error);
       setErrorMessage("Something went wrong. Please try again.");
     }
+    setLoading(false)
   };
 
   return (
+    <>
+      {loading?<LoadingScreen/>:""}
+   
     <Box
       sx={{
         width: 600,
@@ -174,6 +181,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
         </Button>
       </Box>
     </Box>
+    </>
   );
 };
 

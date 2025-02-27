@@ -11,6 +11,9 @@ import {
 import Footer from "../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
 import { useNavigate } from "react-router";
+import { useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import { AccountProps } from "../../interface/IAccount";
 
 const roles = [
   {
@@ -41,6 +44,34 @@ const nav = useNavigate()
 const naviagate =(url:string)=>{
   nav(url)
 }
+useEffect(()=>{
+  const autoLogin = ()=>{
+    const user = localStorage.getItem("token"); // Store user token in local. Don't worry it expired
+    if(!user){
+      console.error("No account found");
+      return false; 
+    }
+    else{
+      var token = jwtDecode<AccountProps>(user||"");
+      sessionStorage.setItem("account", JSON.stringify(token));
+      switch(token.Role){
+        case "seeker":
+          nav("/seeker/")
+          break;
+        case "doc":
+          nav("/doctor/")
+          break;
+        case "agent":
+          nav("/agent/")
+          break;
+        default:
+          nav("/")
+      }
+      return true; 
+    }
+  }
+  autoLogin()
+},[])
   return (
     <Box
       sx={{
