@@ -6,9 +6,16 @@ import NavigationRail from "../NavBar";
 import React, { useState } from "react";
 import RightComponents from "./component";
 import ChatProfileList from "./tabs";
+interface chatProps{
+  chatGroupId: string;
+  userInGroupId: string;
+}
 
 const TherapyChatPage: React.FC = () => {
-  const [currentChat,setCurrentChat] = useState("")
+  const [currentChat,setCurrentChat] = useState<chatProps>({
+    chatGroupId:"",
+    userInGroupId:""
+  })
   return (
     <>
     <NavigationRail />
@@ -24,7 +31,6 @@ const TherapyChatPage: React.FC = () => {
     />
   </Box>
 </Box>
-
     </>
   );
 };

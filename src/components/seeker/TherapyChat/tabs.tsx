@@ -9,10 +9,15 @@ interface ChatProfile {
   chatGroudId: string;
   adminId: string;
   adminName: string;
+  userInGroupId: string;
+}
+interface chatProps{
+  chatGroupId: string;
+  userInGroupId: string;
 }
 
 interface ChatProfileListProps {
-  setCurrentChat:React.Dispatch<React.SetStateAction<string>>
+  setCurrentChat:React.Dispatch<React.SetStateAction<chatProps>>
 }
 const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   const [profiles, setProfiles] = useState<ChatProfile[]>([]);
@@ -53,7 +58,11 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
           <Box key={profile.chatGroudId} sx={{ display: "flex", alignItems: "center", 
             backgroundColor: onSelect===profile.chatGroudId? "#A9D2FF":"#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer" }}
             onClick={() => {
-              setCurrentChat(profile.chatGroudId)
+              setCurrentChat({
+                chatGroupId: profile.chatGroudId,
+                userInGroupId: profile.userInGroupId,
+              }
+              )
               setOnSelect(profile.chatGroudId)
               //alert("Click On Group: "+profile.chatGroudId)
             }}
@@ -61,7 +70,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
             <Avatar sx={{ bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
             <Box>
               <Typography fontWeight="bold" color="white">{profile.adminName}</Typography>
-              <Typography color="white">{profile.chatGroudId}</Typography>
+              <Typography color="white">{profile.userInGroupId}</Typography>
             </Box>
             {/* TODO */}
             <Typography sx={{ marginLeft: "auto", color: "white" }}>{}</Typography>

@@ -43,7 +43,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
       if (data.statusCode === 200) {
         console.log("Login Success:", data.result);
         localStorage.setItem("token", JSON.stringify(data.result)); // Store jwt info
-        nav(-1) // return to role select page
+        nav("/") // return to role select page
       } else {
         setErrorMessage(data.errorMessage || "Login failed. Please try again.");
       }
