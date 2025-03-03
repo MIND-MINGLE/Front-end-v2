@@ -60,18 +60,26 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
 
     //Connect to SignalR and join the group after connecting... based on your chatGroupId
     connectToChatHub((message) => {
-        console.log("📥 Incoming message:", message);
-        setMessages((prevMessages) => [...prevMessages, message]);
-    }).then((conn) => {
-        if (conn) {
-            signalRConnection = conn;
-            conn.invoke("JoinGroup", currentChat.chatGroupId)
-                .then(() => console.log(`Joined group: ${currentChat.chatGroupId}`))
-                .catch((err) => console.error(" Error joining group:", err));
-        } else {
-            console.error("SignalR connection failed, cannot join group!");
-        }
-    }); // by the nine heavens this should work
+      console.log("📥 Incoming message:", message);
+
+      setMessages((prevMessages) => {
+          // **IMPORTANT!!! Block Duplicate Messages (Based on ID or Content)**
+          const isDuplicate = prevMessages.some(
+              (m) => m.accountId === message.accountId && m.content === message.content
+          );
+
+          return isDuplicate ? prevMessages : [...prevMessages, message];
+      });
+  }).then((conn) => {
+      if (conn) {
+          signalRConnection = conn;
+          conn.invoke("JoinGroup", currentChat.chatGroupId)
+              .then(() => console.log(`Joined group: ${currentChat.chatGroupId}`))
+              .catch((err) => console.error(" Error joining group:", err));
+      } else {
+          console.error("SignalR connection failed, cannot join group!");
+      }
+  }); // by the nine heavens this should work
     return () => {
         if (signalRConnection) {
             disconnectFromChatHub();
@@ -83,21 +91,26 @@ useEffect(() => {
   if (messagesEndRef.current) {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }
-}, [messages]); // 🔥 Scroll to the bottom when messages update
+}, [messages]); // Scroll to the bottom when messages update
 
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+const handleSendMessage = async () => {
+  if (!inputMessage.trim()) return;
 
-    const chatMessage: ChatMessageRequest = {
-      accountId: currentAccountId,
-      usersInGroupId: currentChat.userInGroupId,
-      content: inputMessage,
-      messageStatus: "sent",
-    };
-    setInputMessage("");
-    await sendMessage(chatMessage);
+  const chatMessage: ChatMessageRequest = {
+    accountId: currentAccountId,
+    usersInGroupId: currentChat.userInGroupId,
+    content: inputMessage,
+    messageStatus: "sent",
   };
+
+  setInputMessage("");
+
+  // **Quickly add message without waiting for SignlR Response**
+  setMessages((prevMessages) => [...prevMessages, { ...chatMessage }]);
+
+  await sendMessage(chatMessage);
+};
   const shrinkPage = () => {
     setShrink(!shrink);
   };
