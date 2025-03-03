@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import IconComponentNode from "@mui/icons-material/AccountCircle";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Icon2 from "@mui/icons-material/Mic";
@@ -13,6 +13,7 @@ import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, disconnectFromChatHub,ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
+import { HubConnection } from "@microsoft/signalr";
 
 interface RightComponentsProps {
   currentChat: chatProps;
@@ -29,6 +30,7 @@ interface chatProps {
 }
 
 const RightComponents = ({ currentChat }: RightComponentsProps) => {
+  const messagesEndRef = useRef<HTMLDivElement | null>(null); // Reference to the last message
   const [showExtraComponent, setShowExtraComponent] = useState("");
   const [shrink, setShrink] = useState(false);
   const [format, setFormat] = useState("video");
@@ -38,30 +40,51 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const data = sessionStorage.getItem("account");
-      if (data) {
-        const account = JSON.parse(data);
-        setCurrentAccountId(account.UserId);
-        if (currentChat) {
-          const response = await getGroupChatMessage(currentChat.chatGroupId);
-          if (response.isSuccess) {
-            setMessages(response.result);
-          }
+        const data = sessionStorage.getItem("account");
+        if (data) {
+            const account = JSON.parse(data);
+            setCurrentAccountId(account.UserId);
+
+            if (currentChat) {
+                const response = await getGroupChatMessage(currentChat.chatGroupId);
+                if (response.isSuccess) {
+                    setMessages(response.result);
+                }
+            }
         }
-      }
     };
 
     fetchMessages();
 
-    // Connect to SignalR and listen for messages
-    connectToChatHub((message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+    let signalRConnection: HubConnection | null = null;
 
+    //Connect to SignalR and join the group after connecting... based on your chatGroupId
+    connectToChatHub((message) => {
+        console.log("📥 Incoming message:", message);
+        setMessages((prevMessages) => [...prevMessages, message]);
+    }).then((conn) => {
+        if (conn) {
+            signalRConnection = conn;
+            conn.invoke("JoinGroup", currentChat.chatGroupId)
+                .then(() => console.log(`Joined group: ${currentChat.chatGroupId}`))
+                .catch((err) => console.error(" Error joining group:", err));
+        } else {
+            console.error("SignalR connection failed, cannot join group!");
+        }
+    }); // by the nine heavens this should work
     return () => {
-      disconnectFromChatHub();
-    };
-  }, [currentChat]);
+        if (signalRConnection) {
+            disconnectFromChatHub();
+        }
+      }
+}, [currentChat]);
+
+useEffect(() => {
+  if (messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [messages]); // 🔥 Scroll to the bottom when messages update
+
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -72,13 +95,8 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
       content: inputMessage,
       messageStatus: "sent",
     };
-    setMessages([
-      ...messages,
-      chatMessage
-    ])
-
-    await sendMessage(chatMessage);
     setInputMessage("");
+    await sendMessage(chatMessage);
   };
   const shrinkPage = () => {
     setShrink(!shrink);
@@ -112,25 +130,51 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           </Box>
 
           {/* MESSAGES BOX */}
-          <Paper elevation={0} sx={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center", pt: 0, pb: 4, px: 0, bgcolor: "white" }}>
-            <Box display="flex" flexDirection="column" gap={2} px={{ xs: 2, md: 4 }} py={2}>
-              {messages.map((message, index) => (
+          <Paper
+                elevation={0}
+                sx={{
+                  marginTop:10,
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "calc(100vh - 200px)",  // Fixed height to prevent growing UI
+                  justifyContent: "flex-start",
+                  pt: 0,
+                  pb: 4,
+                  px: 0,
+                  bgcolor: "white",
+                  overflowY: "auto",  //Keeps messages scrollable
+                }}
+            >
                 <Box
-                  key={index}
                   display="flex"
-                  alignSelf={message.accountId === currentAccountId ? "flex-end" : "flex-start"}
-                  px={3}
+                  flexDirection="column"
+                  gap={2}
+                  px={{ xs: 2, md: 4 }}
                   py={2}
-                  borderRadius="16px"
-                  sx={{ background: message.accountId === currentAccountId ? "#0077b6" : "#f0f0f0" }}
                 >
-                  <Typography variant="body1" color={message.accountId === currentAccountId ? "white" : "black"}>
-                    {message.content}
-                  </Typography>
+                  {messages.map((message, index) => (
+                    <Box
+                      key={index}
+                      display="flex"
+                      alignSelf={message.accountId === currentAccountId ? "flex-end" : "flex-start"}
+                      px={3}
+                      py={2}
+                      borderRadius="16px"
+                      sx={{
+                        background: message.accountId === currentAccountId ? "#0077b6" : "#f0f0f0",
+                        maxWidth: "70%", 
+                        wordBreak: "break-word", 
+                      }}
+                    >
+                      <Typography variant="body1" color={message.accountId === currentAccountId ? "white" : "black"}>
+                        {message.content}
+                      </Typography>
+                    </Box>
+                  ))}
+                  {/* 🔥 Invisible div to keep the scroll at the bottom */}
+                  <div ref={messagesEndRef} />
                 </Box>
-              ))}
-            </Box>
-          </Paper>
+            </Paper>
 
           {/* INPUT BOX */}
           <Box display="flex" alignItems="center" justifyContent="center" gap={2} px={{ xs: 2, md: 4 }} py={3} position="absolute" bottom={0} left={0} width="100%">

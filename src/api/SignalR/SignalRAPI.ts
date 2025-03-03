@@ -1,5 +1,5 @@
 // import React from 'react'
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 // Local Server, change to REAL server later
 //const hub_local_URL = 'http://localhost:5000/chathub'
 const hub_URL = "https://mindmingle.azurewebsites.net/chathub"
@@ -17,43 +17,46 @@ export interface ChatMessageRequest {
 export const connectToChatHub = async (
     onMessageReceived?: (message: ChatMessageRequestProps) => void,
     onError?: (error: any) => void
-): Promise<void> => {
+): Promise<HubConnection | null> => {
     connection = new HubConnectionBuilder()
         .withUrl(hub_URL)
         .withAutomaticReconnect()
         .configureLogging(LogLevel.Information)
         .build();
-
     connection.on("ReceiveTextMessage", (message) => {
-        console.log("Message received from server:", message);
+        console.log("YES! Message received from server");
         onMessageReceived?.(message);
     });
 
     connection.on("ErrorMessage", (error) => {
-        console.error("Error received:", error);
+        console.error(" Error received:", error);
         onError?.(error);
     });
 
     try {
         await connection.start();
         console.log("Connected to SignalR chat hub");
+        return connection;
     } catch (err) {
-        console.error("Error connecting to SignalR hub:", err);
+        console.error(" Error connecting to SignalR hub:", err);
+        return null;
     }
 };
 
+
 export const sendMessage = async (chatMessageRequest: ChatMessageRequest): Promise<void> => {
-    if (!connection || connection.state !== "Connected") {
-        console.error("SignalR connection is not established.");
+    if (!connection || connection.state !== HubConnectionState.Connected) {
+        console.error(" SignalR connection is not established.");
         return;
     }
     try {
         await connection.invoke("ReceiveTextMessage", chatMessageRequest);
-        console.log("Message sent:", chatMessageRequest);
+        console.log("Message sent to server");
     } catch (err) {
-        console.error("Error sending message:", err);
+        console.error(" Error sending message:", err);
     }
 };
+
 // dont know if I gonna need to disconnect from Server
 export const disconnectFromChatHub = async (): Promise<void> => {
     if (connection) {
