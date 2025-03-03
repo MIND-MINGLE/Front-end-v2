@@ -1,8 +1,6 @@
 interface AccountProps{
-    Email: String
-    Role: String
-    UserId: String
-    Username: String
+    Role: string
+    UserId: string
 }
 
 export type {AccountProps}

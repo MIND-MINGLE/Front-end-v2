@@ -1,4 +1,4 @@
-import React from 'react'
+
 import WithVideo from './CallFormat/WithVideo';
 import NoVideo from './CallFormat/NoVideo';
 interface CallPageProps{
