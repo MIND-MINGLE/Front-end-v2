@@ -116,7 +116,7 @@ const handleSendMessage = async () => {
   };
 
   return (
-    <Box display="flex" width="90%" height="100%" position="relative" bgcolor="white">
+    <Box display="flex" width="100%" height="100%" position="relative" bgcolor="white">
       {shrink && (
         <Box width="50%" bgcolor="#f0f0f0" height="100%">
           {showExtraComponent === "music" && <MusicPlaylist />}

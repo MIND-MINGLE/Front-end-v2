@@ -42,9 +42,13 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   return (
     <>
     {isLoading?<LoadingScreen/>:""}
-    <Box padding="10px" paddingBottom={0} paddingTop={0} width="100%" height="100vh" bgcolor="#D0E8FF" color="white">
+    <Box padding={0} width="100%" height="100vh" bgcolor="#D0E8FF" color="white">
       {/* Header */}
-      <Box sx={{ width: "100%", backgroundColor: "#1E73BE", color: "white", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px", paddingTop: "16px", paddingBottom: "16px" }}>
+      <Box sx={{ width: "auto",
+         backgroundColor: "#1E73BE",
+          color: "white", display: "flex",
+           alignItems: "center", justifyContent: "space-between",
+            padding: "5px", paddingTop: "16px", paddingBottom: "16px" }}>
         <Typography paddingLeft={"15px"} variant="h6" fontWeight="bold">Therapy Message</Typography>
         <IconButton sx={{ color: "white" }}>
           <ArrowBackIcon />
@@ -53,7 +57,10 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
 
 
       {/* Chat List */}
-      <Box sx={{ width: "100%", backgroundColor: "none", display: "flex", flexDirection: "column", gap: "10px", padding: "5px" }}>
+      <Box sx={{ padding:"5px",width: "95%", backgroundColor: "none", 
+        display: "flex", 
+        flexDirection: "column", 
+        gap: "10px",justifyContent:"center",alignContent:"center" }}>
         {profiles.map((profile) => (
           <Box key={profile.chatGroudId} sx={{ display: "flex", alignItems: "center", 
             backgroundColor: onSelect===profile.chatGroudId? "#A9D2FF":"#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer" }}
@@ -67,7 +74,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
               //alert("Click On Group: "+profile.chatGroudId)
             }}
           >
-            <Avatar sx={{ bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
+            <Avatar sx={{  zIndex:0,bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
             <Box>
               <Typography fontWeight="bold" color="white">{profile.adminName}</Typography>
               <Typography color="white">{profile.userInGroupId}</Typography>
