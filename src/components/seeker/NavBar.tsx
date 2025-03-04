@@ -13,6 +13,8 @@ import {Link} from "react-router";
 export const NavigationRail = (): JSX.Element => { 
     return ( 
         <Box 
+             minWidth={{xs:0,md:250}}
+            marginLeft={{xs:-100,md:0}}
             sx={{ 
                 position:"fixed",
                 display: "flex", 

@@ -4,6 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getGroupChatByAccountId } from "../../../api/ChatGroup/ChatGroupAPI";
 import { AccountProps } from "../../../interface/IAccount";
 import LoadingScreen from "../../common/LoadingScreen";
+import { useNavigate } from "react-router";
 
 interface ChatProfile {
   chatGroudId: string;
@@ -23,6 +24,10 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   const [profiles, setProfiles] = useState<ChatProfile[]>([]);
   const [onSelect,setOnSelect] =   useState("")
   const [isLoading,setIsLoading] = useState(false)
+  const nav = useNavigate()
+  const returnHome = ()=>{
+    nav("/seeker")
+  }
   useEffect(() => {
     const fetchGroupChats = async () => {
       setIsLoading(true)
@@ -50,7 +55,9 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
            alignItems: "center", justifyContent: "space-between",
             padding: "5px", paddingTop: "16px", paddingBottom: "16px" }}>
         <Typography paddingLeft={"15px"} variant="h6" fontWeight="bold">Therapy Message</Typography>
-        <IconButton sx={{ color: "white" }}>
+        <IconButton
+          onClick={returnHome}
+        sx={{ color: "white" }}>
           <ArrowBackIcon />
         </IconButton>
       </Box>
