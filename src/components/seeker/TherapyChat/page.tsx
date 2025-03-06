@@ -18,14 +18,18 @@ const TherapyChatPage: React.FC = () => {
   })
   return (
     <>
+   
     <NavigationRail />
-    <Box display="flex" flexDirection={{ xs: "column", md: "row" }} height="100%" justifyContent="flex-end">
-  <Box width={{ xs: "100vw", md: "15vw",marginLeft:"5vw" }}>
+  <Box display="flex" flexDirection={{ md: "row" }} height="100%">
+    <Box minWidth={{xs:150,md:250}} width={{ xs: "5vw", md: "20vw" }}
+    marginLeft={{sx:0,md:"70px"}}
+    paddingLeft={{sx:0,md:5}}
+    >
     <ChatProfileList 
       setCurrentChat={setCurrentChat}
     />
   </Box>
-  <Box width={{ xs: "100vw", md: "85vw" }} display="flex" flexDirection="column" alignItems="center">
+  <Box minWidth={{xs:"100vw",md:600}} width={{ xs: "100vw", md: "80vw" }} display="flex" flexDirection="column" alignItems="center">
     <RightComponents
       currentChat={currentChat}
     />
