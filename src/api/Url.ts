@@ -1,4 +1,5 @@
-const baseUrl = "https://mindmingle.azurewebsites.net/api";
+const baseUrl = "https://mindmingle202.azurewebsites.net/api";
+const signalRBaseURL = "https://mindmingle202.azurewebsites.net";
 const localhostUrl = "https://localhost:7250/api";
 
 const getJwtToken = () => {
@@ -13,4 +14,4 @@ const headers = {
 };
 
 
-export { headers, baseUrl, localhostUrl, getJwtToken };
+export { headers, baseUrl, localhostUrl,signalRBaseURL, getJwtToken };
