@@ -1,12 +1,12 @@
 import axios from "axios";
-import { headers } from "../Url"; // Giả định headers được định nghĩa trong file Url
+import { baseUrl, headers } from "../Url"; // Giả định headers được định nghĩa trong file Url
 
 interface VideoCallProps {
   userId: string;
   roomNum: string;
 }
 
-const videocallURL = "https://mindmingle.azurewebsites.net/api/Twilio/CallRoomToken";
+const videocallURL = baseUrl+"/Twilio/CallRoomToken";
 
 async function VideoCall({ userId, roomNum }: VideoCallProps) {
   try {

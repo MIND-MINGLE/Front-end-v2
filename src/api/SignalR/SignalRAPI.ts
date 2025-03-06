@@ -2,7 +2,7 @@
 import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 // Local Server, change to REAL server later
 //const hub_local_URL = 'http://localhost:5000/chathub'
-const hub_URL = "https://mindmingle.azurewebsites.net/chathub"
+const hub_URL = "https://mindmingle202.azurewebsites.net/chathub"
 
 
 let connection: HubConnection | null = null;
