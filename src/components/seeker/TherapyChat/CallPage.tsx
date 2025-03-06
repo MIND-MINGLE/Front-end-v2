@@ -1,21 +1,14 @@
 import MicOffIcon from "@mui/icons-material/MicOff";
 import PhoneIcon from "@mui/icons-material/Phone";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import MicIcon from "@mui/icons-material/Mic";
 import { Box, IconButton, Typography } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TwilioVideo from "twilio-video";
 import { VideoCall } from "../../../api/Twilio/TwilioApi";
 
 interface CallPageProps {
   format: "call" | "video"; // "call" cho NoVideo (audio), "video" cho WithVideo
   onFormatChange: (newFormat: "call" | "video") => void; // Callback để thay đổi format
-}
-
-interface RemoteParticipant {
-  identity: string;
-  videoTrack: TwilioVideo.RemoteVideoTrack | null;
-  videoRef: React.RefObject<HTMLVideoElement | null>;
 }
 
 const CallPage = ({ format, onFormatChange }: CallPageProps) => {
@@ -35,69 +28,57 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
   const [localTrack, setLocalTrack] = useState<TwilioVideo.LocalVideoTrack | null>(null);
   const [callEnded, setCallEnded] = useState(false);
   const [roomNum, setRoomNum] = useState<string>("");
-  const [remoteParticipants, setRemoteParticipants] = useState<RemoteParticipant[]>([]);
+  const [remoteParticipants, setRemoteParticipants] = useState<
+    Array<{
+      identity: string;
+      videoTrack: TwilioVideo.RemoteVideoTrack | null;
+      videoRef: React.RefObject<HTMLVideoElement>;
+    }>
+  >([]); // Danh sách các participant từ xa
   const maxRetries = 3;
   const retryDelay = 5000;
   const ROOM_TIMEOUT = 60 * 60 * 1000; // 1 giờ (tính bằng milliseconds)
-  const reconnectAttemptsRef = useRef(0);
-  const connectionRef = useRef<TwilioVideo.Room | null>(null);
 
   // Hàm tạo roomNum mới
   const generateRoomNum = () => {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
-    // Thêm prefix để dễ track
-    const roomName = `room-${timestamp}-${randomString}`;
-    // Lưu ngay vào sessionStorage
-    sessionStorage.setItem(
-      "roomData",
-      JSON.stringify({
-        roomNum: roomName,
-        lastAccessTime: timestamp,
-      })
-    );
-    return roomName;
+    return `room-${timestamp}-${randomString}`;
   };
 
   // Kiểm tra và thiết lập roomNum
   useEffect(() => {
     const storedRoomData = sessionStorage.getItem("roomData");
+    let newRoomNum = "";
+    let lastAccessTime = 0;
 
     if (storedRoomData) {
-      try {
-        const { roomNum: storedRoomNum, lastAccessTime } = JSON.parse(storedRoomData);
-        const currentTime = Date.now();
-        const timeDiff = currentTime - lastAccessTime;
+      const { roomNum: storedRoomNum, lastAccessTime: storedLastAccessTime } = JSON.parse(storedRoomData);
+      newRoomNum = storedRoomNum;
+      lastAccessTime = storedLastAccessTime;
 
-        if (timeDiff > ROOM_TIMEOUT) {
-          // Nếu phòng hết hạn, tạo mới và cập nhật
-          const newRoomNum = generateRoomNum();
-          setRoomNum(newRoomNum);
-          console.log("Phòng hết hạn, tạo mới:", newRoomNum);
-        } else {
-          // Sử dụng phòng hiện tại
-          setRoomNum(storedRoomNum);
-          // Cập nhật thời gian truy cập
-          sessionStorage.setItem(
-            "roomData",
-            JSON.stringify({
-              roomNum: storedRoomNum,
-              lastAccessTime: currentTime,
-            })
-          );
-          console.log("Sử dụng phòng hiện tại:", storedRoomNum);
-        }
-      } catch (error) {
-        console.error("Lỗi khi xử lý roomData:", error);
-        const newRoomNum = generateRoomNum();
-        setRoomNum(newRoomNum);
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastAccessTime;
+
+      if (timeDiff > ROOM_TIMEOUT) {
+        console.log("Phòng đã hết hạn, tạo roomNum mới...");
+        newRoomNum = generateRoomNum();
       }
     } else {
-      // Không có dữ liệu phòng, tạo mới
-      const newRoomNum = generateRoomNum();
-      setRoomNum(newRoomNum);
-      console.log("Tạo phòng mới:", newRoomNum);
+      console.log("Không tìm thấy roomData, tạo roomNum mới...");
+      newRoomNum = generateRoomNum();
     }
+
+    sessionStorage.setItem(
+      "roomData",
+      JSON.stringify({
+        roomNum: newRoomNum,
+        lastAccessTime: Date.now(),
+      })
+    );
+
+    setRoomNum(newRoomNum);
+    console.log("RoomNum được sử dụng:", newRoomNum);
   }, []);
 
   // Kiểm tra quyền micro khi component mount
@@ -176,32 +157,30 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
 
         // Thêm các participant hiện có trong phòng (nếu có)
         const existingParticipants = Array.from(roomInstance.participants.values());
-        const newParticipants = existingParticipants
-          .map((participant: TwilioVideo.Participant) => {
-            const videoTrackPublication = Array.from(participant.videoTracks.values())[0];
-            const videoTrack = videoTrackPublication?.track || null;
-            if (videoTrack && videoTrack.kind === "video") {
-              const participantInfo: RemoteParticipant = {
+        existingParticipants.forEach((participant: TwilioVideo.Participant) => {
+          const videoTrack = Array.from(participant.videoTracks.values())[0]?.track || null;
+          if (videoTrack) {
+            setRemoteParticipants((prev) => [
+              ...prev,
+              {
                 identity: participant.identity,
                 videoTrack: videoTrack as TwilioVideo.RemoteVideoTrack,
-                videoRef: React.createRef<HTMLVideoElement | null>(),
-              };
-              return participantInfo;
-            }
-            return null;
-          })
-          .filter((p): p is NonNullable<typeof p> => p !== null);
-
-        setRemoteParticipants((prev) => [...prev, ...newParticipants]);
+                videoRef: React.createRef<HTMLVideoElement>(),
+              },
+            ]);
+          }
+        });
 
         roomInstance.on("participantConnected", (participant: TwilioVideo.Participant) => {
           console.log(`${participant.identity} đã tham gia phòng`);
-          const newParticipant: RemoteParticipant = {
-            identity: participant.identity,
-            videoTrack: null,
-            videoRef: React.createRef<HTMLVideoElement | null>(),
-          };
-          setRemoteParticipants((prev) => [...prev, newParticipant]);
+          setRemoteParticipants((prev) => [
+            ...prev,
+            {
+              identity: participant.identity,
+              videoTrack: null,
+              videoRef: React.createRef<HTMLVideoElement>(),
+            },
+          ]);
 
           participant.on("trackSubscribed", (track: TwilioVideo.RemoteTrack) => {
             if (track.kind === "audio" && remoteAudioRef.current) {
@@ -348,19 +327,6 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
         setError("Không thể phát video cục bộ: " + (err instanceof Error ? err.message : "Lỗi không xác định"));
       });
     }
-
-    return () => {
-      // Cleanup video tracks
-      remoteParticipants.forEach((participant) => {
-        if (participant.videoTrack && participant.videoRef.current) {
-          participant.videoTrack.detach(participant.videoRef.current);
-        }
-      });
-
-      if (localTrack && localVideoRef.current) {
-        localTrack.detach(localVideoRef.current);
-      }
-    };
   }, [format, localTrack, remoteParticipants]);
 
   // Yêu cầu quyền camera
@@ -375,6 +341,7 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
     }
   };
 
+  // Xử lý chuyển đổi giữa audio và video
   const toggleFormat = async () => {
     if (!room || !cameraPermissionGranted) {
       console.log("Không thể chuyển chế độ: Phòng chưa kết nối hoặc chưa cấp quyền camera.");
@@ -427,12 +394,7 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
 
   const disconnectCall = () => {
     console.log("Kết thúc cuộc gọi...");
-
-    // Hiển thị thông báo
-    setError("Cuộc gọi đã kết thúc");
-
     if (room) {
-      // Dừng tất cả audio tracks
       room.localParticipant.audioTracks.forEach((publication) => {
         console.log("Dừng track audio cục bộ:", publication.track);
         publication.track.disable();
@@ -440,7 +402,6 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
         room.localParticipant.unpublishTrack(publication.track);
       });
 
-      // Dừng tất cả video tracks
       room.localParticipant.videoTracks.forEach((publication) => {
         console.log("Dừng track video cục bộ:", publication.track);
         publication.track.disable();
@@ -448,46 +409,31 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
         room.localParticipant.unpublishTrack(publication.track);
       });
 
-      // Ngắt kết nối phòng
       console.log("Ngắt kết nối phòng Twilio...");
       room.disconnect();
     }
 
-    // Dọn dẹp hoàn toàn
     cleanup();
-
-    // Đặt lại các trạng thái
     setCallEnded(true);
-    setIsConnected(false);
-    setIsConnecting(false);
-    setAudioConnected(false);
-    setRemoteAudioDetected(false);
     onFormatChange("call");
 
-    // Dừng mọi kết nối đang có
-    if (connectionRef.current) {
-      connectionRef.current.disconnect();
-      connectionRef.current = null;
+    const storedRoomData = sessionStorage.getItem("roomData");
+    if (storedRoomData) {
+      const roomData = JSON.parse(storedRoomData);
+      sessionStorage.setItem(
+        "roomData",
+        JSON.stringify({
+          ...roomData,
+          lastAccessTime: Date.now(),
+        })
+      );
     }
-
-    // Reset số lần thử kết nối
-    reconnectAttemptsRef.current = 0;
-    setRetryCount(0);
-
-    // Sau 3 giây, xóa thông báo lỗi
-    setTimeout(() => {
-      setError(null);
-    }, 3000);
   };
 
   const cleanup = () => {
     console.log("Dọn dẹp trạng thái...");
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    if (remoteAudioRef.current) {
-      remoteAudioRef.current.srcObject = null;
-    }
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteAudioRef.current) remoteAudioRef.current.srcObject = null;
     setRemoteParticipants([]);
     setRoom(null);
     setIsConnected(false);
@@ -498,138 +444,6 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
     setLocalTrack(null);
     setRetryCount(0);
     setError(null);
-  };
-
-  const connectToRoom = async (token: string) => {
-    if (isConnecting) return;
-
-    try {
-      setIsConnecting(true);
-
-      // Ngắt kết nối cũ nếu có
-      if (connectionRef.current) {
-        connectionRef.current.disconnect();
-      }
-
-      const connection = await TwilioVideo.connect(token, {
-        name: 'room-name',
-        // Thêm các config khác nếu cần
-        maxAudioBitrate: 16000,
-        maxVideoBitrate: 800000,
-        preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
-      });
-
-      connectionRef.current = connection;
-      setRoom(connection);
-      reconnectAttemptsRef.current = 0;
-
-      // Xử lý các events
-      connection.on('disconnected', (room, error) => {
-        console.log('Disconnected from room:', error);
-        handleReconnection(token);
-      });
-
-      connection.on('reconnecting', error => {
-        console.log('Reconnecting to room:', error);
-      });
-
-    } catch (error) {
-      console.error('Error connecting to room:', error);
-      handleReconnection(token);
-    } finally {
-      setIsConnecting(false);
-    }
-  };
-
-  const handleReconnection = (token: string) => {
-    if (reconnectAttemptsRef.current >= maxRetries) {
-      console.error('Max reconnection attempts reached');
-      return;
-    }
-
-    setTimeout(() => {
-      reconnectAttemptsRef.current += 1;
-      connectToRoom(token);
-    }, retryDelay);
-  };
-
-  useEffect(() => {
-    // Fetch token và kết nối
-    const initializeConnection = async () => {
-      try {
-        const response = await fetch('your-token-endpoint');
-        const { token } = await response.json();
-        await connectToRoom(token);
-      } catch (error) {
-        console.error('Error fetching token:', error);
-      }
-    };
-
-    initializeConnection();
-
-    // Cleanup khi component unmount
-    return () => {
-      if (connectionRef.current) {
-        connectionRef.current.disconnect();
-      }
-    };
-  }, []); // Chỉ chạy một lần khi component mount
-
-  // Sửa lại hàm handleReconnect
-  const handleReconnect = async () => {
-    try {
-      // Reset các trạng thái
-      setCallEnded(false);
-      setError(null);
-      setRetryCount(0);
-      reconnectAttemptsRef.current = 0;
-      setIsConnecting(true);
-
-      // Lấy token mới và kết nối
-      const userData = sessionStorage.getItem("account");
-      if (!userData) {
-        throw new Error("Không tìm thấy account trong sessionStorage!");
-      }
-      const user = JSON.parse(userData);
-      const userId = user.UserId;
-
-      // Tạo phòng mới
-      const newRoomNum = generateRoomNum();
-      setRoomNum(newRoomNum);
-
-      const token = await VideoCall({
-        userId: userId,
-        roomNum: newRoomNum,
-      });
-
-      // Kết nối với phòng mới
-      const roomInstance = await TwilioVideo.connect(token, {
-        name: newRoomNum,
-        audio: true,
-        video: format === "video",
-      });
-
-      // Cập nhật trạng thái
-      setRoom(roomInstance);
-      setIsConnected(true);
-      setAudioConnected(true);
-      setIsConnecting(false);
-
-      // Nếu là video call, tạo và publish video track
-      if (format === "video") {
-        const track = await TwilioVideo.createLocalVideoTrack();
-        await roomInstance.localParticipant.publishTrack(track);
-        setLocalTrack(track);
-        setIsVideoOn(true);
-      }
-
-      console.log("Kết nối lại thành công!");
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Lỗi không xác định";
-      console.error("Lỗi khi kết nối lại:", errorMessage);
-      setError(`Không thể kết nối lại: ${errorMessage}`);
-      setIsConnecting(false);
-    }
   };
 
   return (
@@ -663,7 +477,7 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
             {/* Video cục bộ */}
             <Box
               sx={{
-                width: "80%",
+                width: "40%",
                 height: "100%",
                 position: "relative",
                 borderRadius: "8px",
@@ -772,21 +586,17 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
             "&:hover": { backgroundColor: isMicOn ? "#00000050" : "#ff6060" },
           }}
         >
-          {isMicOn ? (
-            <MicIcon sx={{ color: "white", fontSize: 30 }} />
-          ) : (
-            <MicOffIcon sx={{ color: "white", fontSize: 30 }} />
-          )}
+          <MicOffIcon sx={{ color: "white", fontSize: 30 }} />
         </IconButton>
         <IconButton
           onClick={disconnectCall}
-          disabled={!isConnected || isConnecting}
+          disabled={!isConnected}
           sx={{
-            backgroundColor: isConnected ? "#ff4040" : "#666",
+            backgroundColor: "#ff4040",
             borderRadius: "50%",
             width: 48,
             height: 48,
-            "&:hover": { backgroundColor: isConnected ? "#ff6060" : "#666" },
+            "&:hover": { backgroundColor: "#ff6060" },
           }}
         >
           <PhoneIcon sx={{ color: "white", fontSize: 30 }} />
@@ -818,8 +628,8 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
       <Box display="flex" flexDirection="column" alignItems="center" mt={2} color="white">
         {isConnected ? (
           <>
-            <Typography variant="h6" fontWeight="bold" color="success.main">
-              Đang trong cuộc gọi
+            <Typography variant="h6" fontWeight="bold">
+              John Doe
             </Typography>
             <Typography variant="body2" fontStyle="italic" color="#e0e0e0">
               {audioConnected
@@ -830,14 +640,12 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
             </Typography>
           </>
         ) : (
-          <Typography variant="body2" color={isConnecting ? "info.main" : "error.main"} mt={2}>
+          <Typography variant="body2" color="white" mt={2}>
             {isConnecting
               ? "Đang kết nối..."
-              : callEnded
-                ? "Cuộc gọi đã kết thúc"
-                : retryCount >= maxRetries
-                  ? "Không thể kết nối sau nhiều lần thử."
-                  : "Đang chờ kết nối..."}
+              : retryCount >= maxRetries
+                ? "Không thể kết nối sau nhiều lần thử."
+                : "Đang chờ kết nối..."}
           </Typography>
         )}
       </Box>
@@ -846,26 +654,6 @@ const CallPage = ({ format, onFormatChange }: CallPageProps) => {
         <Typography color="error" mt={2}>
           {error}
         </Typography>
-      )}
-
-      {/* Thêm nút kết nối lại khi cuộc gọi đã kết thúc */}
-      {callEnded && (
-        <Box mt={3} display="flex" flexDirection="column" alignItems="center">
-
-          <IconButton
-            onClick={handleReconnect}
-            sx={{
-              backgroundColor: "green",
-              borderRadius: "8px",
-              padding: "10px 20px",
-              "&:hover": { backgroundColor: "#00cc00" },
-            }}
-          >
-            <Typography color="white" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <PhoneIcon /> Kết nối lại
-            </Typography>
-          </IconButton>
-        </Box>
       )}
     </Box>
   );
