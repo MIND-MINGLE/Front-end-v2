@@ -51,6 +51,7 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
 
   const onSubmit =async()=>{
     const role = localStorage.getItem("role")
+    let response;
     switch (role) {
       case "seeker":{
         const response  = await RegisterPatientAccount(formData);

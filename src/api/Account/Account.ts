@@ -1,10 +1,11 @@
 // import React from 'react'
 
 import { baseUrl,headers } from "../Url"
-import { axiosRegisterAccount } from "../AxiosCRUD"
-import { AccountRequestProps } from "../../interface/IAccount"
+import { axiosLoginAccount, axiosRegisterAccount } from "../AxiosCRUD"
+import { AccountProps, AccountRequestProps } from "../../interface/IAccount"
 
-const loginUrl = baseUrl + "/Auth/register"
+const resUrl = baseUrl + "/Auth/register"
+const loginUrl = baseUrl + "/Auth/login"
 
 
 export const RegisterPatient = async()=> {
@@ -14,7 +15,7 @@ export const RegisterPatient = async()=> {
 export const RegisterPatientAccount = async(data:AccountRequestProps)=> {
     const props = {
         data: data,
-        url: loginUrl+"?roleId=seeker",
+        url: resUrl+"?roleId=seeker",
         headers: headers
     }
     const result = await axiosRegisterAccount(props)
@@ -31,7 +32,7 @@ export const RegisterPatientAccount = async(data:AccountRequestProps)=> {
 export const RegisterDocAccount = async(data:AccountRequestProps)=> {
     const props = {
         data: data,
-        url: loginUrl+"?roleId=doc",
+        url: resUrl+"?roleId=doc",
         headers: headers
     }
     const result = await axiosRegisterAccount(props)
@@ -48,10 +49,28 @@ export const RegisterDocAccount = async(data:AccountRequestProps)=> {
 export const RegisterAgentAccount = async(data:AccountRequestProps)=> {
     const props = {
         data: data,
-        url: loginUrl+"?roleId=agent",
+        url: resUrl+"?roleId=agent",
         headers: headers
     }
     const result = await axiosRegisterAccount(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+    
+}
+
+export const LoginAccount = async(data:AccountProps)=> {
+    const props = {
+        data: data,
+        url: loginUrl,
+        headers: headers
+    }
+    const result = await axiosLoginAccount(props)
     if(result.success) {
         console.log(result.data)
         return result.data
