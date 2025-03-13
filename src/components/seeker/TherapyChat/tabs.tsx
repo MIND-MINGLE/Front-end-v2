@@ -68,7 +68,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
         display: "flex", 
         flexDirection: "column", 
         gap: "10px",justifyContent:"center",alignContent:"center" }}>
-        {profiles.map((profile) => (
+        {profiles?profiles.map((profile) => (
           <Box key={profile.chatGroudId} sx={{ display: "flex", alignItems: "center", 
             backgroundColor: onSelect===profile.chatGroudId? "#A9D2FF":"#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer" }}
             onClick={() => {
@@ -89,7 +89,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
             {/* TODO */}
             <Typography sx={{ marginLeft: "auto", color: "white" }}>{}</Typography>
           </Box>
-        ))}
+        )):null}
       </Box>
     </Box>
     </>

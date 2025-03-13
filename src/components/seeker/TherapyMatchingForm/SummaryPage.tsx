@@ -28,17 +28,17 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Depression:</span>
-              <span className={styles.resultValue}>{formData.depression}</span>
+              <span className={styles.resultValue}>{formData?.depression}</span>
             </div>
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Anxiety:</span>
-              <span className={styles.resultValue}>{formData.anxiety}</span>
+              <span className={styles.resultValue}>{formData?.anxiety}</span>
             </div>
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Trauma:</span>
-              <span className={styles.resultValue}>{formData.trauma}</span>
+              <span className={styles.resultValue}>{formData?.trauma}</span>
             </div>
           </div>
 
@@ -47,17 +47,17 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Main Concern:</span>
-              <span className={styles.resultValue}>{formData.concern}</span>
+              <span className={styles.resultValue}>{formData?.concern}</span>
             </div>
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Interference Level:</span>
-              <span className={styles.resultValue}>{formData.interference}</span>
+              <span className={styles.resultValue}>{formData?.interference}</span>
             </div>
 
             <div className={styles.resultItem}>
               <span className={styles.resultLabel}>Urgency:</span>
-              <span className={styles.resultValue}>{formData.urgency}</span>
+              <span className={styles.resultValue}>{formData?.urgency}</span>
             </div>
           </div>
 
