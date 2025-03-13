@@ -1,43 +1,64 @@
 // import React from 'react'
 
 import { baseUrl,headers } from "../Url"
-import { axiosLoginAccount } from "../AxiosCRUD"
+import { axiosRegisterAccount } from "../AxiosCRUD"
+import { AccountRequestProps } from "../../interface/IAccount"
 
-const loginUrl = baseUrl + "/Auth/login"
-
-interface loginProps{
-    emailOrAccountName: string,
-    password: string
-}
+const loginUrl = baseUrl + "/Auth/register"
 
 
-const GetAllAccount = async()=> {
+export const RegisterPatient = async()=> {
     return await null
 }
 
-const LoginAccount = async(data:loginProps)=> {
+export const RegisterPatientAccount = async(data:AccountRequestProps)=> {
     const props = {
         data: data,
-        url: loginUrl,
+        url: loginUrl+"?roleId=seeker",
         headers: headers
     }
-    const result = await axiosLoginAccount(props)
+    const result = await axiosRegisterAccount(props)
     if(result.success) {
         console.log(result.data)
-       localStorage.setItem('token', result.data.result)
         return result.data
     }
     else{
         console.log(result.error)
-        return result.error
+        return null
     }
     
 }
-
-
-const LoginGoogle = async()=> {
-    return await null
+export const RegisterDocAccount = async(data:AccountRequestProps)=> {
+    const props = {
+        data: data,
+        url: loginUrl+"?roleId=doc",
+        headers: headers
+    }
+    const result = await axiosRegisterAccount(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+    
 }
-
-
-export {GetAllAccount, LoginAccount, LoginGoogle}
+export const RegisterAgentAccount = async(data:AccountRequestProps)=> {
+    const props = {
+        data: data,
+        url: loginUrl+"?roleId=agent",
+        headers: headers
+    }
+    const result = await axiosRegisterAccount(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+    
+}

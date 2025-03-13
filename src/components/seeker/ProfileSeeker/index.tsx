@@ -5,6 +5,7 @@ import {
     Edit,
     Facebook,
     Google,
+    Logout,
     Phone,
 } from "@mui/icons-material";
 import {
@@ -27,13 +28,20 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import AddCard from "../../coworking/PersonalInformation/AddCard";
+import { useNavigate } from "react-router";
 
 export const Frame = () => {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const nav = useNavigate()
 
+    const logout = ()=>{
+        sessionStorage.removeItem("user")
+        localStorage.removeItem("token")
+        nav("/")
+    }
     return (
         <Box display="flex" justifyContent="center" py={5} px={2}>
             <Box width="100%" maxWidth="1200px">
@@ -92,6 +100,18 @@ export const Frame = () => {
                                     <Phone />
                                     <Typography variant="body2" color="textSecondary" ml={2} flexGrow={1}>
                                         0123456789
+                                    </Typography>
+                                    <IconButton size="small">
+                                        <Delete fontSize="small" />
+                                    </IconButton>
+                                </Box>
+                                <Divider />
+                                <Box
+                                        onClick={()=>{logout()}}
+                                        display="flex" alignItems="center" mt={2}>
+                                    <Logout color="error" />
+                                    <Typography variant="body2" color="error" ml={2} flexGrow={1}>
+                                        Sign Out
                                     </Typography>
                                     <IconButton size="small">
                                         <Delete fontSize="small" />

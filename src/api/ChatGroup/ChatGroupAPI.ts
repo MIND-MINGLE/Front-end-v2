@@ -1,7 +1,7 @@
 import { baseUrl, headers } from "../Url";
 import { axiosGetGroupChatByAccountId } from "../AxiosCRUD";
 
-const url = baseUrl + "/UsersInGroup/getGroupChatByAccountId/";
+const url = baseUrl + "TODO";
 
 const getGroupChatByAccountId = async (accountId: string) => {
     const props = {

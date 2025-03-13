@@ -20,14 +20,17 @@ const roles = [
     title: "Therapist Seeker",
     image: "/Ellipse 30.svg",
     link: "/seeker/",
+    id:"seeker"
   },
   { title: "Therapist", 
     image: "/Ellipse 27.svg",
-    link: "/doctor/"
+    link: "/doctor/",
+    id:"doc"
   },
   { title: "Co-working Space Agent", 
     image: "/Ellipse 33.svg", 
-    link: "/agent/" 
+    link: "/agent/",
+    id:"agent"
   },
 ];
 
@@ -41,7 +44,8 @@ const GradientAvatar = styled(Avatar)(({ theme }) => ({
 
 const LandingPage = () => {
 const nav = useNavigate()
-const naviagate =(url:string)=>{
+const naviagate =(role:string,url:string)=>{
+  localStorage.setItem("role",role)
   nav(url)
 }
 useEffect(()=>{
@@ -115,7 +119,7 @@ useEffect(()=>{
         {roles.map((role, index) => (
           <Grid item key={index}>
             <Button
-              onClick={() => naviagate(role.link)}
+              onClick={() => naviagate(role.id,role.link)}
             >
               <Card
                 sx={{

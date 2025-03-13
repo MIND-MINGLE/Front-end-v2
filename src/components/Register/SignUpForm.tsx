@@ -1,174 +1,194 @@
 
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import {
   Box,
   Button,
   Checkbox,
-  FormControl,
-  FormControlLabel,
   Grid,
-  InputLabel,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
+import { useState, useEffect } from "react";
+import { RegisterPatientAccount } from "../../api/Account/Account";
+import { AccountRequestProps } from "../../interface/IAccount";
 
-const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => (
-  <Box
-    sx={{
-      width: 600,
-      bgcolor: "background.paper",
-      borderRadius: 2,
-      boxShadow: 3,
-      p: 4,
-      m: "auto",
-      mt: 5,
-      maxWidth: "90%",
-    }}
-  >
-    <Typography variant="h5" color="primary" sx={{ mb: 2, fontWeight: 500 }}>
-      Sign up to Mindmingle
-    </Typography>
+const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
+  // State for form data
+  const [formData, setFormData] = useState<AccountRequestProps>({
+    email: "",
+    accountName: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-    <Box sx={{ mt: 2 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField 
-            fullWidth 
-            label="Full Name" 
-            placeholder="Your full name" 
-            variant="outlined"
-            size="small"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Email or Phone Number"
-            placeholder="Your email address or phone number"
-            variant="outlined"
-            size="small"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Password"
-            placeholder="Your password"
-            variant="outlined"
-            size="small"
-            type="password"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Confirm Password"
-            placeholder="Confirm your password"
-            variant="outlined"
-            size="small"
-            type="password"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Typography variant="body1" color="textSecondary" sx={{ fontWeight: 500 }}>Birthday</Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={4}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Day</InputLabel>
-                <Select label="Day" defaultValue={2} IconComponent={ArrowDropDownIcon}>
-                  <MenuItem value={2}>2</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={4}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Month</InputLabel>
-                <Select label="Month" defaultValue="December" IconComponent={ArrowDropDownIcon}>
-                  {["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"].map((month) => (
-                    <MenuItem key={month} value={month}>{month}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={4}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Year</InputLabel>
-                <Select label="Year" defaultValue={2022} IconComponent={ArrowDropDownIcon}>
-                  <MenuItem value={2022}>2022</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+  // State for validation errors
+  const [errors, setErrors] = useState({
+    email: "",
+    accountName: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // State for terms acceptance
+  const [accept, setAccept] = useState(false);
+
+  // useEffect to validate form data whenever it changes
+  useEffect(() => {
+    setErrors({
+      email: formData.email.trim() === "" ? "Email is required" : "",
+      accountName: formData.accountName.trim() === "" ? "User Name is required" : "",
+      password: formData.password.length < 6 ? "Password must be at least 6 characters" : "",
+      confirmPassword: formData.confirmPassword !== formData.password ? "Passwords do not match" : "",
+    });
+  }, [formData]);
+
+  // Handler for terms checkbox
+  const handleAccept = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAccept(event.target.checked);
+  };
+
+  // Determine if the form is valid
+  const isFormValid = accept && Object.values(errors).every((error) => error === "");
+
+  const onSubmit =async()=>{
+    const role = localStorage.getItem("role")
+    switch (role) {
+      case "seeker":{
+        const response  = await RegisterPatientAccount(formData);
+        break;}
+      case "doc":{
+        const response  = await RegisterPatientAccount(formData);
+        break;}
+      case "agent":{
+        const response  = await RegisterPatientAccount(formData);
+        break;}
+      default:{
+        alert("No role found")
+      }
+
+    }
+    if(response){
+      onCreateAccount()
+    }
+    else{
+      alert("Error in creating account")
+    }
+   
+  }
+
+  return (
+    <Box
+      sx={{
+        width: 600,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        boxShadow: 3,
+        p: 4,
+        m: "auto",
+        mt: 5,
+        maxWidth: "90%",
+      }}
+    >
+      <Typography variant="h5" color="primary" sx={{ mb: 2, fontWeight: 500 }}>
+        Sign up to Mindmingle
+      </Typography>
+
+      <Box sx={{ mt: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="User Name"
+              placeholder="account123" // Fixed typo from "acount123"
+              variant="outlined"
+              size="small"
+              value={formData.accountName}
+              onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+              error={!!errors.accountName}
+              helperText={errors.accountName}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Email"
+              placeholder="mailname@gmail.com"
+              variant="outlined"
+              size="small"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              error={!!errors.email}
+              helperText={errors.email}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Password"
+              placeholder="Your password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Confirm Password"
+              placeholder="Confirm your password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+            />
           </Grid>
         </Grid>
-    
-        <Grid item xs={12} sx={{ mt: 3 }}>
-        <Typography color="text.primary" sx={{ fontWeight: 600 }}>
-            Gender
-        </Typography>
-        <RadioGroup row sx={{ mt: 1 }}>
-            <FormControlLabel
-            value="female"
-            control={<Radio />}
-            label="Female"
-            sx={{ color: "text.primary", mr: 3 }} 
-            />
-            <FormControlLabel
-            value="male"
-            control={<Radio />}
-            label="Male"
-            sx={{ color: "text.primary", mr: 3 }}
-            />
-            <FormControlLabel
-            value="other"
-            control={<Radio />}
-            label="Other"
-            sx={{ color: "text.primary" }}
-            />
-        </RadioGroup>
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
 
-    <Box 
-      sx={{ 
-        display: "center",
-        alignItems: "center",
-        mt: 3,
-      }}
-    >
-      <Checkbox />
-      <Typography variant="body2" color="textSecondary">
-        I agree to{" "}
-        <Typography component="span" color="primary" sx={{ fontWeight: 500 }}>
-          Terms of Use
-        </Typography>{" "}
-        and{" "}
-        <Typography component="span" color="primary" sx={{ fontWeight: 500 }}>
-          Privacy Policy
+      <Box
+        sx={{
+          display: "flex", // Fixed from "center" to "flex" for proper alignment
+          alignItems: "center",
+          mt: 3,
+        }}
+      >
+        <Checkbox checked={accept} onChange={handleAccept} />
+        <Typography variant="body2" color="textSecondary">
+          I agree to{" "}
+          <Typography component="span" color="primary" sx={{ fontWeight: 500 }}>
+            Terms of Use
+          </Typography>{" "}
+          and{" "}
+          <Typography component="span" color="primary" sx={{ fontWeight: 500 }}>
+            Privacy Policy
+          </Typography>
         </Typography>
-      </Typography>
-    </Box>
+      </Box>
 
-    <Button
-      variant="contained"
-      color="primary"
-      sx={{
-        mt: 3,
-        width: "100%",
-        py: 1,
-        fontSize: "1rem",
-        fontWeight: 500,
-        borderRadius: 1,
-      }}
-      onClick={onCreateAccount}
-    >
-      Create Account
-    </Button>
-  </Box>
-);
+      <Button
+        disabled={!isFormValid}
+        variant="contained"
+        color="primary"
+        sx={{
+          mt: 3,
+          width: "100%",
+          py: 1,
+          fontSize: "1rem",
+          fontWeight: 500,
+          borderRadius: 1,
+        }}
+        onClick={()=>{onSubmit()}}
+      >
+        Create Account
+      </Button>
+    </Box>
+  );
+};
 
 export default SignUpForm;

@@ -84,7 +84,7 @@ const SeekerPage = (): JSX.Element => {
                             exit={{ opacity: 0, x: 20 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <TherapyMatchingForm onClick={handleClick} />
+                            <TherapyMatchingForm onClick={()=>{handleClick()}} />
                         </motion.div>
                         ) : (
                         <motion.div
