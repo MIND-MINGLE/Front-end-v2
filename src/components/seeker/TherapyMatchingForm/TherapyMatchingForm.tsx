@@ -1,41 +1,66 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
-import styles from './TherapyMatchingForm.module.css';
+import React, { useState, useEffect } from 'react';
+import styles from './TherapyMatchingForm.module.css'; // Import your CSS module
+import { GetAllQuestions } from '../../../api/Question/Question';
 
-const TherapyMatchingForm: React.FC = () => {
-  const nav = useNavigate();
-  const [formData, setFormData] = useState({
-    // PHQ-9 (Depression)
-    phq9_q1: '', // Little interest or pleasure
-    phq9_q2: '', // Feeling down
-    phq9_q3: '', // Trouble sleeping
-    // GAD-7 (Anxiety)
-    gad7_q4: '', // Nervous, anxious
-    gad7_q5: '', // Unable to stop worrying
-    gad7_q6: '', // Restless
-    // PC-PTSD-5 (Trauma)
-    pcptsd5_q7: false, // Nightmares
-    pcptsd5_q8: false, // Avoidance
-    pcptsd5_q9: false, // Hypervigilance
-    // Custom
-    concern: '',
-    interference: '',
-    urgency: '',
-  });
+// Define TypeScript interfaces for the schema
+interface Answer {
+  answerId: string;
+  answerContent: string;
+}
 
-  const handleChange = (e: React.ChangeEvent) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+interface Question {
+  questionId: string;
+  questionContent: string;
+  categoryId: string;
+  createdAt: string;
+  answers: Answer[];
+}
+
+// Helper function to group questions by categoryId
+const groupQuestionsByCategory = (questions: Question[]) => {
+  return questions.reduce((acc, question) => {
+    const category = question.categoryId;
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(question);
+    return acc;
+  }, {} as { [key: string]: Question[] });
+};
+
+// The Form Component
+const DynamicForm: React.FC = () => {
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [responses, setResponses] = useState<{ [key: string]: string }>({});
+
+  // Fetch questions from the API
+  const fetchQuestions = async () => {
+    try {
+      const response = await GetAllQuestions();
+      setQuestions(response.result);
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form Data:', formData);
-    nav('patient-summary');
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  // Handle radio button selection
+  const handleChange = (questionId: string, answerId: string) => {
+    setResponses((prev) => ({ ...prev, [questionId]: answerId }));
   };
+
+  // Handle form submission
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log('User Responses:', responses);
+    // Here, you can send `responses` to an API or process it further
+  };
+
+  // Group questions by category for sectioned layout
+  const groupedQuestions = groupQuestionsByCategory(questions);
 
   return (
     <div className={styles.container}>
@@ -46,243 +71,32 @@ const TherapyMatchingForm: React.FC = () => {
           Please answer the following questions to help us match you with the right therapist.
         </p>
 
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          {/* Depression Section (PHQ-9) */}
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Depression Symptoms</h2>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you felt little interest or pleasure in doing things?
-              </label>
-              <select
-                name="phq9_q1"
-                value={formData.phq9_q1}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          {Object.entries(groupedQuestions).map(([categoryId, categoryQuestions]) => (
+            <div key={categoryId} className={styles.formSection}>
+              <h2 className={styles.sectionTitle}>Category {categoryId}</h2>
+              {categoryQuestions.map((question) => (
+                <div key={question.questionId} className={styles.formGroup}>
+                  <label className={styles.formLabel}>{question.questionContent}</label>
+                  <div className={styles.radioGroup}>
+                    {question.answers.map((answer) => (
+                      <label key={answer.answerId} className={styles.radioLabel}>
+                        <input
+                          type="radio"
+                          name={question.questionId}
+                          value={answer.answerId}
+                          checked={responses[question.questionId] === answer.answerId}
+                          onChange={() => handleChange(question.questionId, answer.answerId)}
+                          className={styles.radioInput}
+                        />
+                        {answer.answerContent}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you felt down, depressed, or hopeless?
-              </label>
-              <select
-                name="phq9_q2"
-                value={formData.phq9_q2}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you had trouble falling or staying asleep?
-              </label>
-              <select
-                name="phq9_q3"
-                value={formData.phq9_q3}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Anxiety Section (GAD-7) */}
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Anxiety Symptoms</h2>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you felt nervous, anxious, or on edge?
-              </label>
-              <select
-                name="gad7_q4"
-                value={formData.gad7_q4}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you been unable to stop or control worrying?
-              </label>
-              <select
-                name="gad7_q5"
-                value={formData.gad7_q5}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                Over the last 2 weeks, how often have you felt restless or unable to sit still?
-              </label>
-              <select
-                name="gad7_q6"
-                value={formData.gad7_q6}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Several days</option>
-                <option value="2">More than half the days</option>
-                <option value="3">Nearly every day</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Trauma Section (PC-PTSD-5) */}
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Trauma Symptoms</h2>
-
-            <div className={styles.checkboxContainer}>
-              <input
-                type="checkbox"
-                name="pcptsd5_q7"
-                checked={formData.pcptsd5_q7}
-                onChange={handleChange}
-                className={styles.checkbox}
-                id="pcptsd5_q7"
-              />
-              <label htmlFor="pcptsd5_q7" className={styles.formLabel}>
-                In the past month, have you had nightmares about a traumatic experience?
-              </label>
-            </div>
-
-            <div className={styles.checkboxContainer}>
-              <input
-                type="checkbox"
-                name="pcptsd5_q8"
-                checked={formData.pcptsd5_q8}
-                onChange={handleChange}
-                className={styles.checkbox}
-                id="pcptsd5_q8"
-              />
-              <label htmlFor="pcptsd5_q8" className={styles.formLabel}>
-                In the past month, have you tried hard not to think about a traumatic experience?
-              </label>
-            </div>
-
-            <div className={styles.checkboxContainer}>
-              <input
-                type="checkbox"
-                name="pcptsd5_q9"
-                checked={formData.pcptsd5_q9}
-                onChange={handleChange}
-                className={styles.checkbox}
-                id="pcptsd5_q9"
-              />
-              <label htmlFor="pcptsd5_q9" className={styles.formLabel}>
-                In the past month, have you felt constantly on guard or easily startled?
-              </label>
-            </div>
-          </div>
-
-          {/* Custom Section */}
-          <div className={styles.formSection}>
-            <h2 className={styles.sectionTitle}>Additional Information</h2>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                What's your biggest concern right now?
-              </label>
-              <select
-                name="concern"
-                value={formData.concern}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="stress">Stress or burnout</option>
-                <option value="relationships">Relationships</option>
-                <option value="trauma">Past trauma</option>
-                <option value="purpose">Feeling lost or purposeless</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                How much do your feelings interfere with daily life?
-              </label>
-              <select
-                name="interference"
-                value={formData.interference}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not at all</option>
-                <option value="1">Slightly</option>
-                <option value="2">Moderately</option>
-                <option value="3">Significantly</option>
-                <option value="4">Completely</option>
-              </select>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
-                How urgent is your need for support?
-              </label>
-              <select
-                name="urgency"
-                value={formData.urgency}
-                onChange={handleChange}
-                className={styles.formSelect}
-              >
-                <option value="">Select...</option>
-                <option value="0">Not urgent</option>
-                <option value="1">Low</option>
-                <option value="2">Medium</option>
-                <option value="3">High</option>
-                <option value="4">I need help now</option>
-              </select>
-            </div>
-          </div>
-
-          <div className={styles.infoBox}>
-            <svg className={styles.infoIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-            </svg>
-            <p className={styles.infoText}>
-              These questions help us understand your needs and match you with a suitable therapist.
-            </p>
-          </div>
-
+          ))}
           <button type="submit" className={styles.submitButton}>
             Submit
           </button>
@@ -292,4 +106,9 @@ const TherapyMatchingForm: React.FC = () => {
   );
 };
 
-export default TherapyMatchingForm;
+// Example Usage
+const App: React.FC = () => {
+  return <DynamicForm />;
+};
+
+export default App;
