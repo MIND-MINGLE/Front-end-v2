@@ -32,7 +32,24 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
     if(response){
       console.log(response)
       alert("Account Verified")
-      nav("/")
+       const role = localStorage.getItem("role")
+          switch (role) {
+            case "seeker":{
+                nav("register-seeker")
+              break;}
+            case "doc":{
+                alert("Doctor Register")
+                nav("/")
+              break;}
+            case "agent":{
+                alert("Agent Register")
+                nav("/")
+              break;}
+            default:{
+              alert("No role found")
+            }
+          }
+     
     }
     setIsLoading(false)
   }

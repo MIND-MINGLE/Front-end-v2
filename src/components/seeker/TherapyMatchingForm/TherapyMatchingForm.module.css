@@ -154,6 +154,7 @@
   display: block;
   width: 200px;
   text-align: center;
+margin: auto;
 }
 
 .submitButton:hover {

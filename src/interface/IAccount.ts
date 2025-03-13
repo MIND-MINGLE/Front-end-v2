@@ -17,5 +17,15 @@ interface VerifyProps{
   verificationCode: string,
 }
 
+interface SeekerCreateProps
+{
+  accountId: string,
+  firstName: string,
+  lastName: string,
+  dob: string,
+  gender: string,
+  phoneNumber: string
+}
+
  
-export type {AccountProps,AccountRequestProps,LoginProps,VerifyProps}
+export type {AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps}
