@@ -2,7 +2,7 @@
 
 import { baseUrl,headers } from "../Url"
 import { axiosLoginAccount, axiosRegisterAccount } from "../AxiosCRUD"
-import { AccountProps, AccountRequestProps } from "../../interface/IAccount"
+import { AccountProps, AccountRequestProps, LoginProps } from "../../interface/IAccount"
 
 const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
@@ -64,7 +64,7 @@ export const RegisterAgentAccount = async(data:AccountRequestProps)=> {
     
 }
 
-export const LoginAccount = async(data:AccountProps)=> {
+export const LoginAccount = async(data:LoginProps)=> {
     const props = {
         data: data,
         url: loginUrl,
