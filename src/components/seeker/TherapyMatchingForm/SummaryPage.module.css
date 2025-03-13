@@ -1,106 +1,193 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  .content {
-    width: 100%;
+  background-color: #f8f9fa;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 750px;
+  margin: 30px auto;
+  padding: 30px;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.divider {
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #3498db, transparent);
+  margin: 20px 0;
+  border: none;
+}
+
+.subtitle {
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.summaryCard {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.section {
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 20px;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+.resultItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.resultLabel {
+  font-weight: 500;
+  color: #555;
+}
+
+.resultValue {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.recommendationBox {
+  background-color: #e8f4fd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.recommendationText {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #2980b9;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 15px;
+  margin: 25px 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.primaryButton {
+  background: linear-gradient(to right, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
+}
+
+.secondaryButton {
+  background-color: white;
+  color: #3498db;
+  border: 2px solid #3498db;
+  border-radius: 30px;
+  padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background-color: #f1f9ff;
+  transform: translateY(-2px);
+}
+
+.infoBox {
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  color: #2980b9;
+  margin: 25px auto;
+  padding: 15px 20px;
+  border-radius: 6px;
+}
+
+.infoIcon {
+  width: 24px;
+  margin-right: 15px;
+  color: #3498db;
+}
+
+.infoText {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+    margin: 15px auto;
   }
   
   .title {
-    font-size: 2rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 26px;
   }
   
-  .divider {
-    border: 0;
-    height: 1px;
-    background: #ccc;
-    margin: 20px 0;
+  .summaryCard {
+    padding: 15px;
   }
   
-  .subtitle {
-    font-size: 1.2rem;
-    text-align: center;
-    margin-bottom: 20px;
-    color: #666;
+  .actionButtons {
+    flex-direction: column;
+    gap: 10px;
   }
   
-  .section {
-    margin-bottom: 30px;
-  }
-  
-  .sectionTitle {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  .formGroup {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    font-size: 1rem;
-    margin-bottom: 5px;
-    display: block;
-  }
-  
-  .input {
-    padding: 8px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  .primaryButton, .secondaryButton {
     width: 100%;
-    max-width: 400px;
   }
-  
-  .checkbox {
-    margin-left: 10px;
-  }
-  
-  .submitButton {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #0070f3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .submitButton:hover {
-    background-color: #005bb5;
-  }
-  
-  .infoBox {
-    display: flex;
-    align-items: center;
-    background: #f9f9f9;
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  
-  .infoIcon {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-  }
-  
-  .infoText {
-    font-size: 0.9rem;
-    color: #666;
-  }
-  
-  .logo {
-    width: 100px;
-    margin-top: 20px;
-  }
+}
