@@ -1,98 +1,187 @@
 .container {
-  background-color: #fff;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-  display: flex;
+  background-color: #f8f9fa;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
   width: 100%;
-  max-width: 700px;
-  flex-direction: column;
-  color: #000;
-  margin: 20px auto;
-  padding: 20px;
-  font: 400 22px/28px Roboto;
+  max-width: 750px;
+  margin: 30px auto;
+  padding: 30px;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
 }
 
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px;
+  padding: 20px 0;
 }
 
 .title {
   text-align: center;
   font-size: 32px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 15px;
 }
 
 .divider {
-  margin-top: 15px;
   width: 100%;
-  height: 1px;
-  border: 1px solid #000;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #3498db, transparent);
+  margin: 20px 0;
+  border: none;
 }
 
 .subtitle {
   text-align: center;
-  margin-top: 5%;
+  margin: 20px 0;
+  font-size: 18px;
+  color: #555;
+  line-height: 1.5;
 }
 
 .optionButton {
-  border-radius: 50px;
-  background-color: #8edfff;
+  border-radius: 8px;
+  background-color: #f1f9ff;
+  border: 1px solid #d0e8ff;
   width: 100%;
   max-width: 600px;
-  margin-top: 5%;
+  margin: 12px 0;
   padding: 15px;
   text-align: center;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.optionButton:hover {
+  background-color: #e1f0ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formSection {
+  margin: 25px 0;
+  width: 100%;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 15px;
+  border-left: 4px solid #3498db;
+  padding-left: 10px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.formSelect {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.formSelect:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.checkbox {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
 }
 
 .infoBox {
-  background-color: #dff6ff;
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   width: 100%;
-  max-width: 500px;
-  gap: 10px;
-  color: #0077a6;
-  margin: 30px auto;
-  padding: 15px;
-  justify-content: center;
+  max-width: 600px;
+  color: #2980b9;
+  margin: 25px auto;
+  padding: 15px 20px;
+  border-radius: 6px;
 }
 
 .infoIcon {
-  width: 35px;
+  width: 24px;
+  margin-right: 15px;
+  color: #3498db;
 }
 
 .infoText {
   flex: 1;
-  min-width: 200px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.submitButton {
+  background: linear-gradient(to right, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 14px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: all 0.3s ease;
+  display: block;
+  width: 200px;
+  text-align: center;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
 }
 
 .logo {
-  width: 80%;
-  max-width: 200px;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  width: 120px;
+  margin: 30px auto;
+  display: block;
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 20px 15px;
+    margin: 15px auto;
+  }
+  
   .title {
-    font-size: 28px;
+    font-size: 26px;
   }
-  .content {
-    padding: 20px;
+  
+  .sectionTitle {
+    font-size: 20px;
   }
-  .infoBox {
-    flex-direction: column;
-    align-items: center;
+  
+  .submitButton {
+    width: 100%;
   }
 }

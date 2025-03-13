@@ -8,5 +8,14 @@ interface AccountRequestProps{
   password: string,
   confirmPassword: string
 }
+interface LoginProps{
+  emailOrAccountName: string,
+  password: string
+}
+interface VerifyProps{
+  accountId: string,
+  verificationCode: string,
+}
 
-export type {AccountProps,AccountRequestProps}
+ 
+export type {AccountProps,AccountRequestProps,LoginProps,VerifyProps}

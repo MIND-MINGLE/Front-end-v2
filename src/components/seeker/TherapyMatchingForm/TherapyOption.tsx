@@ -7,9 +7,9 @@ interface TherapyOptionProps {
 
 const TherapyOption: React.FC<TherapyOptionProps> = ({ text }) => {
   return (
-    <button className={styles.optionButton}>
+    <div className={styles.optionButton}>
       {text}
-    </button>
+    </div>
   );
 };
 

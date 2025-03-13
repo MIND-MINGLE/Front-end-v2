@@ -8,10 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { RegisterPatientAccount } from "../../api/Account/Account";
+import { RegisterAgentAccount, RegisterDocAccount, RegisterPatientAccount } from "../../api/Account/Account";
 import { AccountRequestProps } from "../../interface/IAccount";
+import LoadingScreen from "../common/LoadingScreen";
 
 const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
+  const [isLoading,setIsLoading] = useState(false)
   // State for form data
   const [formData, setFormData] = useState<AccountRequestProps>({
     email: "",
@@ -50,32 +52,36 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
   const isFormValid = accept && Object.values(errors).every((error) => error === "");
 
   const onSubmit =async()=>{
+    setIsLoading(true)
     const role = localStorage.getItem("role")
+    let response = null;
     switch (role) {
       case "seeker":{
-        const response  = await RegisterPatientAccount(formData);
+         response  = await RegisterPatientAccount(formData);
         break;}
       case "doc":{
-        const response  = await RegisterPatientAccount(formData);
+         response  = await RegisterDocAccount(formData);
         break;}
       case "agent":{
-        const response  = await RegisterPatientAccount(formData);
+         response  = await RegisterAgentAccount(formData);
         break;}
       default:{
         alert("No role found")
       }
-
     }
-    if(response){
+    if(response!=null){
+      localStorage.setItem("account",response.result);
       onCreateAccount()
     }
     else{
       alert("Error in creating account")
     }
-   
+    setIsLoading(false)
   }
 
   return (
+    <>
+    {isLoading?<LoadingScreen/>:null}
     <Box
       sx={{
         width: 600,
@@ -188,6 +194,7 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
         Create Account
       </Button>
     </Box>
+    </>
   );
 };
 
