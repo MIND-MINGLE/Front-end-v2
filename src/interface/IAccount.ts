@@ -12,4 +12,10 @@ interface LoginProps{
   emailOrAccountName: string,
   password: string
 }
-export type {AccountProps,AccountRequestProps,LoginProps}
+interface VerifyProps{
+  accountId: string,
+  verificationCode: string,
+}
+
+ 
+export type {AccountProps,AccountRequestProps,LoginProps,VerifyProps}

@@ -1,9 +1,45 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
-import React from "react";
-import {Link} from "react-router";
+import React, { useState, useEffect } from "react";
+import LoadingScreen from "../common/LoadingScreen";
+import { verifyAccount } from "../../api/Account/Account";
+import { useNavigate } from "react-router";
+
+interface VerifyProps {
+  accountId: string;
+  verificationCode: string;
+}
 
 const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.Element => {
+  // State to manage VerifyProps data
+  const [verifyData, setVerifyData] = useState<VerifyProps>({
+    accountId: "",
+    verificationCode: "",
+  });
+  const [isLoading,setIsLoading] = useState(false)
+  const nav = useNavigate()
+
+  // Retrieve accountId from LocalStorage when the component mounts
+  useEffect(() => {
+    const storedAccountId = localStorage.getItem("account");
+    if (storedAccountId) {
+      setVerifyData((prev) => ({ ...prev, accountId: storedAccountId }));
+    }
+  }, [isLoading]);
+
+  const verify = async()=>{
+    setIsLoading(true)
+    const response = await verifyAccount(verifyData)
+    if(response){
+      console.log(response)
+      alert("Account Verified")
+      nav("/")
+    }
+    setIsLoading(false)
+  }
+
   return (
+    <>
+    {isLoading?<LoadingScreen/>:null}
     <Box
       sx={{
         width: 600,
@@ -49,8 +85,12 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
         <TextField
           fullWidth
           label="Enter Code"
-          placeholder="R-_ _ _ _ _ _"
+          placeholder="_ _ _ _ _ _"
           variant="outlined"
+          value={verifyData.verificationCode}
+          onChange={(e) =>
+            setVerifyData({ ...verifyData, verificationCode: e.target.value })
+          }
           sx={{
             width: "80%",
             mb: 0,
@@ -76,27 +116,30 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
       >
         <Button
           variant="outlined"
-            color="primary"
+          color="primary"
           sx={{
             width: "50%",
           }}
-            onClick={onUpdateInfo}
+          onClick={onUpdateInfo}
         >
           Update Information
         </Button>
-        <Link to="/register/accountverification">
-            <Button
+          <Button
+            onClick={()=>{
+              verify()
+              
+            }}
             variant="contained"
             color="primary"
             sx={{
-                width: "100%",
+              width: "100%",
             }}
-            >
-                Continue
-            </Button>
-        </Link>
+          >
+            Continue
+          </Button>
       </Box>
     </Box>
+    </>
   );
 };
 
