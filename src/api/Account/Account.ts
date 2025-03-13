@@ -2,11 +2,11 @@
 
 import { baseUrl,headers } from "../Url"
 import { axiosLoginAccount, axiosRegisterAccount } from "../AxiosCRUD"
-import { AccountProps, AccountRequestProps } from "../../interface/IAccount"
+import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 
 const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
-
+const verifyUrl = baseUrl + "/Auth/verification"
 
 export const RegisterPatient = async()=> {
     return await null
@@ -64,7 +64,7 @@ export const RegisterAgentAccount = async(data:AccountRequestProps)=> {
     
 }
 
-export const LoginAccount = async(data:AccountProps)=> {
+export const LoginAccount = async(data:LoginProps)=> {
     const props = {
         data: data,
         url: loginUrl,
@@ -79,5 +79,21 @@ export const LoginAccount = async(data:AccountProps)=> {
         console.log(result.error)
         return null
     }
-    
+}
+
+export const verifyAccount = async(data:VerifyProps)=> {
+    const props = {
+        data: data,
+        url: verifyUrl,
+        headers: headers
+    }
+    const result = await axiosLoginAccount(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
 }
