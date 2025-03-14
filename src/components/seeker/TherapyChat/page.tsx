@@ -27,7 +27,7 @@ const TherapyChatPage: React.FC = () => {
         {/* Sidebar */}
         <Box
           minWidth={{ xs: 150, md: 250 }}
-          width={{ xs: "5vw", md: "20vw" }}
+          width={{ xs: "5vw", md: "15vw" }}
           marginLeft={{ sx: 0, md: "70px" }}
           paddingLeft={{ sx: 0, md: 5 }}
           bgcolor="#f5f5f5" // Màu nền sidebar
@@ -40,8 +40,8 @@ const TherapyChatPage: React.FC = () => {
 
         {/* Main Content */}
         <Box
-          minWidth={{ xs: "95vw", md: 600 }}
-          width={{ xs: "95vw", md: "80vw" }}
+          minWidth={{ xs: "95vw", md: "70vw" }}
+          width={{ xs: "95vw", md: "85vw" }}
           display="flex"
           flexDirection="column"
           alignItems="center"

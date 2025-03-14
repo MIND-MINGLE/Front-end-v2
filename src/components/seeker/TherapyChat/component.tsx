@@ -12,13 +12,11 @@ import { Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
-import { connectToChatHub, sendMessage, disconnectFromChatHub, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
+import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import { getGroupChatByAccountId } from "../../../api/ChatGroup/ChatGroupAPI";
-import axios from "axios";
 
 interface RightComponentsProps {
   currentChat: {
@@ -41,7 +39,6 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [currentAccountId, setCurrentAccountId] = useState("");
-  const [signalRConnection, setSignalRConnection] = useState<HubConnection | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
 
@@ -299,11 +296,11 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           justifyContent="center"
           gap={2}
           px={{ xs: 2, md: 4 }}
-          py={3}
+          py={1}
           position="absolute"
           bottom={0}
           left={0}
-          width="100%"
+          width="90%"
         >
           <IconButton>
             <AddCircleIcon />
