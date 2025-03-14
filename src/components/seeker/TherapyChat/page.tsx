@@ -40,8 +40,8 @@ const TherapyChatPage: React.FC = () => {
 
         {/* Main Content */}
         <Box
-          minWidth={{ xs: "100vw", md: 600 }}
-          width={{ xs: "100vw", md: "80vw" }}
+          minWidth={{ xs: "95vw", md: 600 }}
+          width={{ xs: "95vw", md: "80vw" }}
           display="flex"
           flexDirection="column"
           alignItems="center"

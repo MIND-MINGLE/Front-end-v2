@@ -1,5 +1,4 @@
 import AddIcon from "@mui/icons-material/Add";
-import ChatIcon from "@mui/icons-material/Chat";
 import EventIcon from "@mui/icons-material/Event";
 import HealingIcon from "@mui/icons-material/Healing";
 import HistoryIcon from "@mui/icons-material/History";
@@ -35,7 +34,7 @@ export const NavigationRail = (): JSX.Element => {
                         alignItems: "center",
                         gap: 1,
                         width: "100%",
-                        padding: "12px 0", // Tăng padding để mục lớn hơn
+                        padding: "10px 0", // Tăng padding để mục lớn hơn
                         position: "relative",
                         transition: "all 0.3s ease",
                         "&:hover": {
@@ -57,7 +56,7 @@ export const NavigationRail = (): JSX.Element => {
                                 content: '""',
                                 position: "absolute",
                                 left: 0,
-                                width: "6px", // Thanh dọc đậm hơn
+                                width: "5px", // Thanh dọc đậm hơn
                                 height: "100%",
                                 background: "linear-gradient(180deg, #1E73BE 0%, #90CAF9 100%)", // Gradient cho thanh active
                                 borderTopRightRadius: "4px",
@@ -110,21 +109,20 @@ export const NavigationRail = (): JSX.Element => {
                 position: "fixed",
                 display: "flex",
                 flexDirection: "column",
-                height: "100vh",
+                height: "100%",
                 alignItems: "center",
-                gap: 3,
-                pt: 10,
-                pb: 12,
+                gap: 2,
+                padding:"10px",
                 bgcolor: "white",
                 top: 0,
                 boxShadow: "4px 0 20px rgba(0,0,0,0.15)", // Bóng đậm hơn
-                width: { xs: "80px", md: "110px" }, // Tăng chiều rộng
+                width: { xs: "80px", md: "80px" }, // Tăng chiều rộng
                 marginLeft: 0,
                 background: "linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%)", // Gradient nhẹ cho nền
                 transition: "all 0.3s ease",
                 zIndex: 1000,
                 "&:hover": {
-                    width: { xs: "85px", md: "120px" }, // Phóng to nhẹ khi hover vào rail
+                    width: { xs: "85px", md: "100px" }, // Phóng to nhẹ khi hover vào rail
                 },
             }}
         >
@@ -132,8 +130,8 @@ export const NavigationRail = (): JSX.Element => {
                 <Avatar
                     sx={{
                         bgcolor: "#1E73BE", // Màu nổi bật cho nút Add
-                        width: { xs: 48, md: 56 },
-                        height: { xs: 48, md: 56 },
+                        width: { xs: 50, md: 50 },
+                        height: { xs: 50, md: 50 },
                         boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)", // Bóng đậm
                         cursor: "pointer",
                         transition: "all 0.3s ease",
@@ -157,8 +155,8 @@ export const NavigationRail = (): JSX.Element => {
                 width="100%"
                 sx={{
                     "& .MuiAvatar-root": {
-                        width: { xs: 50, md: 56 },
-                        height: { xs: 50, md: 56 },
+                        width: { xs: 50, md: 50 },
+                        height: { xs: 50, md: 50 },
                     },
                     "& .MuiTypography-root": {
                         fontSize: { xs: "0.85rem", md: "1rem" },

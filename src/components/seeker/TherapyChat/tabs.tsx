@@ -21,7 +21,7 @@ interface ChatProfileListProps {
   setCurrentChat: React.Dispatch<React.SetStateAction<chatProps>>
 }
 const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
-  const [profiles, setProfiles] = useState<ChatProfile[]>([]);
+  const [profiles, setProfiles] = useState<ChatProfile[]>();
   const [onSelect, setOnSelect] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const nav = useNavigate()
@@ -68,7 +68,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
         {/* Chat List */}
         <Box sx={{
           padding: "5px",
-          width: "95%",
+          width: "100%",
           backgroundColor: "none",
           display: "flex",
           flexDirection: "column",
@@ -76,7 +76,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
           justifyContent: "center",
           alignContent: "center"
         }}>
-          {profiles && profiles.length > 0 ? (
+          {Array.isArray(profiles) ? 
             profiles.map((profile) => (
               <Box key={profile.chatGroupId} sx={{
                 display: "flex", alignItems: "center",
@@ -89,7 +89,9 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                   }
                   )
                   setOnSelect(profile.chatGroupId)
-                  //alert("Click On Group: "+profile.chatGroudId)
+                  //alert("Click On Group: "+profile.chatGroupId)
+                  // We lost the chat group Id, so SignalR can't conenct
+                  // FUCKING GOD JUST KILL ME ALREADY HOLY FUCK
                 }}
               >
                 <Avatar sx={{ zIndex: 0, bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
@@ -101,7 +103,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                 <Typography sx={{ marginLeft: "auto", color: "white" }}>{ }</Typography>
               </Box>
             ))
-          ) : (
+           : 
             <Box
               sx={{
                 display: "flex",
@@ -160,7 +162,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                 </Typography>
               </Box>
             </Box>
-          )}
+          }
         </Box>
       </Box>
     </>
