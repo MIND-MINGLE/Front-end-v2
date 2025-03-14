@@ -48,7 +48,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   useEffect(() => {
     const initializeChat = async () => {
       try {
-        // Lấy thông tin người dùng
+        // Fetch user data (same as V1)
         const userData = sessionStorage.getItem("account");
         if (!userData) {
           setError("Không tìm thấy thông tin tài khoản");
@@ -56,68 +56,48 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
         }
         const account = JSON.parse(userData);
         setCurrentAccountId(account.UserId);
-
-        // Kết nối SignalR
-        const connection = await connectToChatHub();
-        setHubConnection(connection);
-
-        // Đăng ký nhận tin nhắn mới
-        connection.on("ReceiveMessage", (message: ChatMessage) => {
-          console.log("Nhận tin nhắn mới:", message);
-          setMessages(prev => [...prev, message]);
+  
+        // Fetch messages if chat exists (like V1)
+        if (currentChat?.chatGroupId) {
+          const response = await getGroupChatMessage(currentChat.chatGroupId);
+          if (response.isSuccess) {
+            setMessages(response.result);
+          } else {
+            setError("Không thể tải tin nhắn");
+          }
+        }
+  
+        // Set up SignalR (inspired by V1)
+        const connection = await connectToChatHub((message) => {
+          setMessages((prev) => {
+            const isDuplicate = prev.some(
+              (m) => m.accountId === message.accountId && m.content === message.content
+            );
+            return isDuplicate ? prev : [...prev, message];
+          });
         });
-
-        // Xử lý khi mất kết nối
-        connection.onclose(() => {
-          console.log("Mất kết nối SignalR");
-          setError("Mất kết nối với server. Đang thử kết nối lại...");
-        });
-
+  
+        if (connection && currentChat?.chatGroupId) {
+          setHubConnection(connection);
+          await connection.invoke("JoinGroup", currentChat.chatGroupId);
+          console.log(`Joined group: ${currentChat.chatGroupId}`);
+        } else if (!connection) {
+          setError("Không thể kết nối SignalR");
+        }
       } catch (error) {
         console.error("Lỗi khởi tạo chat:", error);
         setError("Không thể kết nối đến server chat");
       }
     };
-
+  
     initializeChat();
-
-    // Cleanup khi component unmount
+  
     return () => {
       if (hubConnection) {
         hubConnection.stop();
       }
     };
-  }, []); // Chỉ chạy một lần khi component mount
-
-  useEffect(() => {
-    const loadChatRoom = async () => {
-      if (!currentChat?.chatGroupId || !hubConnection) return;
-
-      try {
-        // Rời phòng cũ nếu có
-        if (hubConnection.state === "Connected") {
-          await hubConnection.invoke("LeaveGroup", currentChat.chatGroupId);
-        }
-
-        // Tham gia phòng mới
-        await hubConnection.invoke("JoinGroup", currentChat.chatGroupId);
-        console.log("Đã tham gia phòng:", currentChat.chatGroupId);
-
-        // Lấy lịch sử tin nhắn
-        const response = await getGroupChatMessage(currentChat.chatGroupId);
-        if (response.isSuccess) {
-          setMessages(response.result);
-        } else {
-          setError("Không thể tải tin nhắn");
-        }
-      } catch (err) {
-        console.error("Lỗi khi tải phòng chat:", err);
-        setError("Không thể tải tin nhắn. Vui lòng thử lại");
-      }
-    };
-
-    loadChatRoom();
-  }, [currentChat?.chatGroupId, hubConnection]);
+  }, [currentChat?.chatGroupId]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -126,8 +106,11 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || !currentChat || !hubConnection) return;
-
+    if (!inputMessage.trim() || !currentChat) {
+      setError("Không có nội dung hoặc phòng chat để gửi");
+      return;
+    }
+  
     try {
       const chatMessage: ChatMessageRequest = {
         accountId: currentAccountId,
@@ -135,13 +118,10 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
         content: inputMessage.trim(),
         messageStatus: "sent",
       };
-
-      // Gửi tin nhắn qua SignalR
-      await hubConnection.invoke("SendMessage", currentChat.chatGroupId, chatMessage);
-
-      // Cập nhật UI ngay lập tức
-      setMessages(prev => [...prev, chatMessage]);
+  
       setInputMessage("");
+      setMessages((prev) => [...prev, { ...chatMessage }]);
+      await sendMessage(chatMessage);
     } catch (error) {
       console.error("Lỗi gửi tin nhắn:", error);
       setError("Không thể gửi tin nhắn. Vui lòng thử lại");
