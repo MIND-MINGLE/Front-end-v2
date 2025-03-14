@@ -7,7 +7,7 @@ import LoadingScreen from "../../common/LoadingScreen";
 import { useNavigate } from "react-router";
 
 interface ChatProfile {
-  chatGroudId: string;
+  chatGroupId: string;
   adminId: string;
   adminName: string;
   userInGroupId: string;
@@ -69,15 +69,15 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
         flexDirection: "column", 
         gap: "10px",justifyContent:"center",alignContent:"center" }}>
         {profiles.map((profile) => (
-          <Box key={profile.chatGroudId} sx={{ display: "flex", alignItems: "center", 
-            backgroundColor: onSelect===profile.chatGroudId? "#A9D2FF":"#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer" }}
+          <Box key={profile.chatGroupId} sx={{ display: "flex", alignItems: "center", 
+            backgroundColor: onSelect===profile.chatGroupId? "#A9D2FF":"#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer" }}
             onClick={() => {
               setCurrentChat({
-                chatGroupId: profile.chatGroudId,
+                chatGroupId: profile.chatGroupId,
                 userInGroupId: profile.userInGroupId,
               }
               )
-              setOnSelect(profile.chatGroudId)
+              setOnSelect(profile.chatGroupId)
               //alert("Click On Group: "+profile.chatGroudId)
             }}
           >

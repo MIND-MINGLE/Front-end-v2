@@ -1,4 +1,4 @@
-const baseUrl = "https://mindmingle.azurewebsites.net/api";
+const baseUrl = "https://mindmingle202.azurewebsites.net/api";
 const localhostUrl = "https://localhost:7250/api";
 
 const getJwtToken = () => {
