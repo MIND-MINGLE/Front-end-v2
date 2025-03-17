@@ -30,7 +30,7 @@ const CommentSection: React.FC = () => {
           Reply
         </button>
         <span className={styles.commentTime} aria-label="Comment timestamp">
-          10 h ago
+          10h ago
         </span>
       </div>
 
