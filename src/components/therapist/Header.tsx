@@ -127,7 +127,7 @@ const Header: React.FC = () => {
           </div>
         )}
         {/* Profile icon */}
-        <Link to="profile">
+        <Link to="/LandingPage/PersonalInformation">
           <button className={styles.navMenu} aria-label="Profile">
             <img src="/Ellipse 11.svg" alt="Profile icon" />
           </button>
