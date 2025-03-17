@@ -8,6 +8,7 @@ import TherapyChatPage from './TherapyChat/page'
 import ProtectedRoutes, { RoleProtectedRoute } from '../../routes/protectedroutes'
 import { useEffect } from 'react'
 import SummaryPage from './TherapyMatchingForm/SummaryPage'
+import TherapistSelection from './TherapyProfile/therapyConnector'
 
 export default function SeekerRoute() {
   const nav = useNavigate()
@@ -30,8 +31,16 @@ export default function SeekerRoute() {
           <Route path='/history' element={<HistoryPage />} />
           <Route path='/profile' element={<ProfileSeekerPage />} />
           <Route path='/therapy-chat' element={<TherapyChatPage />} />
-          <Route path='/patient-summary' element={<SummaryPage />} />
-      </Route>
+          <Route path='/patient-summary' element={<SummaryPage formData={{
+            depression: '',
+            anxiety: '',
+            trauma: '',
+            concern: '',
+            interference: '',
+            urgency: ''
+          }} />} />
+          <Route path='/connector' element={<TherapistSelection/>} />
+          </Route>
     </Routes>
     </>
   )

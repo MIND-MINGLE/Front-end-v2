@@ -7,7 +7,6 @@ import NavigationRail from './NavBar';
 import Footer from '../coworking/Components/Footer/Footer';
 import CopyrightFooter from '../coworking/Components/CopyrightFooter/CopyrightFooter';
 import TherapyMatchingForm from './TherapyMatchingForm/TherapyMatchingForm';
-import TherapistConnector from './Connector/Connector';
 import {Link} from 'react-router';
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -87,15 +86,7 @@ const SeekerPage = (): JSX.Element => {
                             <TherapyMatchingForm onClick={()=>{handleClick()}} />
                         </motion.div>
                         ) : (
-                        <motion.div
-                            key="connector"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            <TherapistConnector />
-                        </motion.div>
+                            null
                         )}
                     </AnimatePresence>
                 </Box>
