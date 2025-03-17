@@ -12,7 +12,7 @@ import { Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
-import { connectToChatHub, sendMessage, disconnectFromChatHub, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
+import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
@@ -39,20 +39,22 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [currentAccountId, setCurrentAccountId] = useState("");
-  const [signalRConnection, setSignalRConnection] = useState<HubConnection | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
 
   useEffect(() => {
-    const fetchMessages = async () => {
+    const initializeChat = async () => {
       try {
-        const data = sessionStorage.getItem("account");
-        if (!data) {
+        // Fetch user data (same as V1)
+        const userData = sessionStorage.getItem("account");
+        if (!userData) {
           setError("Không tìm thấy thông tin tài khoản");
           return;
         }
-        const account = JSON.parse(data);
+        const account = JSON.parse(userData);
         setCurrentAccountId(account.UserId);
-
+  
+        // Fetch messages if chat exists (like V1)
         if (currentChat?.chatGroupId) {
           const response = await getGroupChatMessage(currentChat.chatGroupId);
           if (response.isSuccess) {
@@ -61,39 +63,38 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             setError("Không thể tải tin nhắn");
           }
         }
-      } catch (err) {
-        console.error("Error fetching messages:", err);
-        setError("Đã xảy ra lỗi khi tải tin nhắn");
+  
+        // Set up SignalR (inspired by V1)
+        const connection = await connectToChatHub((message) => {
+          setMessages((prev) => {
+            const isDuplicate = prev.some(
+              (m) => m.accountId === message.accountId && m.content === message.content
+            );
+            return isDuplicate ? prev : [...prev, message];
+          });
+        });
+  
+        if (connection && currentChat?.chatGroupId) {
+          setHubConnection(connection);
+          await connection.invoke("JoinGroup", currentChat.chatGroupId);
+          console.log(`Joined group: ${currentChat.chatGroupId}`);
+        } else if (!connection) {
+          setError("Không thể kết nối SignalR");
+        }
+      } catch (error) {
+        console.error("Lỗi khởi tạo chat:", error);
+        setError("Không thể kết nối đến server chat");
       }
     };
-
-    fetchMessages();
-
-    connectToChatHub((message) => {
-      console.log("📥 Incoming message:", message);
-      setMessages((prevMessages) => {
-        const isDuplicate = prevMessages.some(
-          (m) => m.accountId === message.accountId && m.content === message.content
-        );
-        return isDuplicate ? prevMessages : [...prevMessages, message];
-      });
-    }).then((conn) => {
-      if (conn) {
-        setSignalRConnection(conn);
-        conn.invoke("JoinGroup", currentChat?.chatGroupId)
-          .then(() => console.log(`Joined group: ${currentChat?.chatGroupId}`))
-          .catch((err) => console.error("Error joining group:", err));
-      } else {
-        console.error("SignalR connection failed!");
-      }
-    }).catch((err) => console.error("Error connecting to SignalR:", err));
-
+  
+    initializeChat();
+  
     return () => {
-      if (signalRConnection) {
-        disconnectFromChatHub();
+      if (hubConnection) {
+        hubConnection.stop();
       }
     };
-  }, [currentChat]);
+  }, [currentChat?.chatGroupId]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -102,18 +103,26 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
-
-    const chatMessage: ChatMessageRequest = {
-      accountId: currentAccountId,
-      usersInGroupId: currentChat?.userInGroupId || "",
-      content: inputMessage,
-      messageStatus: "sent",
-    };
-
-    setInputMessage("");
-    setMessages((prevMessages) => [...prevMessages, { ...chatMessage }]);
-    await sendMessage(chatMessage);
+    if (!inputMessage.trim() || !currentChat) {
+      setError("Không có nội dung hoặc phòng chat để gửi");
+      return;
+    }
+  
+    try {
+      const chatMessage: ChatMessageRequest = {
+        accountId: currentAccountId,
+        usersInGroupId: currentChat.userInGroupId,
+        content: inputMessage.trim(),
+        messageStatus: "sent",
+      };
+  
+      setInputMessage("");
+      setMessages((prev) => [...prev, { ...chatMessage }]);
+      await sendMessage(chatMessage);
+    } catch (error) {
+      console.error("Lỗi gửi tin nhắn:", error);
+      setError("Không thể gửi tin nhắn. Vui lòng thử lại");
+    }
   };
 
   const shrinkPage = () => {
@@ -124,12 +133,18 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     setFormat(newFormat);
   };
 
+  // Thêm hiển thị trạng thái kết nối
+  const connectionStatus = hubConnection?.state === "Connected"
+    ? "Đã kết nối"
+    : hubConnection?.state === "Connecting"
+      ? "Đang kết nối..."
+      : "Mất kết nối";
+
   if (!currentChat || !currentChat.chatGroupId) {
     return (
       <Box
         sx={{
           height: "100vh",
-          width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -281,11 +296,11 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           justifyContent="center"
           gap={2}
           px={{ xs: 2, md: 4 }}
-          py={3}
+          py={1}
           position="absolute"
           bottom={0}
           left={0}
-          width="100%"
+          width="90%"
         >
           <IconButton>
             <AddCircleIcon />
@@ -318,6 +333,42 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           />
         </Box>
       </Box>
+
+      {/* Thêm indicator trạng thái kết nối */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 70,
+          right: 20,
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          backgroundColor: hubConnection?.state === "Connected" ? '#4caf50' : '#ff9800',
+          color: 'white',
+          opacity: 0.8
+        }}
+      >
+        {connectionStatus}
+      </Box>
+
+      {/* Hiển thị lỗi nếu có */}
+      {error && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 70,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            backgroundColor: '#f44336',
+            color: 'white',
+            zIndex: 1000
+          }}
+        >
+          {error}
+        </Box>
+      )}
     </Box>
   );
 };
