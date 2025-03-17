@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: "5%";
+  margin-bottom: 5%;
 }
 
 .navButton {
@@ -86,7 +86,7 @@
 }
 
 .emptyCell:hover {
-  background-color:  rgb(135, 135, 135);
+  background-color: rgb(135, 135, 135);
   border: none;
 }
 
@@ -98,6 +98,11 @@
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
+}
+
+.sessionBlock:hover {
+  background: linear-gradient(180deg, rgb(0, 99, 162) 0%, rgb(7, 137, 220) 100%);
 }
 
 .formOverlay {
@@ -166,6 +171,7 @@
   display: flex;
   gap: 15px;
   justify-content: center;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
 }
 
 .formButtons button {
@@ -178,12 +184,12 @@
   font-size: 16px;
   text-transform: none;
   transition: all 0.2s ease;
+  min-width: 120px;
 }
 
 .formButtons button[type="submit"] {
   background: linear-gradient(180deg, rgb(0, 119, 182) 0%, rgb(27, 157, 240) 100%);
   color: white;
-  min-width: 120px;
 }
 
 .formButtons button[type="submit"]:hover {
@@ -193,9 +199,17 @@
 .formButtons button[type="button"] {
   background-color: rgba(0, 119, 182, 0.1);
   color: rgb(0, 119, 182);
-  min-width: 120px;
 }
 
 .formButtons button[type="button"]:hover {
   background-color: rgba(0, 119, 182, 0.2);
+}
+
+.deleteButton {
+  background-color: #d32f2f !important; /* Red for delete */
+  color: white !important;
+}
+
+.deleteButton:hover {
+  background-color: #b71c1c !important; /* Darker red on hover */
 }

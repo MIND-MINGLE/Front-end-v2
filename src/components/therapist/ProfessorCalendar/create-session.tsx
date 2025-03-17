@@ -1,8 +1,6 @@
 // src/pages/SessionCreator.tsx
 import React, { useState } from 'react';
 import styles from './calendar.module.css'; // CSS module import
-import Header from '../Header';
-import HeaderProf from '../ProfessorWorkshop/Header';
 
 // Interface for the session schema
 interface Session {
@@ -23,65 +21,75 @@ const SessionCreator: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [formData, setFormData] = useState<FormData>({ startHour: '', endHour: '' });
   const [error, setError] = useState<string | null>(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date()); // Track current displayed month
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [editingSession, setEditingSession] = useState<Session | null>(null); // Track session being edited
 
-  // Days of week for reference
   const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // Generate days for the specified month, including padding for a proper calendar layout
+  // Generate calendar days
   const getCalendarDays = (date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
     const daysInMonth = lastDayOfMonth.getDate();
-    const startDay = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const startDay = firstDayOfMonth.getDay();
 
     const days: (Date | null)[] = [];
-    // Add padding days from previous month
     for (let i = 0; i < startDay; i++) {
       days.push(null);
     }
-    // Add actual days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       days.push(new Date(year, month, i));
     }
-    // Fill remaining cells to complete the last week (optional, for consistent 6-week layout)
     const totalCells = Math.ceil(days.length / 7) * 7;
     for (let i = days.length; i < totalCells; i++) {
       days.push(null);
     }
-
     return days;
   };
 
   const calendarDays = getCalendarDays(currentMonth);
 
-  // Handle month navigation
+  // Navigation handlers
   const handlePrevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-    setSelectedDate(null); // Reset selected date when changing months
+    setSelectedDate(null);
   };
 
   const handleNextMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-    setSelectedDate(null); // Reset selected date when changing months
+    setSelectedDate(null);
   };
 
-  // Handle date selection
+  // Handle date selection for new session
   const handleDateClick = (day: Date | null) => {
     if (day) {
       setSelectedDate(day);
       setFormData({ startHour: '', endHour: '' });
+      setEditingSession(null); // Reset editing mode
       setError(null);
     }
   };
 
-  // Handle form submission
+  // Handle session edit click
+  const handleSessionClick = (session: Session) => {
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
+    setSelectedDate(start);
+    setFormData({
+      startHour: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`,
+      endHour: `${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
+    });
+    setEditingSession(session);
+    setError(null);
+  };
+
+  // Handle form submission (create or update)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -114,15 +122,37 @@ const SessionCreator: React.FC = () => {
       dayOfWeek: daysOfWeek[startTime.getDay()] as Session['dayOfWeek'],
     };
 
-    setSessions([...sessions, newSession]);
+    if (editingSession) {
+      // Update existing session
+      setSessions(sessions.map((s) =>
+        s.startTime === editingSession.startTime && s.endTime === editingSession.endTime ? newSession : s
+      ));
+      console.log('Session updated:', newSession); // Send update to BE here
+    } else {
+      // Create new session
+      setSessions([...sessions, newSession]);
+      console.log('Session created:', newSession); // Send to BE here
+    }
+
     setFormData({ startHour: '', endHour: '' });
     setSelectedDate(null);
-    console.log('Session created:', newSession); // Send to BE here
+    setEditingSession(null);
+  };
+
+  // Handle session deletion
+  const handleDelete = () => {
+    if (editingSession) {
+      setSessions(sessions.filter((s) =>
+        s.startTime !== editingSession.startTime || s.endTime !== editingSession.endTime
+      ));
+      console.log('Session deleted:', editingSession); // Send delete to BE here
+      setFormData({ startHour: '', endHour: '' });
+      setSelectedDate(null);
+      setEditingSession(null);
+    }
   };
 
   return (
-    <>
-    <HeaderProf/>
     <div className={styles.calendarContainer}>
       <div className={styles.header}>
         <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
@@ -152,7 +182,14 @@ const SessionCreator: React.FC = () => {
               sessions
                 .filter((s) => new Date(s.startTime).toDateString() === day.toDateString())
                 .map((s, idx) => (
-                  <div key={idx} className={styles.sessionBlock}>
+                  <div
+                    key={idx}
+                    className={styles.sessionBlock}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering date click
+                      handleSessionClick(s);
+                    }}
+                  >
                     {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
                     {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
@@ -164,7 +201,7 @@ const SessionCreator: React.FC = () => {
       {selectedDate && (
         <div className={styles.formOverlay}>
           <form onSubmit={handleSubmit} className={styles.form}>
-            <h2>Create Session for {selectedDate.toDateString()}</h2>
+            <h2>{editingSession ? 'Edit Session' : 'Create Session'} for {selectedDate.toDateString()}</h2>
 
             <div className={styles.formGroup}>
               <label>Start Time:</label>
@@ -189,8 +226,16 @@ const SessionCreator: React.FC = () => {
             {error && <p className={styles.error}>{error}</p>}
 
             <div className={styles.formButtons}>
-              <button type="submit">Create Session</button>
-              <button type="button" onClick={() => setSelectedDate(null)}>
+              <button type="submit">{editingSession ? 'Update' : 'Create'} Session</button>
+              {editingSession && (
+                <button type="button" onClick={handleDelete} className={styles.deleteButton}>
+                  Delete
+                </button>
+              )}
+              <button type="button" onClick={() => {
+                setSelectedDate(null);
+                setEditingSession(null);
+              }}>
                 Cancel
               </button>
             </div>
@@ -198,7 +243,6 @@ const SessionCreator: React.FC = () => {
         </div>
       )}
     </div>
-    </>
   );
 };
 
