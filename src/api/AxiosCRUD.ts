@@ -57,6 +57,21 @@ const axiosGetGroupChatMessage = async (props: AxiosProp): Promise<AxiosResult> 
     }
 };
 
+const axiosGetQuestionCategory = async (props: AxiosProp): Promise<AxiosResult> => {
+    try {
+        const response = await axios.get(props.url, props.headers);
+        return { success: true, data: response.data };
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("Axios error:", error.response?.data || error.message);
+            return { success: false, error: error.response?.data || error.message };
+        } else {
+            console.error("Unexpected error:", error);
+            return { success: false, error: "An unexpected error occurred" };
+        }
+    }
+};
+
 const axiosGetQuestionnaire = async (props: AxiosProp): Promise<AxiosResult> => {
     try {
         const response = await axios.get(props.url, props.headers);
@@ -87,7 +102,7 @@ const axiosSummitUserResponse = async (props: AxiosProp): Promise<AxiosResult> =
     }
 };
 
- const axiosRegisterAccount = async (props: AxiosProp): Promise<AxiosResult> => {
+const axiosRegisterAccount = async (props: AxiosProp): Promise<AxiosResult> => {
     try {
         const response = await axios.post(props.url, props.data, props.headers);
         return { success: true, data: response.data };
@@ -102,4 +117,4 @@ const axiosSummitUserResponse = async (props: AxiosProp): Promise<AxiosResult> =
     }
 };
 
-export { axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount };
+export { axiosGetQuestionCategory, axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount };
