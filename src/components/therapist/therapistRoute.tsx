@@ -1,4 +1,4 @@
-import { Route,Routes, useNavigate } from "react-router";
+import { Outlet, Route,Routes, useNavigate } from "react-router";
 import TherapistPage from "./page";
 import { useEffect } from "react";
 import { RoleProtectedRoute } from "../../routes/protectedroutes";
@@ -20,6 +20,7 @@ export default function TherapistRoute() {
    <Routes>
         <Route path="/" element={<TherapistPage />} />
         <Route path="/session-calendar" element={<PersonalInformation />} />
+        <Route path="/session-calendar/create-session" element={<PersonalInformation />} />
    </Routes>
   )
 }
