@@ -9,6 +9,7 @@ import ProtectedRoutes, { RoleProtectedRoute } from '../../routes/protectedroute
 import { useEffect } from 'react'
 import SummaryPage from './TherapyMatchingForm/SummaryPage'
 import TherapistSelection from './TherapyProfile/therapyConnector'
+import { TherapistProfile } from './TherapyProfile/viewtherapist'
 
 export default function SeekerRoute() {
   const nav = useNavigate()
@@ -40,6 +41,8 @@ export default function SeekerRoute() {
             urgency: ''
           }} />} />
           <Route path='/connector' element={<TherapistSelection/>} />
+          <Route path='/therapist/:accountId' element={<TherapistProfile/>} />
+          TherapistProfile
           </Route>
     </Routes>
     </>
