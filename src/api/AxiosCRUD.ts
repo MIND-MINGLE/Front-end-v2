@@ -189,6 +189,4 @@ export const axiosDeleteSession = async (props: AxiosProp): Promise<AxiosResult>
     }
 };
 
-
-export { axiosGetQuestionCategory, axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount, axiosUpdateUserAvatar, axiosDeleteSession };
-```
+export { axiosGetQuestionCategory, axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount };
