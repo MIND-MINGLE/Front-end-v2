@@ -90,14 +90,13 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                   )
                   setOnSelect(profile.chatGroupId)
                   //alert("Click On Group: "+profile.chatGroupId)
-                  // We lost the chat group Id, so SignalR can't conenct
-                  // FUCKING GOD JUST KILL ME ALREADY HOLY FUCK
+                  // We lost the chat group Id, so SignalR can't connect
+                  // JESUS GOD JUST KILL ME ALREADY HOLY HELL
                 }}
               >
                 <Avatar sx={{ zIndex: 0, bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
                 <Box>
                   <Typography fontWeight="bold" color="white">{profile.adminName}</Typography>
-                  <Typography color="white">{profile.userInGroupId}</Typography>
                 </Box>
                 {/* TODO */}
                 <Typography sx={{ marginLeft: "auto", color: "white" }}>{ }</Typography>

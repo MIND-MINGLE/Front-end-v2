@@ -1,14 +1,10 @@
 // src/pages/SessionCreator.tsx
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import styles from './calendar.module.css'; // CSS module import
-=======
 import styles from './calendar.module.css';
 import LoadingScreen from '../../common/LoadingScreen';
 import { getTherapist } from '../../../api/Account/Therapist';
 import { createSession, deleteSessionById, GetAllSessionByTherapistId, updateSessionById } from '../../../api/Session/Session';
 import HeaderProf from '../ProfessorWorkshop/Header';
->>>>>>> parent of da33956 (a)
 
 interface Session {
   sessionId: string;
@@ -38,11 +34,6 @@ const SessionCreator: React.FC = () => {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-  useEffect(()=>{
-    const getExistingSession = async()=>{
-      
-    }
-  })
 
   // Fetch data from BE
   useEffect(() => {

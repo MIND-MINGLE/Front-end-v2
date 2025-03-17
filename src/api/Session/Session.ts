@@ -1,15 +1,16 @@
+
 import { baseUrl, headers } from "../Url";
-import { axiosCreateSession, axiosDeleteSession, axiosGetSession, axiosUpdateSession } from "../AxiosCRUD";
+import { axiosCreate, axiosDelete, axiosRead, axiosUpdate } from "../AxiosCRUD";
 
 const sessionUrl = baseUrl + "/Session";
 
 export const GetAllSessionByTherapistId = async(therapistId:string) =>{
     const props = {
-        data:therapistId,
-        url: sessionUrl+"/getSessionsByTherapist/",
+        data:null,
+        url: sessionUrl+"/getSessionsByTherapist/"+therapistId,
         headers: headers
     }
-    const result = await axiosGetSession(props);
+    const result = await axiosRead(props);
     if(result.success) {
         console.log(result.data)
         return result.data.result
@@ -21,11 +22,11 @@ export const GetAllSessionByTherapistId = async(therapistId:string) =>{
 }
 export const GetAllSessionById = async(therapistId:string) =>{
     const props = {
-        data:therapistId,
-        url: sessionUrl+"/getSessionsByTherapist/",
+        data:null,
+        url: sessionUrl+"/getSessionsByTherapist/"+therapistId,
         headers: headers
     }
-    const result = await axiosGetSession(props);
+    const result = await axiosRead(props);
     if(result.success) {
         console.log(result.data)
         return result.data
@@ -38,11 +39,11 @@ export const GetAllSessionById = async(therapistId:string) =>{
 
 export const deleteSessionById = async(sessionId:string) =>{
     const props = {
-        data:sessionId,
-        url: sessionUrl+"/delete/",
+        data:null,
+        url: sessionUrl+"/delete/"+sessionId,
         headers: headers
     }
-    const result = await axiosDeleteSession(props);
+    const result = await axiosDelete(props);
     if(result.success) {
         console.log(result.data)
         return result.data
@@ -59,7 +60,7 @@ export const updateSessionById = async(data:any) =>{
         url: sessionUrl+"/update",
         headers: headers
     }
-    const result = await axiosUpdateSession(props);
+    const result = await axiosUpdate(props);
     if(result.success) {
         console.log(result.data)
         return result.data
@@ -76,7 +77,7 @@ export const createSession = async(data:any) =>{
         url: sessionUrl+"/create",
         headers: headers
     }
-    const result = await axiosCreateSession(props);
+    const result = await axiosCreate(props);
     if(result.success) {
         console.log(result.data)
         return result.data

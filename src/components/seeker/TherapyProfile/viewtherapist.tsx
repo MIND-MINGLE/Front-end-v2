@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "react-router-dom"; // For getting therap
 import { getTherapistById } from "../../../api/Therapist/Therapist";
 import LoadingScreen from "../../common/LoadingScreen";
 import NavigationRail from "../NavBar";
+import { formatVnd } from "../../../services/common";
 
 // Define the Therapist type based on your schema
 interface Therapist {
@@ -26,6 +27,7 @@ interface Therapist {
   dob: string; // Formatted as "dd/MM/yyyy"
   gender: string;
   certificates?: string[]; // Optional, array of image URLs
+  pricePerHour: number;
   account:{
     email: string; 
     avatar:string
@@ -33,7 +35,7 @@ interface Therapist {
 }
 
 export const TherapistProfile = () => {
-  const { accountId } = useParams<{ accountId: string }>(); // Get therapistId from URL
+  const { accountId } = useParams<{ accountId: string }>(); // Get accountId from URL
   const [therapist, setTherapist] = useState<Therapist | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -161,6 +163,14 @@ export const TherapistProfile = () => {
                   </Typography>
                   <Typography variant="body2" mt={1}>
                     {therapist.gender}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="h5" color="textSecondary">
+                    Hourly Rate
+                  </Typography>
+                  <Typography variant="h5" mt={1} color="warning">
+                    {formatVnd(therapist.pricePerHour)}
                   </Typography>
                 </Grid>
                 {therapist.certificates && therapist.certificates.length > 0 && (

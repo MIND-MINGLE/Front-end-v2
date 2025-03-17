@@ -1,50 +1,125 @@
-// src/pages/SessionCreator.tsx
-import React, { useState } from 'react';
-import styles from './calendar.module.css'; // CSS module import
+import React, { useEffect, useState } from 'react';
+import styles from './calendar.module.css';
+import LoadingScreen from '../../common/LoadingScreen';
+import { GetAllSessionByTherapistId } from '../../../api/Session/Session';
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button as MuiButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+} from '@mui/material';
+import NavigationRail from '../NavBar';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getPatientByAccountId } from '../../../api/Account/Seeker';
+import { getTherapistByTherapistId } from '../../../api/Therapist/Therapist';
+import { Appointment, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
+import { formatVnd } from '../../../services/common';
+import { RegisterAppointment } from '../../../api/Appointment/appointment';
+import { addUserInGroup, createGroupChat } from '../../../api/ChatGroup/ChatGroupAPI';
 
 // Interface for the session schema
 interface Session {
+  sessionId: string;
   therapistId: string;
-  startTime: string; // ISO string
-  endTime: string; // ISO string
+  startTime: string; // ISO string from C# DateTime (assumed UTC)
+  endTime: string; // ISO string from C# DateTime (assumed UTC)
   dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 }
 
-// Interface for form data
-interface FormData {
-  startHour: string; // e.g., "09:00"
-  endHour: string; // e.g., "10:00"
-}
 
-const BookAppointment: React.FC = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+const BookingAppointment: React.FC = () => {
+  const { therapistId } = useParams<{ therapistId: string }>(); // Get therapistId from URL
+  const [patient, setPatient] = useState<Patient>();
+  const [therapist, setTherapist] = useState<Therapist | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [formData, setFormData] = useState<FormData>({ startHour: '', endHour: '' });
-  const [error, setError] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [editingSession, setEditingSession] = useState<Session | null>(null); // Track session being edited
-
-  const daysOfWeek = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [appointmentType, setAppointmentType] = useState<'OFFLINE' | 'ONLINE'>('OFFLINE');
+  const [userInGroup, setUserInGroup] = useState<userInGroup>();
+  const nav = useNavigate();
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // Generate calendar days
+  // Fetch data from BE
+  useEffect(() => {
+    const fetchAccount = async () => {
+      const account = sessionStorage.getItem('account');
+      if (account) {
+        const accountData = JSON.parse(account);
+        const patientData = await getPatientByAccountId(accountData.UserId);
+        if (patientData) {
+          setPatient(patientData.result);
+        } else {
+          setError('No patient found for this account.');
+        }
+      }
+      if (therapistId) {
+        const therapist = await getTherapistByTherapistId(therapistId);
+        if (therapist) {
+          setTherapist(therapist.result);
+          console.log('Therapist data:', therapist.result);
+        }
+      }
+    };
+
+    const fetchSessions = async () => {
+      setIsLoading(true);
+      if (therapistId) {
+        const sessionData = await GetAllSessionByTherapistId(therapistId);
+        if (sessionData) {
+          // Normalize C# DateTime (assumed UTC) to UTC ISO strings
+          setSessions(sessionData.map((s: Session) => ({
+            ...s,
+            startTime: ensureUtc(s.startTime),
+            endTime: ensureUtc(s.endTime),
+          })));
+        } else {
+          setError('No sessions available for this therapist.');
+        }
+      } else {
+        setError('No therapist ID provided.');
+      }
+      setIsLoading(false);
+    };
+
+    fetchAccount();
+    fetchSessions();
+  }, [therapistId]);
+
+  const ensureUtc = (isoString: string): string => {
+    if (!isoString.endsWith('Z')) {
+      return isoString + 'Z'; // Assume UTC and append Z
+    }
+    return isoString;
+  };
+
+  // Generate calendar days in UTC
   const getCalendarDays = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-    const daysInMonth = lastDayOfMonth.getDate();
-    const startDay = firstDayOfMonth.getDay();
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth();
+    const firstDayOfMonth = new Date(Date.UTC(year, month, 1));
+    const lastDayOfMonth = new Date(Date.UTC(year, month + 1, 0));
+    const daysInMonth = lastDayOfMonth.getUTCDate();
+    const startDay = firstDayOfMonth.getUTCDay();
 
     const days: (Date | null)[] = [];
     for (let i = 0; i < startDay; i++) {
       days.push(null);
     }
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
+      days.push(new Date(Date.UTC(year, month, i)));
     }
     const totalCells = Math.ceil(days.length / 7) * 7;
     for (let i = days.length; i < totalCells; i++) {
@@ -53,199 +128,224 @@ const BookAppointment: React.FC = () => {
     return days;
   };
 
+  // Calculate fees based on session duration and pricePerHour
+  const calculateFees = (session: Session, pricePerHour: number) => {
+    const start = new Date(session.startTime);
+    const end = new Date(session.endTime);
+    const durationMs = end.getTime() - start.getTime();
+    const durationHours = durationMs / (1000 * 60 * 60); // Convert milliseconds to hours
+
+    const baseFee = durationHours * pricePerHour;
+    const platformFee = baseFee * 0.2; // 20% additional charge
+    const totalFee = baseFee + platformFee;
+
+    return { totalFee: Math.round(totalFee), platformFee: Math.round(platformFee) };
+  };
+
   const calendarDays = getCalendarDays(currentMonth);
 
   // Navigation handlers
   const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-    setSelectedDate(null);
+    setCurrentMonth(new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() - 1, 1)));
   };
 
   const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-    setSelectedDate(null);
+    setCurrentMonth(new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() + 1, 1)));
   };
 
-  // Handle date selection for new session
-  const handleDateClick = (day: Date | null) => {
-    if (day) {
-      setSelectedDate(day);
-      setFormData({ startHour: '', endHour: '' });
-      setEditingSession(null); // Reset editing mode
-      setError(null);
-    }
-  };
-
-  // Handle session edit click
+  // Handle session selection
   const handleSessionClick = (session: Session) => {
-    const start = new Date(session.startTime);
-    const end = new Date(session.endTime);
-    setSelectedDate(start);
-    setFormData({
-      startHour: `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`,
-      endHour: `${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`,
-    });
-    setEditingSession(session);
-    setError(null);
+    setSelectedSession(session);
+    setOpenDialog(true);
   };
 
-  // Handle form submission (create or update)
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle dialog confirmation
+  const handleConfirmAppointment = async () => {
+    setIsLoading(true)
+    if (selectedSession && patient && therapist) {
+      const { totalFee, platformFee } = calculateFees(selectedSession, therapist.pricePerHour || 0);
+      const appointment: Appointment = {
+        patientId: patient.patientId,
+        therapistId: therapist.therapistId,
+        coWorkingSpaceId: null, // Nullable, set to null for now
+        sessionId: selectedSession.sessionId,
+        emergencyEndId: null, // Nullable, set to null
+        appointmentType: appointmentType,
+        totalFee: totalFee,
+        platformFee: platformFee,
+      };
 
-    if (!selectedDate) return;
+      try {
+        const response = await RegisterAppointment(appointment);
 
-    const [startHour, startMinute] = formData.startHour.split(':').map(Number);
-    const [endHour, endMinute] = formData.endHour.split(':').map(Number);
+        if (response.statusCode===200) {
+          alert('Appointment booked successfully!');
+          const groupchat = {
+            adminId: therapist.accountId
+          }
+          const responseGroupchat = await createGroupChat(groupchat);
+          if (responseGroupchat.statusCode === 200) {
+            console.log('Groupchat created successfully!',);
+            setUserInGroup(responseGroupchat.result)
+            const userInGroupData:userInGroup = {
+              clientId: patient.accountId,
+              chatGroupId: responseGroupchat.result.chatGroupId
+            }
+            console.log('UserInGroupData:', userInGroupData);
+            const response = await addUserInGroup(userInGroupData)
+            if (response.statusCode === 200) {
+              console.log('User added to group successfully!');
+              nav("/seeker/therapy-chat",{replace: true})
+            }
+          } else {
+            setError('Failed to create groupchat. Please try again.');
+          }
+        } else {
+          setError('Failed to book appointment. Please try again.');
+        }
+      } catch (err) {
+        setError('An error occurred while booking the appointment.');
+        console.error(err);
+      }
 
-    // Validation
-    if (!formData.startHour || !formData.endHour) {
-      setError('Please fill in both start and end times');
-      return;
+      setOpenDialog(false);
+      setSelectedSession(null);
+      setAppointmentType('OFFLINE'); // Reset to default
     }
-
-    if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
-      setError('End time must be after start time');
-      return;
-    }
-
-    const startTime = new Date(selectedDate);
-    startTime.setHours(startHour, startMinute || 0, 0, 0);
-
-    const endTime = new Date(selectedDate);
-    endTime.setHours(endHour, endMinute || 0, 0, 0);
-
-    const newSession: Session = {
-      therapistId: 'therapist123', // Replace with actual ID or add input
-      startTime: startTime.toISOString(),
-      endTime: endTime.toISOString(),
-      dayOfWeek: daysOfWeek[startTime.getDay()] as Session['dayOfWeek'],
-    };
-
-    if (editingSession) {
-      // Update existing session
-      setSessions(sessions.map((s) =>
-        s.startTime === editingSession.startTime && s.endTime === editingSession.endTime ? newSession : s
-      ));
-      console.log('Session updated:', newSession); // Send update to BE here
-    } else {
-      // Create new session
-      setSessions([...sessions, newSession]);
-      console.log('Session created:', newSession); // Send to BE here
-    }
-
-    setFormData({ startHour: '', endHour: '' });
-    setSelectedDate(null);
-    setEditingSession(null);
+    setIsLoading(false)
   };
 
-  // Handle session deletion
-  const handleDelete = () => {
-    if (editingSession) {
-      setSessions(sessions.filter((s) =>
-        s.startTime !== editingSession.startTime || s.endTime !== editingSession.endTime
-      ));
-      console.log('Session deleted:', editingSession); // Send delete to BE here
-      setFormData({ startHour: '', endHour: '' });
-      setSelectedDate(null);
-      setEditingSession(null);
-    }
+  // Handle dialog cancellation
+  const handleCancelAppointment = () => {
+    setOpenDialog(false);
+    setSelectedSession(null);
+    setAppointmentType('OFFLINE'); // Reset to default
   };
 
   return (
     <>
-    <div className={styles.calendarContainer}>
-      <div className={styles.header}>
-        <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
-        <h1 className={styles.title}>
-          {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-        </h1>
-        <button onClick={handleNextMonth} className={styles.navButton}>→</button>
-      </div>
-
-      <div className={styles.weekDays}>
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-          <div key={day} className={styles.weekDay}>{day}</div>
-        ))}
-      </div>
-
-      <div className={styles.calendarGrid}>
-        {calendarDays.map((day, index) => (
-          <div
-            key={index}
-            className={`${styles.dayCell} ${
-              day && selectedDate?.toDateString() === day.toDateString() ? styles.selected : ''
-            } ${!day ? styles.emptyCell : ''}`}
-            onClick={() => handleDateClick(day)}
+      {isLoading ? <LoadingScreen /> : null}
+      <NavigationRail />
+      <div className={styles.calendarContainer}>
+        {therapist && (
+          <Typography
+            variant="h6"
+            sx={{ textAlign: 'center', marginBottom: '10px', color: 'warning.main' }}
           >
-            {day && <span>{day.getDate()}</span>}
-            {day &&
-              sessions
-                .filter((s) => new Date(s.startTime).toDateString() === day.toDateString())
-                .map((s, idx) => (
-                  <div
-                    key={idx}
-                    className={styles.sessionBlock}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering date click
-                      handleSessionClick(s);
-                    }}
-                  >
-                    {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
-                    {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </div>
-                ))}
-          </div>
-        ))}
-      </div>
-
-      {selectedDate && (
-        <div className={styles.formOverlay}>
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <h2>{editingSession ? 'Edit Session' : 'Create Session'} for {selectedDate.toDateString()}</h2>
-
-            <div className={styles.formGroup}>
-              <label>Start Time:</label>
-              <input
-                type="time"
-                value={formData.startHour}
-                onChange={(e) => setFormData({ ...formData, startHour: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>End Time:</label>
-              <input
-                type="time"
-                value={formData.endHour}
-                onChange={(e) => setFormData({ ...formData, endHour: e.target.value })}
-                required
-              />
-            </div>
-
-            {error && <p className={styles.error}>{error}</p>}
-
-            <div className={styles.formButtons}>
-              <button type="submit">{editingSession ? 'Update' : 'Create'} Session</button>
-              {editingSession && (
-                <button type="button" onClick={handleDelete} className={styles.deleteButton}>
-                  Delete
-                </button>
-              )}
-              <button type="button" onClick={() => {
-                setSelectedDate(null);
-                setEditingSession(null);
-              }}>
-                Cancel
-              </button>
-            </div>
-          </form>
+            Hourly Rate: {formatVnd(therapist.pricePerHour || 0)}
+          </Typography>
+        )}
+        <div className={styles.header}>
+          <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
+          <h1 className={styles.title}>
+            {monthNames[currentMonth.getUTCMonth()]} {currentMonth.getUTCFullYear()}
+          </h1>
+          <button onClick={handleNextMonth} className={styles.navButton}>→</button>
         </div>
-      )}
-    </div>
+
+        <div className={styles.weekDays}>
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+            <div key={day} className={styles.weekDay}>{day}</div>
+          ))}
+        </div>
+
+        <div className={styles.calendarGrid}>
+          {calendarDays.map((day, index) => (
+            <div
+              key={index}
+              className={`${styles.dayCell} ${!day ? styles.emptyCell : ''}`}
+            >
+              {day && <span>{day.getUTCDate()}</span>}
+              {day &&
+                sessions
+                  .filter((s) => {
+                    const sessionDate = new Date(s.startTime);
+                    return sessionDate.toDateString() === day.toDateString();
+                  })
+                  .map((s, idx) => (
+                    <div
+                      key={idx}
+                      className={styles.sessionBlock}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSessionClick(s);
+                      }}
+                    >
+                      {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} -{' '}
+                      {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                    </div>
+                  ))}
+            </div>
+          ))}
+        </div>
+
+        {error && <div className={styles.error}>{error}</div>}
+
+        <Dialog
+          open={openDialog}
+          onClose={handleCancelAppointment}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Confirm Appointment
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to book an appointment with{' '}
+              {therapist ? `Therapist: ${therapist.firstName}` : 'this therapist'} for{' '}
+              {selectedSession && new Date(selectedSession.startTime).toLocaleString('en-US', {
+                dateStyle: 'full',
+                timeStyle: 'short',
+                timeZone: 'UTC',
+              })}{' '}
+              to{' '}
+              {selectedSession && new Date(selectedSession.endTime).toLocaleString('en-US', {
+                timeStyle: 'short',
+                timeZone: 'UTC',
+              })}?
+            </DialogContentText>
+            {therapist && selectedSession && (
+              <>
+                <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+                  Hourly Rate: {formatVnd(therapist.pricePerHour || 0)}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Total Fee (including 20% platform fee):{' '}
+                  {formatVnd(calculateFees(selectedSession, therapist.pricePerHour || 0).totalFee)}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                  Platform Fee: {formatVnd(calculateFees(selectedSession, therapist.pricePerHour || 0).platformFee)}
+                </Typography>
+              </>
+            )}
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="appointment-type-label">Appointment Type</InputLabel>
+              <Select
+                labelId="appointment-type-label"
+                id="appointment-type"
+                value={appointmentType}
+                label="Appointment Type"
+                onChange={(e) => setAppointmentType(e.target.value as 'OFFLINE' | 'ONLINE')}
+              >
+                <MenuItem value="OFFLINE">Offline</MenuItem>
+                <MenuItem value="ONLINE">Online</MenuItem>
+              </Select>
+            </FormControl>
+          </DialogContent>
+          <DialogActions>
+            <MuiButton onClick={handleCancelAppointment} color="primary">
+              Cancel
+            </MuiButton>
+            <MuiButton onClick={handleConfirmAppointment} color="primary" autoFocus>
+              Confirm
+            </MuiButton>
+          </DialogActions>
+        </Dialog>
+      </div>
     </>
   );
 };
 
-export default BookAppointment;
+export default BookingAppointment;
+

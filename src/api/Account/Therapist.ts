@@ -1,5 +1,5 @@
 import { baseUrl,headers } from "../Url"
-import { axiosGetTherapistByAccountId, } from "../AxiosCRUD"
+import { axiosRead, } from "../AxiosCRUD"
 
 
 const theraUrl = baseUrl + "/Therapist/"
@@ -7,11 +7,11 @@ const theraUrl = baseUrl + "/Therapist/"
 
 export const getTherapist = async(accountId:string)=> {
     const props = {
-        data: accountId,
-        url: theraUrl,
+        data: null,
+        url: theraUrl+"/"+accountId,
         headers: headers
     }
-    const result = await axiosGetTherapistByAccountId(props)
+    const result = await axiosRead(props)
     if(result.success) {
         console.log(result.data)
         return result.data.result

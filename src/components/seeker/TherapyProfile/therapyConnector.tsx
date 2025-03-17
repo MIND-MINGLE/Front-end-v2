@@ -5,17 +5,10 @@ import styles from './therapistSelection.module.css';
 import NavigationRail from '../NavBar';
 import LoadingScreen from '../../common/LoadingScreen';
 import { getAllTherapist } from '../../../api/Therapist/Therapist';
+import { Therapist } from '../../../interface/IAccount';
 
-// Define the Therapist type based on your schema
-interface Therapist {
-  therapistId: string;
-  accountId: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  dob: string; // Formatted as "dd/MM/yyyy" from backend
-  gender: string;
-}
+
+
 
 const TherapistSelection: React.FC = () => {
   const [allTherapists, setAllTherapists] = useState<Therapist[]>([]); // Store all therapists
