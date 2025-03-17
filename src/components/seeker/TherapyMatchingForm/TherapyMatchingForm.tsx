@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router'; // Import useNavigate for navigation
 import styles from './TherapyMatchingForm.module.css'; // Import your CSS module
-import { GetAllQuestions } from '../../../api/Question/Question';
 import { GetAllQuestionCategory } from '../../../api/Category/Category';
 
 // Define TypeScript interfaces for the schema

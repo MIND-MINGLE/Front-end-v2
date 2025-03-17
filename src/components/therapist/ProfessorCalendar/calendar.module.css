@@ -1,0 +1,201 @@
+/* src/pages/calendar.module.css */
+.calendarContainer {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  font-family: 'Roboto, Helvetica, Arial, sans-serif';
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: "5%";
+}
+
+.navButton {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: rgb(0, 119, 182);
+  cursor: pointer;
+  padding: 0 20px;
+  transition: color 0.2s ease;
+}
+
+.navButton:hover {
+  color: rgb(27, 157, 240);
+}
+
+.title {
+  text-align: center;
+  color: rgb(0, 119, 182);
+  font-weight: 500;
+  font-size: 28px;
+  margin: 20px 20px;
+}
+
+.weekDays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.weekDay {
+  text-align: center;
+  font-weight: 800;
+  color: rgb(0, 119, 182);
+  font-size: 24px;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(0, 119, 182, 0.1) 0%, rgba(27, 157, 240, 0.1) 100%);
+  padding: 10px;
+  border-radius: 20px;
+  border: 2px solid rgba(0, 119, 182, 0.2);
+}
+
+.dayCell {
+  min-height: 80px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dayCell:hover {
+  background-color: rgba(27, 157, 240, 0.1);
+  border-color: rgb(27, 157, 240);
+}
+
+.selected {
+  background: linear-gradient(180deg, rgba(0, 119, 182, 0.2) 0%, rgba(27, 157, 240, 0.2) 100%);
+  border: 2px solid rgb(0, 119, 182);
+}
+
+.emptyCell {
+  background-color: rgba(0, 119, 182, 0.5);
+  border: none;
+  cursor: default;
+}
+
+.emptyCell:hover {
+  background-color:  rgb(135, 135, 135);
+  border: none;
+}
+
+.sessionBlock {
+  background: linear-gradient(180deg, rgb(0, 119, 182) 0%, rgb(27, 157, 240) 100%);
+  color: white;
+  padding: 4px 8px;
+  margin-top: 6px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.formOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  background-color: white;
+  padding: 25px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.1);
+}
+
+.form h2 {
+  color: rgb(0, 119, 182);
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: rgb(0, 119, 182);
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(0, 119, 182, 0.3);
+  border-radius: 10px;
+  font-family: 'Roboto, Helvetica, Arial, sans-serif';
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.formGroup input:focus {
+  border-color: rgb(27, 157, 240);
+  outline: none;
+}
+
+.error {
+  color: #d32f2f;
+  margin: 10px 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+.formButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.formButtons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Roboto, Helvetica, Arial, sans-serif';
+  font-weight: 500;
+  font-size: 16px;
+  text-transform: none;
+  transition: all 0.2s ease;
+}
+
+.formButtons button[type="submit"] {
+  background: linear-gradient(180deg, rgb(0, 119, 182) 0%, rgb(27, 157, 240) 100%);
+  color: white;
+  min-width: 120px;
+}
+
+.formButtons button[type="submit"]:hover {
+  background: linear-gradient(180deg, rgb(0, 99, 162) 0%, rgb(7, 137, 220) 100%);
+}
+
+.formButtons button[type="button"] {
+  background-color: rgba(0, 119, 182, 0.1);
+  color: rgb(0, 119, 182);
+  min-width: 120px;
+}
+
+.formButtons button[type="button"]:hover {
+  background-color: rgba(0, 119, 182, 0.2);
+}
