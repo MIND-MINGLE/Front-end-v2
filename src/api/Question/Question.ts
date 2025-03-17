@@ -1,15 +1,15 @@
 import { baseUrl, headers } from "../Url";
-import { axiosGetQuestionnaire } from "../AxiosCRUD";
+import { axiosRead } from "../AxiosCRUD";
 
 const questionUrl = baseUrl + "/Question/question";
 
 export const GetAllQuestions = async() =>{
     const props = {
-        data:"",
+        data:null,
         url: questionUrl,
         headers: headers
     }
-    const result = await axiosGetQuestionnaire(props);
+    const result = await axiosRead(props);
     if(result.success) {
         console.log(result.data)
         return result.data

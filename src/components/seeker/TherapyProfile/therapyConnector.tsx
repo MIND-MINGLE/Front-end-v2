@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'; // Assuming you're using react-router
 import styles from './therapistSelection.module.css';
 import NavigationRail from '../NavBar';
 import LoadingScreen from '../../common/LoadingScreen';
+import { getAllTherapist } from '../../../api/Therapist/Therapist';
 
 const TherapistSelection: React.FC = () => {
   const [therapists, setTherapists] = useState<any[]>([]);
@@ -23,8 +24,8 @@ const TherapistSelection: React.FC = () => {
     setIsLoading(true);
     try {
       // Replace with your actual API call
-      const response = await fetch(`/api/therapists?page=${page}&limit=${therapistsPerPage}`);
-      const data = await response.json();
+      const response = await getAllTherapist();
+      const data = await response.result;
       setTherapists(data.therapists || []);
       setTotalPages(Math.ceil(data.total / therapistsPerPage));
     } catch (err) {

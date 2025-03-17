@@ -1,10 +1,10 @@
 // import React from 'react'
 
 import { baseUrl, headers } from "../Url"
-import { axiosLoginAccount, axiosRegisterAccount, axiosUpdateUserAvatar } from "../AxiosCRUD"
 import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 import { storage } from "../../services/firebase" // Đảm bảo đã cấu hình Firebase trong services/firebase.js
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { axiosCreate, axiosUpdate } from "../AxiosCRUD";
 
 const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
@@ -20,7 +20,7 @@ export const RegisterPatientAccount = async (data: AccountRequestProps) => {
         url: resUrl + "?roleId=seeker",
         headers: headers
     }
-    const result = await axiosRegisterAccount(props)
+    const result = await axiosCreate(props)
     if (result.success) {
         console.log(result.data)
         return result.data
@@ -37,7 +37,7 @@ export const RegisterDocAccount = async (data: AccountRequestProps) => {
         url: resUrl + "?roleId=doc",
         headers: headers
     }
-    const result = await axiosRegisterAccount(props)
+    const result = await axiosCreate(props)
     if (result.success) {
         console.log(result.data)
         return result.data
@@ -54,7 +54,7 @@ export const RegisterAgentAccount = async (data: AccountRequestProps) => {
         url: resUrl + "?roleId=agent",
         headers: headers
     }
-    const result = await axiosRegisterAccount(props)
+    const result = await axiosCreate(props)
     if (result.success) {
         console.log(result.data)
         return result.data
@@ -72,7 +72,7 @@ export const LoginAccount = async (data: LoginProps) => {
         url: loginUrl,
         headers: headers
     }
-    const result = await axiosLoginAccount(props)
+    const result = await axiosCreate(props)
     if (result.success) {
         console.log(result.data)
         return result.data
@@ -89,7 +89,7 @@ export const verifyAccount = async (data: VerifyProps) => {
         url: verifyUrl,
         headers: headers
     }
-    const result = await axiosLoginAccount(props)
+    const result = await axiosCreate(props)
     if (result.success) {
         console.log(result.data)
         return result.data
@@ -128,7 +128,7 @@ export const updateUserAvatar = async (file: File, accountId: string) => {
             headers: headers
         }
 
-        const result = await axiosUpdateUserAvatar(props)
+        const result = await axiosUpdate(props)
         if (result.success) {
             console.log(result.data)
             return result.data

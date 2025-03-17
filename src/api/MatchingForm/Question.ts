@@ -1,16 +1,16 @@
 import { baseUrl, headers } from "../Url";
-import { axiosGetGroupChatMessage } from "../AxiosCRUD";
+import { axiosRead } from "../AxiosCRUD";
 
 const url = baseUrl + "/ChatMessage/getgrouplog/";
 
 const getGroupChatMessage = async (chatGroupId: string) => {
     const props = {
-        data: chatGroupId,
-        url: url,
+        data: null,
+        url: url+"/"+chatGroupId,
         headers: headers
     };
 
-    const result = await axiosGetGroupChatMessage(props);
+    const result = await axiosRead(props);
 
     if (result.success) {
         console.log("Chat Messages fetched successfully:", result.data);

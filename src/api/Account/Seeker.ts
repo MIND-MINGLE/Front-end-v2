@@ -1,5 +1,5 @@
 import { SeekerCreateProps } from "../../interface/IAccount"
-import { axiosRegisterAccount } from "../AxiosCRUD"
+import { axiosCreate } from "../AxiosCRUD"
 import { baseUrl,headers } from "../Url"
 
 
@@ -12,7 +12,7 @@ export const RegisterPatientAccount = async(data:SeekerCreateProps)=> {
         url: patientUrl,
         headers: headers
     }
-    const result = await axiosRegisterAccount(props)
+    const result = await axiosCreate(props)
     if(result.success) {
         console.log(result.data)
         return result.data
