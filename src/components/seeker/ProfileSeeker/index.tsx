@@ -26,6 +26,7 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { updateUserAvatar } from "../../../api/Account/Account";
 
 export const Frame = () => {
     const [openEdit, setOpenEdit] = useState(false);
@@ -39,6 +40,8 @@ export const Frame = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const nav = useNavigate();
+    const [avatarUrl, setAvatarUrl] = useState<string>("");
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -78,6 +81,7 @@ export const Frame = () => {
                         isEmailVerified: data.result.isEmailVerified || false,
                         createdAt: data.result.createdAt || "",
                     });
+                    setAvatarUrl(data.result.avatar || "");
                 } else {
                     setError("Dữ liệu không hợp lệ từ API.");
                 }
@@ -109,6 +113,39 @@ export const Frame = () => {
             hour: "2-digit",
             minute: "2-digit",
         });
+    };
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploadingAvatar(true);
+            setError(null);
+
+            const accountData = sessionStorage.getItem("account");
+            if (!accountData) {
+                throw new Error("Không tìm thấy thông tin tài khoản");
+            }
+
+            const { UserId } = JSON.parse(accountData);
+            if (!UserId) {
+                throw new Error("Không tìm thấy UserId");
+            }
+
+            const result = await updateUserAvatar(file, UserId);
+
+            if (result) {
+                setAvatarUrl(result.avatar);
+            } else {
+                throw new Error("Cập nhật avatar thất bại");
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Đã xảy ra lỗi khi cập nhật avatar');
+            console.error('Error:', err);
+        } finally {
+            setUploadingAvatar(false);
+        }
     };
 
     if (loading) {
@@ -156,19 +193,46 @@ export const Frame = () => {
                             }}
                         >
                             <Box display="flex" flexDirection="column" alignItems="center">
-                                <Avatar
-                                    sx={{
-                                        width: 120,
-                                        height: 120,
-                                        background: "linear-gradient(180deg, #027FC1 0%, #1B9DF0 100%)",
-                                        border: "4px solid #E3F2FD",
-                                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                                        transition: "all 0.3s ease",
-                                        "&:hover": { transform: "scale(1.05)" },
-                                    }}
-                                >
-                                    <AccountCircle sx={{ fontSize: 60, color: "#FFFFFF" }} />
-                                </Avatar>
+                                <Box position="relative">
+                                    <Avatar
+                                        src={avatarUrl}
+                                        sx={{
+                                            width: 120,
+                                            height: 120,
+                                            background: "linear-gradient(180deg, #027FC1 0%, #1B9DF0 100%)",
+                                            border: "4px solid #E3F2FD",
+                                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                                            transition: "all 0.3s ease",
+                                            "&:hover": { transform: "scale(1.05)" },
+                                        }}
+                                    >
+                                        {!avatarUrl && <AccountCircle sx={{ fontSize: 60, color: "#FFFFFF" }} />}
+                                    </Avatar>
+                                    <IconButton
+                                        component="label"
+                                        disabled={uploadingAvatar}
+                                        sx={{
+                                            position: 'absolute',
+                                            bottom: 0,
+                                            right: 0,
+                                            backgroundColor: '#fff',
+                                            '&:hover': { backgroundColor: '#e3f2fd' },
+                                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                                        }}
+                                    >
+                                        <input
+                                            type="file"
+                                            hidden
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                        />
+                                        {uploadingAvatar ? (
+                                            <CircularProgress size={20} sx={{ color: '#027FC1' }} />
+                                        ) : (
+                                            <Edit fontSize="small" sx={{ color: '#027FC1' }} />
+                                        )}
+                                    </IconButton>
+                                </Box>
                                 <Typography
                                     variant="h5"
                                     color="#027FC1"

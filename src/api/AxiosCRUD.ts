@@ -134,7 +134,7 @@ const axiosRegisterAccount = async (props: AxiosProp): Promise<AxiosResult> => {
 
 export const axiosGetSession = async (props: AxiosProp): Promise<AxiosResult> => {
     try {
-        const response = await axios.get(props.url+props.data, props.headers);
+        const response = await axios.get(props.url + props.data, props.headers);
         return { success: true, data: response.data };
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -174,10 +174,23 @@ export const axiosUpdateSession = async (props: AxiosProp): Promise<AxiosResult>
             return { success: false, error: "An unexpected error occurred" };
         }
     }
+}; const axiosUpdateUserAvatar = async (props: AxiosProp): Promise<AxiosResult> => {
+    try {
+        const response = await axios.put(props.url, props.data, props.headers);
+        return { success: true, data: response.data };
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error("Axios error:", error.response?.data || error.message);
+            return { success: false, error: error.response?.data || error.message };
+        } else {
+            console.error("Unexpected error:", error);
+            return { success: false, error: "An unexpected error occurred" };
+        }
+    }
 };
 export const axiosDeleteSession = async (props: AxiosProp): Promise<AxiosResult> => {
     try {
-        const response = await axios.delete(props.url+props.data, props.headers);
+        const response = await axios.delete(props.url + props.data, props.headers);
         return { success: true, data: response.data };
     } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -190,4 +203,4 @@ export const axiosDeleteSession = async (props: AxiosProp): Promise<AxiosResult>
     }
 };
 
-export { axiosGetQuestionCategory, axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount };
+export { axiosGetQuestionCategory, axiosLoginAccount, axiosGetGroupChatByAccountId, axiosGetGroupChatMessage, axiosGetQuestionnaire, axiosSummitUserResponse, axiosRegisterAccount, axiosUpdateUserAvatar };
