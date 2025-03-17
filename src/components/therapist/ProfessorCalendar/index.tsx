@@ -51,15 +51,15 @@ export const Frame = () => {
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <Link to="/ProfessorPage/ThankYouPage">
+                    <Link to="create-workspace">
                         <GradientButton>Book a workspace</GradientButton>
                     </Link>
 
-                    <Link to="/ProfessorPage/ProfessorCalendar" >
-                        <GradientButton>Create an appointment</GradientButton>
+                    <Link to="create-session" >
+                        <GradientButton>Create a session</GradientButton>
                     </Link>
 
-                    <Link to="/ProfessorPage/ProfessorWorkshop" >
+                    <Link to="create-workshop" >
                         <GradientButton>Create a workshop</GradientButton>
                     </Link>
                 </Grid>

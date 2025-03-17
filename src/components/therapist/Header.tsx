@@ -54,14 +54,14 @@ const Header: React.FC = () => {
 
   return (
     <header className={styles.header}>
-      <Link to="/ProfessorPage">
+      <Link to="/">
         <button className={styles.backButton} aria-label="Back to home">
           <img src="/Logo.png" alt="Company logo" className={styles.logo} />
         </button>
       </Link>
       {/* Navigation buttons */}
       <div className={styles.navButtons}>
-        <Link to="/ProfessorPage/ProfessorCalendar">
+        <Link to="session-calendar">
           <button className={styles.createButton}>
             Create
           </button>

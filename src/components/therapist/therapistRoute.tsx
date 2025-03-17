@@ -2,6 +2,7 @@ import { Route,Routes, useNavigate } from "react-router";
 import TherapistPage from "./page";
 import { useEffect } from "react";
 import { RoleProtectedRoute } from "../../routes/protectedroutes";
+import PersonalInformation from "./ProfessorCalendar/page";
 
 
 export default function TherapistRoute() {
@@ -18,6 +19,7 @@ export default function TherapistRoute() {
   return (
    <Routes>
         <Route path="/" element={<TherapistPage />} />
+        <Route path="/session-calendar" element={<PersonalInformation />} />
    </Routes>
   )
 }
