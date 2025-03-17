@@ -1,5 +1,5 @@
 // src/pages/SessionCreator.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './calendar.module.css'; // CSS module import
 
 // Interface for the session schema
@@ -16,7 +16,7 @@ interface FormData {
   endHour: string; // e.g., "10:00"
 }
 
-const SessionCreator: React.FC = () => {
+const BookAppointment: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [formData, setFormData] = useState<FormData>({ startHour: '', endHour: '' });
@@ -29,11 +29,6 @@ const SessionCreator: React.FC = () => {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-  useEffect(()=>{
-    const getExistingSession = async()=>{
-      
-    }
-  })
 
   // Generate calendar days
   const getCalendarDays = (date: Date) => {
@@ -158,6 +153,7 @@ const SessionCreator: React.FC = () => {
   };
 
   return (
+    <>
     <div className={styles.calendarContainer}>
       <div className={styles.header}>
         <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
@@ -248,7 +244,8 @@ const SessionCreator: React.FC = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
-export default SessionCreator;
+export default BookAppointment;

@@ -11,8 +11,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // For getting therapistId from URL
+import { useNavigate, useParams } from "react-router-dom"; // For getting therapistId from URL
 import { getTherapistById } from "../../../api/Therapist/Therapist";
+import LoadingScreen from "../../common/LoadingScreen";
+import NavigationRail from "../NavBar";
 
 // Define the Therapist type based on your schema
 interface Therapist {
@@ -23,9 +25,11 @@ interface Therapist {
   phoneNumber: string;
   dob: string; // Formatted as "dd/MM/yyyy"
   gender: string;
-  email?: string; // Optional, not in schema but used in original
-  bio?: string; // Optional, added for user view
   certificates?: string[]; // Optional, array of image URLs
+  account:{
+    email: string; 
+    avatar:string
+  }
 }
 
 export const TherapistProfile = () => {
@@ -33,6 +37,10 @@ export const TherapistProfile = () => {
   const [therapist, setTherapist] = useState<Therapist | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+    const nav = useNavigate()
+  const bookAppointment= (therapistId:string) =>{
+    nav(`../therapist/${therapistId}/appointment`)
+  }
 
   // Fetch therapist data
   const fetchTherapist = async () => {
@@ -56,7 +64,7 @@ export const TherapistProfile = () => {
   }, [accountId]);
 
   if (loading) {
-    return <Typography>Loading...</Typography>; // Replace with your LoadingScreen if desired
+    return <LoadingScreen/>
   }
 
   if (error || !therapist) {
@@ -64,7 +72,14 @@ export const TherapistProfile = () => {
   }
 
   return (
-    <Box display="flex" justifyContent="center" py={5} px={2}>
+    <>
+    <NavigationRail/>
+    <Box display="flex" justifyContent="center" py={5} px={2}
+        sx={{background: "linear-gradient(135deg, #0077B6 0%, #1B9DF0 50%, #E3F2FD 100%)",
+            height:"100vh"
+
+        }}
+    >
       <Box width="100%" maxWidth="1200px">
         <Grid container spacing={3}>
           {/* Profile Section */}
@@ -95,11 +110,11 @@ export const TherapistProfile = () => {
               </Box>
               <Divider sx={{ my: 2 }} />
               <Box>
-                {therapist.email && (
+                {therapist.account.email && (
                   <Box display="flex" alignItems="center" mb={2}>
                     <Google />
                     <Typography variant="body2" color="textSecondary" ml={2}>
-                      {therapist.email}
+                      {therapist.account.email}
                     </Typography>
                   </Box>
                 )}
@@ -148,16 +163,6 @@ export const TherapistProfile = () => {
                     {therapist.gender}
                   </Typography>
                 </Grid>
-                {therapist.bio && (
-                  <Grid item xs={12}>
-                    <Typography variant="body1" color="textSecondary">
-                      Bio
-                    </Typography>
-                    <Typography variant="body2" mt={1}>
-                      {therapist.bio}
-                    </Typography>
-                  </Grid>
-                )}
                 {therapist.certificates && therapist.certificates.length > 0 && (
                   <Grid item xs={12}>
                     <Typography variant="body1" color="textSecondary">
@@ -173,7 +178,9 @@ export const TherapistProfile = () => {
                   </Grid>
                 )}
                 <Grid item xs={12}>
-                  <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                  <Button
+                    onClick={()=>{bookAppointment(therapist.therapistId)}}
+                  variant="contained" color="primary" sx={{ mt: 2 }}>
                     Book Appointment
                   </Button>
                 </Grid>
@@ -183,6 +190,7 @@ export const TherapistProfile = () => {
         </Grid>
       </Box>
     </Box>
+    </>
   );
 };
 

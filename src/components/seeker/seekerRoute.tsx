@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import SummaryPage from './TherapyMatchingForm/SummaryPage'
 import TherapistSelection from './TherapyProfile/therapyConnector'
 import { TherapistProfile } from './TherapyProfile/viewtherapist'
+import BookAppointment from './TherapyProfile/bookAppointment'
 
 export default function SeekerRoute() {
   const nav = useNavigate()
@@ -42,7 +43,8 @@ export default function SeekerRoute() {
           }} />} />
           <Route path='/connector' element={<TherapistSelection/>} />
           <Route path='/therapist/:accountId' element={<TherapistProfile/>} />
-          TherapistProfile
+          <Route path='/therapist/:therapistId/appointment' element={<BookAppointment/>} />
+          
           </Route>
     </Routes>
     </>

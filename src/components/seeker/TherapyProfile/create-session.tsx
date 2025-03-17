@@ -1,5 +1,5 @@
 // src/pages/SessionCreator.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './calendar.module.css'; // CSS module import
 
 // Interface for the session schema
@@ -29,11 +29,6 @@ const SessionCreator: React.FC = () => {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-  useEffect(()=>{
-    const getExistingSession = async()=>{
-      
-    }
-  })
 
   // Generate calendar days
   const getCalendarDays = (date: Date) => {
