@@ -43,8 +43,20 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const [emergencyReason, setEmergencyReason] = useState("");
   const [therapist, setTherapist] = useState<Therapist>();
   const [patient, setPatient] = useState<Patient>();
+  const [currentAppointment, setCurrentAppointment] = useState<Appointment>()
   const[isLoading, setIsLoading] = useState(false)
   const nav = useNavigate()
+  useEffect(()=>{
+    const getAppointment = async () => {
+      if(therapist!=undefined && patient!=undefined){
+      const currentResponse = await getCurrentAppointment(therapist.therapistId,patient.patientId)
+      if(currentResponse.statusCode ===200){
+        setCurrentAppointment(currentResponse.result);
+      }
+    }
+  }
+    getAppointment()
+  },[therapist,patient])
 
   useEffect(() => {
     const getTherapist = async ()=>{
@@ -182,7 +194,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     setOpenEmergencyDialog(false);
   };
 
-  if (!currentChat || !currentChat.chatGroupId) {
+  if (!currentChat || currentChat.chatGroupId.trim().length === 0) {
     return (
       <Box
         sx={{
@@ -246,14 +258,10 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
 
   const handleEmergencyEnd= async()=>{
     setIsLoading(true)
-    if(therapist!=undefined && patient!=undefined){
-      const currentResponse = await getCurrentAppointment(therapist.therapistId,patient.patientId)
-      if(currentResponse.statusCode===200){
+    if(therapist!=undefined && patient!=undefined && currentAppointment!=undefined){
         const currentLocalAccount = sessionStorage.getItem('account')
         if(currentLocalAccount){
           const currentAccount:AccountProps = JSON.parse(currentLocalAccount)
-          const currentAppointment:Appointment = currentResponse.result
-          console.log("currentAppointment:",currentAppointment)
           const emergencyEndrequest:EmergencyEndRequest={
             appointmentId: currentAppointment.appointmentId,
             accountId: currentAccount.UserId,
@@ -263,10 +271,11 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           if(emergencyEndResponse.statusCode===200){
             handleConfirmEmergency
             alert("Emergency End Success")
+            sessionStorage.removeItem("appointment")
             nav("/")
           }
         }
-      }else{
+      else{
         alert("Cannot Emergency End")
         handleConfirmEmergency
       }
@@ -363,48 +372,53 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             <div ref={messagesEndRef} />
           </Box>
         </Paper>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          gap={2}
-          px={{ xs: 2, md: 4 }}
-          py={1}
-          position="absolute"
-          bottom={0}
-          left={0}
-          width="90%"
-        >
-          <IconButton>
-            <AddCircleIcon />
-          </IconButton>
-          <IconButton>
-            <MoodIcon />
-          </IconButton>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Text messages here"
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconComponentNode />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleSendMessage}>
-                    <SendIcon style={{ color: "#0077b6" }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{ borderRadius: "10px", border: "2px solid #0077b6" }}
-          />
-        </Box>
+            {currentAppointment!=null&&(currentAppointment.status!=="CANCELED"&&currentAppointment.status!=="DECLINED")? 
+                 <Box
+                 display="flex"
+                 alignItems="center"
+                 justifyContent="center"
+                 gap={2}
+                 px={{ xs: 2, md: 4 }}
+                 py={1}
+                 position="absolute"
+                 bottom={0}
+                 left={0}
+                 width="90%"
+               >
+                 <IconButton>
+                   <AddCircleIcon />
+                 </IconButton>
+                 <IconButton>
+                   <MoodIcon />
+                 </IconButton>
+                 <TextField
+                   fullWidth
+                   variant="outlined"
+                   placeholder="Text messages here"
+                   value={inputMessage}
+                   onChange={(e) => setInputMessage(e.target.value)}
+                   onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                   InputProps={{
+                     startAdornment: (
+                       <InputAdornment position="start">
+                         <IconComponentNode />
+                       </InputAdornment>
+                     ),
+                     endAdornment: (
+                       <InputAdornment position="end">
+                         <IconButton onClick={handleSendMessage}>
+                           <SendIcon style={{ color: "#0077b6" }} />
+                         </IconButton>
+                       </InputAdornment>
+                     ),
+                   }}
+                   sx={{ borderRadius: "10px", border: "2px solid #0077b6" }}
+                 />
+               </Box>
+              :null
+            }
+     
+
       </Box>
 
       {/* Thêm indicator trạng thái kết nối */}
