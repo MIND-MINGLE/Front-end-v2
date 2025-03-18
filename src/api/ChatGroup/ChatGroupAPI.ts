@@ -2,15 +2,14 @@ import { baseUrl, headers } from "../Url";
 import { axiosCreate, axiosRead } from "../AxiosCRUD";
 import { requestGroupChat, userInGroup } from "../../interface/IAccount";
 
-const url = baseUrl + "";
+const url = baseUrl;
 
-const getGroupChatByAccountId = async (accountId: string) => {
+export const getGroupChatByAccountId = async (accountId: string) => {
     const props = {
         data: null,
         url: url+"/UsersInGroup/getGroupChatByAccountId/"+accountId,
         headers: headers
     };
-
     const result = await axiosRead(props);
 
     if (result.success) {
@@ -21,6 +20,24 @@ const getGroupChatByAccountId = async (accountId: string) => {
         return result.error;
     }
 };
+
+export const getAllClientByChatGroupId = async (chatgroupId: string) => {
+    const props = {
+        data: null,
+        url: url+"/UsersInGroup/getallclient/"+chatgroupId,
+        headers: headers
+    };
+    const result = await axiosRead(props);
+
+    if (result.success) {
+        console.log("Clients fetched successfully:", result.data);
+        return result.data;
+    } else {
+        console.error("Error fetching Clients:", result.error);
+        return result.error;
+    }
+};
+
 export const createGroupChat = async (data: requestGroupChat) => {
     const props = {
         data: data,
@@ -55,6 +72,3 @@ export const addUserInGroup = async (data: userInGroup) => {
         return result.error;
     }
 };
-
-
-export { getGroupChatByAccountId };

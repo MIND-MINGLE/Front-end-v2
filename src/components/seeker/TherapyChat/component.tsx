@@ -8,7 +8,7 @@ import Icon4 from "@mui/icons-material/MusicNote";
 import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Warning";
-import { Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material";
+import { Box, IconButton, InputAdornment, Paper, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Alert } from "@mui/material";
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
@@ -17,20 +17,17 @@ import { HubConnection } from "@microsoft/signalr";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Therapist } from "../../../interface/IAccount";
+import { getCurrentAppointment } from "../../../api/Appointment/appointment";
+import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
+import { getTherapistById } from "../../../api/Therapist/Therapist";
+import { getPatientByAccountId } from "../../../api/Account/Seeker";
+import { useNavigate } from "react-router";
 
 interface RightComponentsProps {
-  currentChat: {
-    chatGroupId: string;
-    userInGroupId: string;
-    name:string
-  } | null; // Cho phép null
+  currentChat: ChatProps | null; // Cho phép null
 }
 
-interface ChatMessage {
-  accountId: string;
-  content: string;
-  messageId?: string; // Thêm nếu server hỗ trợ
-}
 
 const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -42,8 +39,30 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const [currentAccountId, setCurrentAccountId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
+  const [openEmergencyDialog, setOpenEmergencyDialog] = useState(false); // Added state for dialog
+  const [emergencyReason, setEmergencyReason] = useState("");
+  const [therapist, setTherapist] = useState<Therapist>();
+  const [patient, setPatient] = useState<Patient>();
+  const[isLoading, setIsLoading] = useState(false)
+  const nav = useNavigate()
 
   useEffect(() => {
+    const getTherapist = async ()=>{
+      if(currentChat!=null && currentChat?.therapistId.trim()!==""){
+        const response = await getTherapistById(currentChat.therapistId);
+        if(response.statusCode === 200){
+          setTherapist(response.result);
+        }
+      }
+    } 
+    const getPatient = async ()=>{
+      if(currentChat!=null && currentChat?.patientId.trim()!==""){
+        const response = await getPatientByAccountId(currentChat.patientId);
+        if(response.statusCode === 200){
+          setPatient(response.result);
+        }
+      }
+    }
     const initializeChat = async () => {
       try {
         // Fetch user data (same as V1)
@@ -89,7 +108,8 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     };
   
     initializeChat();
-  
+    getTherapist();
+    getPatient();
     return () => {
       if (hubConnection) {
         hubConnection.stop();
@@ -140,6 +160,27 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     : hubConnection?.state === "Connecting"
       ? "Đang kết nối..."
       : "Mất kết nối";
+
+  // Added dialog handlers
+  const handleOpenEmergencyDialog = () => {
+    setOpenEmergencyDialog(true);
+  };
+
+  const handleCloseEmergencyDialog = () => {
+    setOpenEmergencyDialog(false);
+  };
+
+  const handleConfirmEmergency = () => {
+    // Placeholder for your logic
+    console.log("Emergency confirmed");
+    setOpenEmergencyDialog(false);
+  };
+
+  const handleCancelEmergency = () => {
+    // Placeholder for your logic
+    console.log("Emergency canceled");
+    setOpenEmergencyDialog(false);
+  };
 
   if (!currentChat || !currentChat.chatGroupId) {
     return (
@@ -203,11 +244,34 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   }
   
 
-  function EndAppointmentDialog (){
-    return(
-      <>
-      </>
-    )
+  const handleEmergencyEnd= async()=>{
+    setIsLoading(true)
+    if(therapist!=undefined && patient!=undefined){
+      const currentResponse = await getCurrentAppointment(therapist.therapistId,patient.patientId)
+      if(currentResponse.statusCode===200){
+        const currentLocalAccount = sessionStorage.getItem('account')
+        if(currentLocalAccount){
+          const currentAccount:AccountProps = JSON.parse(currentLocalAccount)
+          const currentAppointment:Appointment = currentResponse.result
+          console.log("currentAppointment:",currentAppointment)
+          const emergencyEndrequest:EmergencyEndRequest={
+            appointmentId: currentAppointment.appointmentId,
+            accountId: currentAccount.UserId,
+            reason: emergencyReason
+          }
+          const emergencyEndResponse = await createEmergencyEnd(emergencyEndrequest)
+          if(emergencyEndResponse.statusCode===200){
+            handleConfirmEmergency
+            alert("Emergency End Success")
+            nav("/")
+          }
+        }
+      }else{
+        alert("Cannot Emergency End")
+        handleConfirmEmergency
+      }
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -241,7 +305,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             {currentChat.name}
           </Typography>
           <Box display="flex" gap={2}>
-            <IconButton >
+            <IconButton onClick={handleOpenEmergencyDialog}>
               <Icon1 color="error"/>
             </IconButton>
             <IconButton onClick={() => { shrinkPage(); setShowExtraComponent("call"); setFormat("call"); }}>
@@ -378,6 +442,49 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           {error}
         </Box>
       )}
+
+      {/* Added Emergency End Dialog */}
+      <Dialog
+        open={openEmergencyDialog}
+        onClose={handleCloseEmergencyDialog}
+        aria-labelledby="emergency-end-dialog-title"
+        aria-describedby="emergency-end-dialog-description"
+        sx={{backgroundColor:"rgba(255, 0, 0, 0.5)"}}
+      >
+        <DialogTitle id="emergency-end-dialog-title">
+          <Box display="flex" alignItems="center" gap={1}>
+            <Icon1 color="error" />
+            <Typography variant="h6">Emergency End Detected</Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="emergency-end-dialog-description">
+            EMERGENCY END DETECTED! DO YOU WANT TO PROCEED?
+          </DialogContentText>
+          <TextField
+            color="error"
+            fullWidth
+            variant="outlined"
+            label="Reason for Emergency End"
+            value={emergencyReason}
+            onChange={(e) => setEmergencyReason(e.target.value)}
+            margin="normal"
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button 
+          loading={isLoading}
+          onClick={handleCancelEmergency} color="primary">
+            No
+          </Button>
+          <Button 
+            loading={isLoading}
+          onClick={()=>{handleEmergencyEnd()}} color="error" variant="contained">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

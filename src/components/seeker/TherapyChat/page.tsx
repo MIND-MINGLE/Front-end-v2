@@ -2,18 +2,16 @@ import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import RightComponents from "./component";
 import ChatProfileList from "./tabs";
+import { ChatProps } from "../../../interface/IAccount";
 
-interface chatProps {
-  chatGroupId: string;
-  userInGroupId: string;
-   name:string
-}
 
 const TherapyChatPage: React.FC = () => {
-  const [currentChat, setCurrentChat] = useState<chatProps>({
+  const [currentChat, setCurrentChat] = useState<ChatProps>({
     chatGroupId: "",
     userInGroupId: "",
-    name:""
+    name:"",
+    therapistId:"",
+    patientId:"",
   });
   const [isSeeker, setIsSeeker] = useState(false);
   useEffect(()=>{

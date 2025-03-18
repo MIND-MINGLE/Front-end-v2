@@ -57,3 +57,21 @@ export const getAppointmentByTherapistId = async(data:string)=> {
     }
 
 }
+export const getCurrentAppointment = async(therapistId:string,patientId:string)=> {
+    const props = {
+        data: null,
+        url: appointmenttUrl+"/"+therapistId+"/"+patientId,
+        headers: headers
+    }
+    console.log(appointmenttUrl+"/"+therapistId+"/"+patientId)
+    const result = await axiosRead(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+
+}

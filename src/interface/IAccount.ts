@@ -83,6 +83,35 @@ interface userInGroup{
    clientId: string
    chatGroupId: string
 }
+interface ChatProfile {
+  chatGroupId: string;
+  adminId: string;
+  adminName: string;
+  userInGroupId: string;
+}
+interface ChatProps {
+  chatGroupId: string;
+  userInGroupId: string;
+  name:string,
+  therapistId:string
+  patientId:string
+}
+interface ChatMessage {
+  accountId: string;
+  content: string;
+  messageId?: string; // Thêm nếu server hỗ trợ
+}
+interface EmergencyEndRequest {
+  appointmentId: string,
+  accountId: string,
+  reason: string
+}
+interface UserInGroup {
+  chatGroupId: string;
+  clientId: string;
+  accountName: string;
+  userInGroupId: string;
+}
 
  
-export type {AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+export type {UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
