@@ -60,7 +60,6 @@ const TherapistSelection: React.FC = () => {
 
   return (
     <>
-      <NavigationRail />
       <div className={styles.container}>
         {isLoading ? (
           <LoadingScreen />

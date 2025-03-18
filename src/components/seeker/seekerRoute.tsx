@@ -11,6 +11,7 @@ import SummaryPage from './TherapyMatchingForm/SummaryPage'
 import TherapistSelection from './TherapyProfile/therapyConnector'
 import { TherapistProfile } from './TherapyProfile/viewtherapist'
 import BookAppointment from './TherapyProfile/bookAppointment'
+import NavigationRail from './NavBar'
 
 export default function SeekerRoute() {
   const nav = useNavigate()
@@ -25,7 +26,7 @@ export default function SeekerRoute() {
   },[])
   return (
     <>
-  
+    <NavigationRail />
     <Routes>
       <Route element={<ProtectedRoutes/>}>
           <Route path='/' element={<SeekerPage />} />

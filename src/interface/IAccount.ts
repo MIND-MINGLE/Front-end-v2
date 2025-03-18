@@ -50,7 +50,7 @@ interface Patient {
 
 
 // Interface for the appointment schema
-interface Appointment {
+interface AppointmentRequest {
   patientId: string;
   therapistId: string;
   coWorkingSpaceId: string | null;
@@ -59,6 +59,19 @@ interface Appointment {
   appointmentType: 'OFFLINE' | 'ONLINE';
   totalFee: number;
   platformFee: number;
+}
+interface Appointment {
+  appointmentId: string;
+  patientId: string;
+  therapistId: string;
+  coWorkingSpaceId: string | null;
+  sessionId: string;
+  emergencyEndId: string | null;
+  appointmentType: "ONLINE" | "OFFLINE"; // Assuming possible values based on context
+  status: "PENDING" | "APPROVED" | "DECLINED" | "CANCELED";
+  totalFee: number;
+  platformFee: number;
+  createdAt: string; // ISO 8601 date string
 }
 
 interface requestGroupChat{
@@ -72,4 +85,4 @@ interface userInGroup{
 }
 
  
-export type {userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+export type {AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}

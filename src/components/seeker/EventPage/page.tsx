@@ -43,7 +43,6 @@ const HistoryPage: React.FC = () => {
         left={0}
         bgcolor="white"
       >
-        <NavigationRail />
       </Box>
     </Box>
   );

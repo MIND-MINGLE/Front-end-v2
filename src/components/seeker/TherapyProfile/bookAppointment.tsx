@@ -19,7 +19,7 @@ import NavigationRail from '../NavBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPatientByAccountId } from '../../../api/Account/Seeker';
 import { getTherapistByTherapistId } from '../../../api/Therapist/Therapist';
-import { Appointment, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
+import { Appointment, AppointmentRequest, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
 import { formatVnd } from '../../../services/common';
 import { RegisterAppointment } from '../../../api/Appointment/appointment';
 import { addUserInGroup, createGroupChat } from '../../../api/ChatGroup/ChatGroupAPI';
@@ -45,7 +45,6 @@ const BookingAppointment: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appointmentType, setAppointmentType] = useState<'OFFLINE' | 'ONLINE'>('OFFLINE');
-  const [userInGroup, setUserInGroup] = useState<userInGroup>();
   const nav = useNavigate();
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -164,7 +163,7 @@ const BookingAppointment: React.FC = () => {
     setIsLoading(true)
     if (selectedSession && patient && therapist) {
       const { totalFee, platformFee } = calculateFees(selectedSession, therapist.pricePerHour || 0);
-      const appointment: Appointment = {
+      const appointment: AppointmentRequest = {
         patientId: patient.patientId,
         therapistId: therapist.therapistId,
         coWorkingSpaceId: null, // Nullable, set to null for now
@@ -186,7 +185,6 @@ const BookingAppointment: React.FC = () => {
           const responseGroupchat = await createGroupChat(groupchat);
           if (responseGroupchat.statusCode === 200) {
             console.log('Groupchat created successfully!',);
-            setUserInGroup(responseGroupchat.result)
             const userInGroupData:userInGroup = {
               clientId: patient.accountId,
               chatGroupId: responseGroupchat.result.chatGroupId
@@ -225,7 +223,6 @@ const BookingAppointment: React.FC = () => {
   return (
     <>
       {isLoading ? <LoadingScreen /> : null}
-      <NavigationRail />
       <div className={styles.calendarContainer}>
         {therapist && (
           <Typography

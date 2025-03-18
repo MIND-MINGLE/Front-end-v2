@@ -26,7 +26,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const nav = useNavigate()
   const returnHome = () => {
-    nav("/seeker")
+    nav("../")
   }
   useEffect(() => {
     const fetchGroupChats = async () => {

@@ -1,5 +1,3 @@
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
 import {
     Box,
     Button,
@@ -14,7 +12,6 @@ import {
     Divider,
     Stack,
     Tooltip,
-    Fade,
 } from '@mui/material';
 import React, { useState } from 'react';
 import VisaLogo from './assets/visa.png'; // Thêm hình ảnh Visa (tải từ internet hoặc tài nguyên)
