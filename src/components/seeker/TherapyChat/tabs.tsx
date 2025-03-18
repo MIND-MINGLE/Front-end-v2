@@ -15,6 +15,7 @@ interface ChatProfile {
 interface chatProps {
   chatGroupId: string;
   userInGroupId: string;
+  name:string
 }
 
 interface ChatProfileListProps {
@@ -86,6 +87,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                   setCurrentChat({
                     chatGroupId: profile.chatGroupId,
                     userInGroupId: profile.userInGroupId,
+                    name: profile.adminName,
                   }
                   )
                   setOnSelect(profile.chatGroupId)

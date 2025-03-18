@@ -7,7 +7,7 @@ import Icon5 from "@mui/icons-material/MoreVert";
 import Icon4 from "@mui/icons-material/MusicNote";
 import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
-import Icon1 from "@mui/icons-material/Settings";
+import Icon1 from "@mui/icons-material/Warning";
 import { Box, IconButton, InputAdornment, Paper, TextField, Typography } from "@mui/material";
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
@@ -22,6 +22,7 @@ interface RightComponentsProps {
   currentChat: {
     chatGroupId: string;
     userInGroupId: string;
+    name:string
   } | null; // Cho phép null
 }
 
@@ -200,6 +201,14 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
       </Box>
     );
   }
+  
+
+  function EndAppointmentDialog (){
+    return(
+      <>
+      </>
+    )
+  }
 
   return (
     <Box display="flex" width="100%" height="100%" position="relative" bgcolor="white" overflow="hidden">
@@ -229,11 +238,11 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             <IconComponentNode />
           </IconButton>
           <Typography variant="h6" color="#1d1b20" flex={1}>
-            Name
+            {currentChat.name}
           </Typography>
           <Box display="flex" gap={2}>
-            <IconButton>
-              <Icon1 />
+            <IconButton >
+              <Icon1 color="error"/>
             </IconButton>
             <IconButton onClick={() => { shrinkPage(); setShowExtraComponent("call"); setFormat("call"); }}>
               <Icon2 />

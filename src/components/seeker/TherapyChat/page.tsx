@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import NavigationRail from "../NavBar";
 import React, { useEffect, useState } from "react";
 import RightComponents from "./component";
 import ChatProfileList from "./tabs";
@@ -7,12 +6,14 @@ import ChatProfileList from "./tabs";
 interface chatProps {
   chatGroupId: string;
   userInGroupId: string;
+   name:string
 }
 
 const TherapyChatPage: React.FC = () => {
   const [currentChat, setCurrentChat] = useState<chatProps>({
     chatGroupId: "",
     userInGroupId: "",
+    name:""
   });
   const [isSeeker, setIsSeeker] = useState(false);
   useEffect(()=>{
