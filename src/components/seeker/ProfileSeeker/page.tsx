@@ -33,7 +33,7 @@ const SeekerPage = (): React.JSX.Element => {
                 left={0}
                 zIndex={1000}
             >
-                <NavigationRail />
+        
             </Box>
 
             {/* Part 2: Main Content */}

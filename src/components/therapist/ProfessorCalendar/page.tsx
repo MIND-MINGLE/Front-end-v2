@@ -5,7 +5,7 @@ import Frame from "./index";
 import Footer from "../../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../../coworking/Components/CopyrightFooter/CopyrightFooter";
 
-const PersonalInformation: React.FC = () => {
+const BookingInformation: React.FC = () => {
   return (
     <div className={styles.professorCalendar}>
       <HeaderProf />
@@ -20,4 +20,4 @@ const PersonalInformation: React.FC = () => {
   );
 };
 
-export default PersonalInformation;
+export default BookingInformation;

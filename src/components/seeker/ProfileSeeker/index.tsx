@@ -112,8 +112,9 @@ export const Frame = () => {
     const logout = () => {
         sessionStorage.removeItem("user");
         localStorage.removeItem("token");
+        localStorage.removeItem("patient")
         sessionStorage.removeItem("account");
-        nav("/");
+        nav("/",{replace:true});
     };
 
     const formatDate = (dateString: string) => {
@@ -163,7 +164,7 @@ export const Frame = () => {
                 setSnackbar({
                     open: true,
                     message: 'Đã lưu ảnh nhưng có thể cần refresh để hiển thị chính xác',
-                    severity: 'warning'
+                    severity: 'success'
                 });
             }
         } catch (err) {

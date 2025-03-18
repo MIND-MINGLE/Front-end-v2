@@ -5,6 +5,7 @@ import {
     Edit,
     Facebook,
     Google,
+    Logout,
     Phone,
 } from "@mui/icons-material";
 import {
@@ -22,9 +23,17 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router";
 
 
 export const Frame = () => {
+    const nav = useNavigate();
+    const logout = () => {
+        sessionStorage.removeItem("user");
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("account");
+        nav("/");
+    };
     return (
         <Box display="flex" justifyContent="center" py={5} px={2}>
             <Box width="100%" maxWidth="1200px">
@@ -36,7 +45,7 @@ export const Frame = () => {
                             borderColor="black"
                             borderRadius={1}
                             bgcolor="white"
-                            p={3}
+                            p={4}
                         >
                             <Box display="flex" flexDirection="column" alignItems="center">
                                 <Avatar
@@ -87,6 +96,23 @@ export const Frame = () => {
                                     <IconButton size="small">
                                         <Delete fontSize="small" />
                                     </IconButton>
+                                </Box>
+                               <Divider sx={{ borderColor: "#E3F2FD" }} />
+                                 <Box
+                                                onClick={logout}
+                                                display="flex"
+                                                alignItems="center"
+                                                 mt={2}
+                                                sx={{
+                                                cursor: "pointer",
+                                               transition: "all 0.3s ease",
+                                               "&:hover": { bgcolor: "#FFEBEE", borderRadius: 1 },
+                                             }}
+                                              >
+                                          <Logout color="error" />
+                                       <Typography variant="body2" color="error" ml={2} flexGrow={1}>
+                                      Sign Out
+                                    </Typography>
                                 </Box>
                             </Box>
                         </Box>

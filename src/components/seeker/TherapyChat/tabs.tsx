@@ -1,24 +1,15 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, IconButton, Avatar } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { getGroupChatByAccountId } from "../../../api/ChatGroup/ChatGroupAPI";
-import { AccountProps } from "../../../interface/IAccount";
+import { getAllClientByChatGroupId, getGroupChatByAccountId } from "../../../api/ChatGroup/ChatGroupAPI";
+import { AccountProps, ChatProfile, ChatProps, UserInGroup } from "../../../interface/IAccount";
 import LoadingScreen from "../../common/LoadingScreen";
 import { useNavigate } from "react-router";
 
-interface ChatProfile {
-  chatGroupId: string;
-  adminId: string;
-  adminName: string;
-  userInGroupId: string;
-}
-interface chatProps {
-  chatGroupId: string;
-  userInGroupId: string;
-}
+
 
 interface ChatProfileListProps {
-  setCurrentChat: React.Dispatch<React.SetStateAction<chatProps>>
+  setCurrentChat: React.Dispatch<React.SetStateAction<ChatProps>>
 }
 const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   const [profiles, setProfiles] = useState<ChatProfile[]>();
@@ -26,7 +17,7 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const nav = useNavigate()
   const returnHome = () => {
-    nav("/seeker")
+    nav("../")
   }
   useEffect(() => {
     const fetchGroupChats = async () => {
@@ -43,6 +34,29 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
     };
     fetchGroupChats();
   }, []);
+  const getChatGroupInfo = async (profile:ChatProfile) => {
+    const usersInGroup = await getAllClientByChatGroupId( profile.chatGroupId)
+    console.log("usersInGroup:",usersInGroup)
+    if(usersInGroup.statusCode===200){
+      const otherUser:UserInGroup = usersInGroup.result.find(
+        (item:UserInGroup) => item.accountName !== profile.adminName
+      );
+      console.log("otherUser:",otherUser)
+      if(otherUser){
+        setCurrentChat({
+          chatGroupId: profile.chatGroupId,
+          userInGroupId: profile.userInGroupId,
+          name: profile.adminName,
+          therapistId: profile.adminId,
+          patientId: otherUser.clientId,
+        }
+        )
+      }
+      else{
+        alert("Cannot Open Chat")
+      }
+    }
+}
 
   return (
     <>
@@ -83,21 +97,16 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
                 backgroundColor: onSelect === profile.chatGroupId ? "#A9D2FF" : "#3d9aff", padding: "10px", borderRadius: "10px", cursor: "pointer"
               }}
                 onClick={() => {
-                  setCurrentChat({
-                    chatGroupId: profile.chatGroupId,
-                    userInGroupId: profile.userInGroupId,
-                  }
-                  )
+                  getChatGroupInfo(profile)
                   setOnSelect(profile.chatGroupId)
                   //alert("Click On Group: "+profile.chatGroupId)
-                  // We lost the chat group Id, so SignalR can't conenct
-                  // FUCKING GOD JUST KILL ME ALREADY HOLY FUCK
+                  // We lost the chat group Id, so SignalR can't connect
+                  // JESUS GOD JUST KILL ME ALREADY HOLY HELL
                 }}
               >
                 <Avatar sx={{ zIndex: 0, bgcolor: "#6BA6FF", marginRight: "10px" }}>{profile.adminName[0]}</Avatar>
                 <Box>
                   <Typography fontWeight="bold" color="white">{profile.adminName}</Typography>
-                  <Typography color="white">{profile.userInGroupId}</Typography>
                 </Box>
                 {/* TODO */}
                 <Typography sx={{ marginLeft: "auto", color: "white" }}>{ }</Typography>

@@ -1,23 +1,29 @@
 import { Box } from "@mui/material";
-import NavigationRail from "../NavBar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RightComponents from "./component";
 import ChatProfileList from "./tabs";
+import { ChatProps } from "../../../interface/IAccount";
 
-interface chatProps {
-  chatGroupId: string;
-  userInGroupId: string;
-}
 
 const TherapyChatPage: React.FC = () => {
-  const [currentChat, setCurrentChat] = useState<chatProps>({
+  const [currentChat, setCurrentChat] = useState<ChatProps>({
     chatGroupId: "",
     userInGroupId: "",
+    name:"",
+    therapistId:"",
+    patientId:"",
   });
+  const [isSeeker, setIsSeeker] = useState(false);
+  useEffect(()=>{
+    const sessionAccount = sessionStorage.getItem('account');
+    if(sessionAccount){
+        const data = JSON.parse(sessionAccount)
+        setIsSeeker(data.Role === "seeker")
+    }
+  },[])
 
   return (
     <>
-      <NavigationRail />
       <Box
         display="flex"
         flexDirection={{ md: "row" }}
@@ -27,9 +33,9 @@ const TherapyChatPage: React.FC = () => {
         {/* Sidebar */}
         <Box
           minWidth={{ xs: 150, md: 250 }}
-          width={{ xs: "5vw", md: "15vw" }}
-          marginLeft={{ sx: 0, md: "70px" }}
-          paddingLeft={{ sx: 0, md: 5 }}
+          width={{ xs: "5vw", md: "vw" }}
+          marginLeft={{ sx: 0, md: isSeeker?"70px":0 }}
+          paddingLeft={{ sx: 0, md: isSeeker?5:0 }}
           bgcolor="#f5f5f5" // Màu nền sidebar
           display="flex"
           flexDirection="column"

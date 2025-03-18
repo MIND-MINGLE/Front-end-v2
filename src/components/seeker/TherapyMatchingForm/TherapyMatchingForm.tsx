@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router'; // Import useNavigate for navigation
 import styles from './TherapyMatchingForm.module.css'; // Import your CSS module
 import { GetAllQuestionCategory } from '../../../api/Category/Category';
+import { Button, Typography } from '@mui/material';
 
 // Define TypeScript interfaces for the schema
 interface Answer {
@@ -214,9 +215,36 @@ const DynamicForm: React.FC = () => {
   );
 };
 
-// Example Usage
-const App: React.FC = () => {
-  return <DynamicForm />;
-};
+function HasAppointmentForm(){
+  const navigate = useNavigate();
+  const gotoChatPage=()=>{
+    navigate('therapy-chat')
+  }
+  return(
+    <div className={styles.container}>
+    <div className={styles.content}>
+      <h1 className={styles.title}>Mental Health Assessment</h1>
+      <hr className={styles.divider} />
+      <Typography marginBottom={2} className={styles.subtitle}>
+        You already have an appointment with your doctor. No need to fill the form again.
+      </Typography>
+      <button
+        onClick={gotoChatPage}
+        className={styles.submitButton}
+      >
+        Go To Chat Page
+      </button>
+    </div>
+  </div>
+  )
+}
 
-export default App;
+// Example Usage
+interface TherapyMatchingFormProps {
+  isAppointment: boolean;
+}
+
+export default function TherapyMatchingForm({ isAppointment }: TherapyMatchingFormProps) {
+  return isAppointment?<HasAppointmentForm/>:<DynamicForm/>;
+  //return <HasAppointmentForm/>;
+};

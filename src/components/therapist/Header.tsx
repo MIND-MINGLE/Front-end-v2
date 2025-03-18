@@ -99,7 +99,7 @@ const Header: React.FC = () => {
             <SavedOffices />
           </div>
         )}
-
+        <Link to="chat">
         <button
           className={styles.navButton}
           aria-label="Chat"
@@ -107,6 +107,7 @@ const Header: React.FC = () => {
         >
           <img src="/ChatDots.svg" alt="Chat icon" />
         </button>
+        </Link>
         {showChatList && (
           <div ref={chatListRef} className={`${styles.dropdown}`}>
             <ChatList />
@@ -127,7 +128,7 @@ const Header: React.FC = () => {
           </div>
         )}
         {/* Profile icon */}
-        <Link to="/LandingPage/PersonalInformation">
+        <Link to="profile">
           <button className={styles.navMenu} aria-label="Profile">
             <img src="/Ellipse 11.svg" alt="Profile icon" />
           </button>
