@@ -30,7 +30,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { updateUserAvatar } from "../../../api/Account/Account";
-
+import LoadingScreen from "../../common/LoadingScreen";
 export const Frame = () => {
     const [openEdit, setOpenEdit] = useState(false);
     const [profile, setProfile] = useState({
@@ -114,7 +114,7 @@ export const Frame = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("patient")
         sessionStorage.removeItem("account");
-        nav("/",{replace:true});
+        nav("/", { replace: true });
     };
 
     const formatDate = (dateString: string) => {
@@ -185,11 +185,7 @@ export const Frame = () => {
     };
 
     if (loading) {
-        return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <CircularProgress sx={{ color: "#027FC1" }} />
-            </Box>
-        );
+        return <LoadingScreen />;
     }
 
     if (error) {

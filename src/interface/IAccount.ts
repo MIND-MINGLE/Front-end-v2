@@ -1,24 +1,23 @@
-interface AccountProps{
-    Role: string
-    UserId: string
+interface AccountProps {
+  Role: string
+  UserId: string
 }
-interface AccountRequestProps{
+interface AccountRequestProps {
   email: string,
   accountName: string,
   password: string,
   confirmPassword: string
 }
-interface LoginProps{
+interface LoginProps {
   emailOrAccountName: string,
   password: string
 }
-interface VerifyProps{
+interface VerifyProps {
   accountId: string,
   verificationCode: string,
 }
 
-interface SeekerCreateProps
-{
+interface SeekerCreateProps {
   accountId: string,
   firstName: string,
   lastName: string,
@@ -37,6 +36,7 @@ interface Therapist {
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
+  avatar?: string;
 }
 interface Patient {
   patientId: string;
@@ -74,14 +74,14 @@ interface Appointment {
   createdAt: string; // ISO 8601 date string
 }
 
-interface requestGroupChat{
+interface requestGroupChat {
   adminId: string
 }
 
 
-interface userInGroup{
-   clientId: string
-   chatGroupId: string
+interface userInGroup {
+  clientId: string
+  chatGroupId: string
 }
 interface ChatProfile {
   chatGroupId: string;
@@ -92,9 +92,9 @@ interface ChatProfile {
 interface ChatProps {
   chatGroupId: string;
   userInGroupId: string;
-  name:string,
-  therapistId:string
-  patientId:string
+  name: string,
+  therapistId: string
+  patientId: string
 }
 interface ChatMessage {
   accountId: string;
@@ -113,5 +113,5 @@ interface UserInGroup {
   userInGroupId: string;
 }
 
- 
-export type {UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+
+export type { UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient }

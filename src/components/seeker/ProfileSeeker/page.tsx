@@ -6,6 +6,7 @@ import Frame from './index';
 
 const SeekerPage = (): React.JSX.Element => {
     return (
+
         <Box
             width="100vw"
             height="100vh"
@@ -33,7 +34,7 @@ const SeekerPage = (): React.JSX.Element => {
                 left={0}
                 zIndex={1000}
             >
-        
+                <NavigationRail />
             </Box>
 
             {/* Part 2: Main Content */}
@@ -55,6 +56,7 @@ const SeekerPage = (): React.JSX.Element => {
                 </Box>
             </Box>
         </Box>
+
     );
 };
 
