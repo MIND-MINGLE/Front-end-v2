@@ -96,6 +96,7 @@ export const Frame = () => {
         gender: '',
         phoneNumber: ''
     });
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -156,20 +157,38 @@ export const Frame = () => {
     }, []);
 
     const formatDateForEdit = (dateString: string) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        const offset = date.getTimezoneOffset();
-        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
-        return localDate.toISOString().split('T')[0];
+        try {
+            if (!dateString) return '';
+
+            // Kiểm tra nếu dateString đã ở định dạng YYYY-MM-DD
+            if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                return dateString;
+            }
+
+            // Chuyển đổi từ định dạng dd/mm/yyyy sang yyyy-mm-dd
+            const [day, month, year] = dateString.split('/');
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return '';
+        }
     };
 
     const handleOpenEdit = () => {
-        setEditForm({
-            ...patientInfo,
-            patientId: patientInfo.patientId,
-            dateOfBirth: formatDateForEdit(patientInfo.dateOfBirth)
-        });
-        setOpenEdit(true);
+        try {
+            setEditForm({
+                ...patientInfo,
+                dateOfBirth: formatDateForEdit(patientInfo.dateOfBirth)
+            });
+            setOpenEdit(true);
+        } catch (error) {
+            console.error('Error in handleOpenEdit:', error);
+            setSnackbar({
+                open: true,
+                message: 'Có lỗi xảy ra khi mở form chỉnh sửa',
+                severity: 'error'
+            });
+        }
     };
 
     const handleCloseEdit = () => {
@@ -256,6 +275,9 @@ export const Frame = () => {
 
     const handleUpdateProfile = async () => {
         try {
+            // Disable nút ngay khi bắt đầu submit
+            setIsSubmitDisabled(true);
+
             const accountData = sessionStorage.getItem("account");
             if (!accountData) {
                 setSnackbar({
@@ -312,7 +334,10 @@ export const Frame = () => {
                 severity: 'error'
             });
         } finally {
-            // setLoading(false);
+            // Set timeout để enable lại nút sau 2 giây
+            setTimeout(() => {
+                setIsSubmitDisabled(false);
+            }, 2000);
         }
     };
 
@@ -815,7 +840,7 @@ export const Frame = () => {
                                     fullWidth
                                     size="small"
                                     type="date"
-                                    value={editForm.dateOfBirth}
+                                    value={editForm.dateOfBirth || ''}
                                     onChange={(e) => setEditForm(prev => ({
                                         ...prev,
                                         dateOfBirth: e.target.value
@@ -824,6 +849,9 @@ export const Frame = () => {
                                         "& .MuiOutlinedInput-root": {
                                             borderRadius: 2,
                                         },
+                                    }}
+                                    InputLabelProps={{
+                                        shrink: true,
                                     }}
                                 />
                             </Grid>
@@ -884,15 +912,15 @@ export const Frame = () => {
                             <Button
                                 variant="contained"
                                 onClick={handleUpdateProfile}
+                                disabled={isSubmitDisabled}
                                 sx={{
-                                    borderRadius: 2,
                                     bgcolor: '#027FC1',
                                     '&:hover': {
-                                        bgcolor: '#1B9DF0',
+                                        bgcolor: '#0073B7',
                                     },
                                 }}
                             >
-                                Lưu thay đổi
+                                {isSubmitDisabled ? 'Đang xử lý...' : 'Lưu thay đổi'}
                             </Button>
                         </Box>
                     </Box>
