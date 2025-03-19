@@ -183,14 +183,12 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   };
 
   const handleConfirmEmergency = () => {
-    // Placeholder for your logic
-    console.log("Emergency confirmed");
+   // console.log("Emergency confirmed");
     setOpenEmergencyDialog(false);
   };
 
   const handleCancelEmergency = () => {
-    // Placeholder for your logic
-    console.log("Emergency canceled");
+   // console.log("Emergency canceled");
     setOpenEmergencyDialog(false);
   };
 
@@ -372,7 +370,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             <div ref={messagesEndRef} />
           </Box>
         </Paper>
-            {currentAppointment!=null&&(currentAppointment.status!=="CANCELED"&&currentAppointment.status!=="DECLINED")? 
+            {!currentAppointment?.emergencyEndId? 
                  <Box
                  display="flex"
                  alignItems="center"

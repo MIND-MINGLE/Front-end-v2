@@ -3,7 +3,6 @@
 "use client";
 import { Box, Divider, Typography } from '@mui/material';
 import { JSX, useEffect, useState } from 'react';
-import NavigationRail from './NavBar';
 import Footer from '../coworking/Components/Footer/Footer';
 import CopyrightFooter from '../coworking/Components/CopyrightFooter/CopyrightFooter';
 import TherapyMatchingForm from './TherapyMatchingForm/TherapyMatchingForm';
@@ -12,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AccountProps, Appointment, Patient } from '../../interface/IAccount';
 import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
+import AppointmentTimer from '../common/appointmentTimer';
 
 
 const SeekerPage = (): JSX.Element => {
@@ -96,11 +96,9 @@ const SeekerPage = (): JSX.Element => {
         getPatient()
         getAppointment()
     },[])
-
-   
-
     return (
         <>
+            <AppointmentTimer getApp={isAppointment} />
             <Box
                 sx={{
                     background: "linear-gradient(180deg, #0077B6 0%, #1B9DF0 50%, #DFF6FF 100%)",
