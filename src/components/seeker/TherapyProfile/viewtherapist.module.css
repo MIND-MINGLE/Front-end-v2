@@ -1,0 +1,152 @@
+.container {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, rgba(144, 202, 249, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+.profileCard {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 24px !important;
+  backdrop-filter: blur(10px);
+}
+
+.profileCard:hover {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+.avatar {
+  width: 150px !important;
+  height: 150px !important;
+  margin: 0 auto !important;
+  border: 4px solid white;
+  box-shadow: 0 8px 24px rgba(0, 119, 182, 0.2);
+  background: linear-gradient(180deg, #0077B6 0%, #1B9DF0 100%) !important;
+}
+
+.name {
+  margin-top: 1rem !important;
+  font-size: 1.8rem !important;
+  color: #1a237e !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+
+.subtitle {
+  text-align: center !important;
+  margin-top: 0.5rem !important;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border-radius: 12px;
+  background: rgba(0, 119, 182, 0.05);
+}
+
+.contactItem:hover {
+  background: rgba(144, 202, 249, 0.2);
+}
+
+.contactIcon {
+  color: #1976d2;
+  margin-right: 0.8rem;
+  font-size: 1.2rem !important;
+}
+
+.infoCard {
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.97) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+.sectionTitle {
+  font-size: 1.8rem !important;
+  font-weight: 600 !important;
+  color: #0d47a1 !important;
+  margin-bottom: 1rem !important;
+}
+
+.infoLabel {
+  font-size: 0.85rem !important;
+  color: #78909c !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoValue {
+  font-size: 1.1rem !important;
+  color: #263238 !important;
+  font-weight: 500 !important;
+}
+
+.priceSection {
+  background: linear-gradient(135deg, #ffffff 35%, #6db5f0 100%);
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(25, 118, 210, 0.3);
+}
+
+.priceLabel {
+  font-size: 1rem !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.priceValue {
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
+.certificatesContainer {
+  display: flex;
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
+
+.certificateCard {
+  width: 140px;
+  height: 90px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.certificateCard:hover {
+  transform: scale(1.08);
+}
+
+.bookButton {
+  color: #fff !important;
+  background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
+  padding: 0.8rem 1.5rem !important;
+  border-radius: 10px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 5px 15px rgba(25, 118, 210, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.bookButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(25, 118, 210, 0.4) !important;
+}

@@ -162,7 +162,7 @@ const TherapistSelection: React.FC = () => {
                     </div>
 
                     <Link to={`../therapist/${therapist.accountId}`} className={styles.selectButton}>
-                      Select Therapist
+                      View Details
                     </Link>
                   </div>
                 </Grid>

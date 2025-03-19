@@ -36,7 +36,6 @@ interface Therapist {
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
-  avatar?: string;
 }
 interface Patient {
   patientId: string;
