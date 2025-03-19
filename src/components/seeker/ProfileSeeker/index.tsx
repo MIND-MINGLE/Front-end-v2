@@ -25,12 +25,41 @@ import {
     CircularProgress,
     Alert,
     Snackbar,
+    Select,
+    MenuItem,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
 import { updateUserAvatar } from "../../../api/Account/Account";
 import LoadingScreen from "../../common/LoadingScreen";
+import { getPatientByAccountId, updatePatientProfile } from "../../../api/Account/Seeker";
+import { getAccountById } from "../../../api/Account/Account";
+
+interface PatientInfo {
+    patientId: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    phoneNumber: string;
+}
+interface AccountInfo {
+    accountName: string;
+    email: string;
+    lastLogin: string;
+    isEmailVerified: boolean;
+    createdAt: string;
+}
+
+interface PatientUpdate {
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    gender: string;
+    phoneNumber: string;
+}
+
 export const Frame = () => {
     const [openEdit, setOpenEdit] = useState(false);
     const [profile, setProfile] = useState({
@@ -51,61 +80,102 @@ export const Frame = () => {
         severity: 'success' as 'success' | 'error'
     });
     const [openImageModal, setOpenImageModal] = useState(false);
+    const [patientInfo, setPatientInfo] = useState<PatientInfo>({
+        patientId: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: '',
+        phoneNumber: ''
+    });
+    const [editForm, setEditForm] = useState<PatientInfo>({
+        patientId: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: '',
+        phoneNumber: ''
+    });
 
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                console.log("Fetching profile...");
-
                 const accountData = sessionStorage.getItem("account");
-                console.log("Account data from sessionStorage:", accountData);
-
                 if (!accountData) {
                     setError("Không tìm thấy thông tin tài khoản trong sessionStorage.");
-                    setLoading(false);
                     return;
                 }
 
                 const { UserId } = JSON.parse(accountData);
-                console.log("Parsed UserId:", UserId);
-
                 if (!UserId) {
                     setError("Không tìm thấy UserId trong sessionStorage.");
-                    setLoading(false);
                     return;
                 }
 
-                const response = await axios.get(
-                    `https://mindmingle202.azurewebsites.net/api/Account/${UserId}`
-                );
-                console.log("API Response:", response.data);
+                // Fetch cả account và patient data
+                const [accountResponse, patientResponse] = await Promise.all([
+                    getAccountById(UserId),
+                    getPatientByAccountId(UserId)
+                ]);
 
-                const data = response.data;
-                if (data.isSuccess && data.result) {
+                // Xử lý account data
+                if (accountResponse?.result) {
                     setProfile({
-                        accountName: data.result.accountName || "",
-                        email: data.result.email || "",
-                        lastLogin: data.result.lastLogin || "",
-                        isEmailVerified: data.result.isEmailVerified || false,
-                        createdAt: data.result.createdAt || "",
+                        accountName: accountResponse.result.accountName || "",
+                        email: accountResponse.result.email || "",
+                        lastLogin: accountResponse.result.lastLogin || "",
+                        isEmailVerified: accountResponse.result.isEmailVerified || false,
+                        createdAt: accountResponse.result.createdAt || "",
                     });
-                    setAvatarUrl(data.result.avatar || "");
+                    setAvatarUrl(accountResponse.result.avatar || "");
                 } else {
-                    setError("Dữ liệu không hợp lệ từ API.");
+                    setError("Dữ liệu tài khoản không hợp lệ.");
+                }
+
+                // Xử lý patient data
+                if (patientResponse?.result) {
+                    setPatientInfo({
+                        patientId: patientResponse.result.patientId || "",
+                        firstName: patientResponse.result.firstName || "",
+                        lastName: patientResponse.result.lastName || "",
+                        dateOfBirth: patientResponse.result.dob || "",
+                        gender: patientResponse.result.gender || "",
+                        phoneNumber: patientResponse.result.phoneNumber || ""
+                    });
                 }
             } catch (err) {
-                console.error("Error fetching profile:", err);
-                setError("Đã xảy ra lỗi khi tải thông tin tài khoản.");
+                console.error("Error fetching data:", err);
+                setError("Đã xảy ra lỗi khi tải thông tin.");
             } finally {
                 setLoading(false);
             }
         };
-        fetchProfile();
+
+        fetchData();
     }, []);
 
-    const handleOpenEdit = () => setOpenEdit(true);
-    const handleCloseEdit = () => setOpenEdit(false);
+    const formatDateForEdit = (dateString: string) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().split('T')[0];
+    };
+
+    const handleOpenEdit = () => {
+        setEditForm({
+            ...patientInfo,
+            patientId: patientInfo.patientId,
+            dateOfBirth: formatDateForEdit(patientInfo.dateOfBirth)
+        });
+        setOpenEdit(true);
+    };
+
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
+
     const handleOpenImage = () => setOpenImageModal(true);
     const handleCloseImage = () => setOpenImageModal(false);
 
@@ -182,6 +252,68 @@ export const Frame = () => {
 
     const handleCloseSnackbar = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            const accountData = sessionStorage.getItem("account");
+            if (!accountData) {
+                setSnackbar({
+                    open: true,
+                    message: 'Không tìm thấy thông tin tài khoản',
+                    severity: 'error'
+                });
+                return;
+            }
+
+            const { UserId } = JSON.parse(accountData);
+            if (!UserId) {
+                setSnackbar({
+                    open: true,
+                    message: 'Không tìm thấy ID người dùng',
+                    severity: 'error'
+                });
+                return;
+            }
+
+            // Set loading state nếu cần
+            // setLoading(true);
+
+            // Format lại date trước khi gửi lên server
+            const formattedData = {
+                id: patientInfo.patientId,
+                ...editForm,
+            };
+
+            // Gọi API update với UserId
+            const response = await updatePatientProfile(formattedData);
+
+            if (response?.isSuccess) {
+                // Cập nhật state với dữ liệu mới
+                setPatientInfo(formattedData);
+
+                // Hiển thị thông báo thành công
+                setSnackbar({
+                    open: true,
+                    message: 'Cập nhật thông tin thành công!',
+                    severity: 'success'
+                });
+
+                // Đóng modal
+                handleCloseEdit();
+            } else {
+                throw new Error(response?.errorMessage || 'Cập nhật không thành công');
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setSnackbar({
+                open: true,
+                message: error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật thông tin',
+                severity: 'error'
+            });
+        } finally {
+            // setLoading(false);
+        }
     };
 
     if (loading) {
@@ -305,9 +437,9 @@ export const Frame = () => {
                                         <Typography variant="body2" color="textSecondary" ml={2} flexGrow={1}>
                                             {profile.email || "Not provided"}
                                         </Typography>
-                                        <IconButton size="small" onClick={handleOpenEdit} sx={{ "&:hover": { color: "#027FC1" } }}>
+                                        {/* <IconButton size="small" onClick={handleOpenEdit} sx={{ "&:hover": { color: "#027FC1" } }}>
                                             <Edit fontSize="small" />
-                                        </IconButton>
+                                        </IconButton> */}
                                     </Box>
                                     <Divider sx={{ borderColor: "#E3F2FD" }} />
                                     <Box
@@ -346,206 +478,186 @@ export const Frame = () => {
                                     },
                                 }}
                             >
-                                <Typography variant="h6" color="#027FC1" fontWeight="medium" mb={3}>
-                                    Thông tin cá nhân
-                                </Typography>
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12}>
-                                        <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                            Tên tài khoản
-                                        </Typography>
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <TextField
-                                                variant="outlined"
-                                                size="small"
-                                                fullWidth
-                                                value={profile.accountName}
-                                                disabled
-                                                sx={{
-                                                    "& .MuiOutlinedInput-root": {
-                                                        borderRadius: 2,
-                                                        "&:hover fieldset": { borderColor: "#027FC1" },
-                                                        "&.Mui-focused fieldset": { borderColor: "#027FC1" },
-                                                    },
-                                                }}
-                                            />
-                                            <IconButton size="small" onClick={handleOpenEdit} sx={{ "&:hover": { color: "#027FC1" } }}>
-                                                <Edit fontSize="small" />
-                                            </IconButton>
-                                        </Box>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                            Email
-                                        </Typography>
-                                        <Box display="flex" alignItems="center" mt={1}>
-                                            <TextField
-                                                variant="outlined"
-                                                size="small"
-                                                fullWidth
-                                                value={profile.email || ""}
-                                                disabled={!openEdit}
-                                                sx={{
-                                                    "& .MuiOutlinedInput-root": {
-                                                        borderRadius: 2,
-                                                        "&:hover fieldset": { borderColor: "#027FC1" },
-                                                        "&.Mui-focused fieldset": { borderColor: "#027FC1" },
-                                                    },
-                                                }}
-                                            />
-                                            <IconButton size="small" onClick={handleOpenEdit} sx={{ "&:hover": { color: "#027FC1" } }}>
-                                                <Edit fontSize="small" />
-                                            </IconButton>
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Paper>
-                        </Grid>
-
-                        {/* Edit Modal */}
-                        <Modal
-                            open={openEdit}
-                            onClose={handleCloseEdit}
-                            closeAfterTransition
-                            BackdropComponent={Backdrop}
-                            BackdropProps={{
-                                timeout: 500,
-                                sx: { backdropFilter: "blur(5px)" },
-                            }}
-                        >
-                            <Fade in={openEdit}>
-                                <Box
-                                    component="div"
-                                    position="fixed"
-                                    top="50%"
-                                    left="50%"
-                                    bgcolor="background.paper"
-                                    p={4}
-                                    boxShadow="0 12px 40px rgba(0, 0, 0, 0.2)"
-                                    borderRadius={3}
-                                    maxWidth={500}
-                                    width="90%"
-                                    sx={{
-                                        transform: "translate(-50%, -50%)",
-                                        animation: "zoomIn 0.3s ease-in-out",
-                                        "@keyframes zoomIn": {
-                                            "0%": { transform: "translate(-50%, -50%) scale(0.8)", opacity: 0 },
-                                            "100%": { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-                                        },
-                                    }}
-                                >
-                                    <Typography variant="h6" color="#027FC1" mb={3} fontWeight="bold">
-                                        Chỉnh sửa thông tin
+                                {/* Account Information Section */}
+                                <Box mb={4}>
+                                    <Typography variant="h6" color="#027FC1" fontWeight="medium" mb={3}>
+                                        Thông tin tài khoản
                                     </Typography>
-                                    <Box component="form" onSubmit={(e) => e.preventDefault()}>
-                                        <TextField
-                                            label="Tên tài khoản"
-                                            fullWidth
-                                            value={profile.accountName}
-                                            onChange={(e) => setProfile({ ...profile, accountName: e.target.value })}
-                                            variant="outlined"
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Tên tài khoản
+                                            </Typography>
+                                            <Box display="flex" alignItems="center" mt={1}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    size="small"
+                                                    fullWidth
+                                                    value={profile.accountName}
+                                                    disabled
+                                                    sx={{
+                                                        "& .MuiOutlinedInput-root": {
+                                                            borderRadius: 2,
+                                                            "&:hover fieldset": { borderColor: "#027FC1" },
+                                                            "&.Mui-focused fieldset": { borderColor: "#027FC1" },
+                                                        },
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Email
+                                            </Typography>
+                                            <Box display="flex" alignItems="center" mt={1}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    size="small"
+                                                    fullWidth
+                                                    value={profile.email || ""}
+                                                    disabled
+                                                    sx={{
+                                                        "& .MuiOutlinedInput-root": {
+                                                            borderRadius: 2,
+                                                            "&:hover fieldset": { borderColor: "#027FC1" },
+                                                            "&.Mui-focused fieldset": { borderColor: "#027FC1" },
+                                                        },
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+
+                                {/* Divider */}
+                                <Divider sx={{ my: 3, borderColor: "#E3F2FD" }} />
+
+                                {/* Personal Information Section */}
+                                <Box>
+
+                                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
+                                        <Typography variant="h6" color="#027FC1" fontWeight="medium">
+                                            Thông tin cá nhân
+                                        </Typography>
+                                        <IconButton
+                                            size="small"
+                                            onClick={handleOpenEdit}
                                             sx={{
-                                                mb: 3,
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                    "&:hover fieldset": { borderColor: "#027FC1" },
-                                                    "&.Mui-focused fieldset": { borderColor: "#027FC1" },
-                                                },
-                                            }}
-                                        />
-                                        <TextField
-                                            label="Email"
-                                            fullWidth
-                                            value={profile.email}
-                                            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                                            variant="outlined"
-                                            sx={{
-                                                mb: 3,
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                    "&:hover fieldset": { borderColor: "#027FC1" },
-                                                    "&.Mui-focused fieldset": { borderColor: "#027FC1" },
-                                                },
-                                            }}
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            size="large"
-                                            fullWidth
-                                            onClick={handleCloseEdit}
-                                            sx={{
-                                                mt: 2,
-                                                py: 1.5,
-                                                borderRadius: 2,
-                                                background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-                                                boxShadow: "0 4px 12px rgba(33, 203, 243, .3)",
-                                                "&:hover": {
-                                                    background: "linear-gradient(45deg, #1976D2 30%, #1B9DF0 90%)",
-                                                    boxShadow: "0 6px 20px rgba(33, 203, 243, .5)",
-                                                },
+                                                color: '#027FC1',
+                                                bgcolor: 'rgba(2, 127, 193, 0.04)',
+                                                '&:hover': {
+                                                    bgcolor: 'rgba(2, 127, 193, 0.08)',
+                                                    color: '#027FC1'
+                                                }
                                             }}
                                         >
-                                            Lưu thay đổi
-                                        </Button>
+                                            <Edit fontSize="medium" />
+                                        </IconButton>
                                     </Box>
-                                </Box>
-                            </Fade>
-                        </Modal>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12} md={6}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Họ
+                                            </Typography>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                fullWidth
+                                                value={patientInfo.lastName}
+                                                disabled
+                                                sx={{
+                                                    mt: 1,
+                                                    "& .MuiOutlinedInput-root": {
+                                                        borderRadius: 2,
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
 
-                        {/* Image Modal */}
-                        <Modal
-                            open={openImageModal}
-                            onClose={handleCloseImage}
-                            closeAfterTransition
-                            BackdropComponent={Backdrop}
-                            BackdropProps={{
-                                timeout: 500,
-                                sx: { backdropFilter: "blur(8px)" },
-                            }}
-                        >
-                            <Fade in={openImageModal}>
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)',
-                                        maxWidth: '90vw',
-                                        maxHeight: '90vh',
-                                        outline: 'none',
-                                        p: 1,
-                                    }}
-                                >
-                                    <IconButton
-                                        onClick={handleCloseImage}
-                                        sx={{
-                                            position: 'absolute',
-                                            right: 8,
-                                            top: 8,
-                                            bgcolor: 'rgba(255, 255, 255, 0.8)',
-                                            '&:hover': {
-                                                bgcolor: 'rgba(255, 255, 255, 0.9)',
-                                            },
-                                            zIndex: 1,
-                                        }}
-                                    >
-                                        <Close />
-                                    </IconButton>
-                                    <Box
-                                        component="img"
-                                        src={avatarUrl}
-                                        alt="Profile"
-                                        sx={{
-                                            maxWidth: '100%',
-                                            maxHeight: '85vh',
-                                            objectFit: 'contain',
-                                            borderRadius: 2,
-                                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                                        }}
-                                    />
+                                        <Grid item xs={12} md={6}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Tên
+                                            </Typography>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                fullWidth
+                                                value={patientInfo.firstName}
+                                                disabled
+                                                sx={{
+                                                    mt: 1,
+                                                    "& .MuiOutlinedInput-root": {
+                                                        borderRadius: 2,
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={12} md={6}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Ngày sinh
+                                            </Typography>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                fullWidth
+                                                value={new Date(patientInfo.dateOfBirth).toLocaleDateString('vi-VN')}
+                                                disabled
+                                                sx={{
+                                                    mt: 1,
+                                                    "& .MuiOutlinedInput-root": {
+                                                        borderRadius: 2,
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={12} md={6}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Giới tính
+                                            </Typography>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                fullWidth
+                                                value={patientInfo.gender}
+                                                disabled
+                                                sx={{
+                                                    mt: 1,
+                                                    "& .MuiOutlinedInput-root": {
+                                                        borderRadius: 2,
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+
+                                        <Grid item xs={12}>
+                                            <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                                Số điện thoại
+                                            </Typography>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                fullWidth
+                                                value={patientInfo.phoneNumber}
+                                                disabled
+                                                sx={{
+                                                    mt: 1,
+                                                    "& .MuiOutlinedInput-root": {
+                                                        borderRadius: 2,
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                    },
+                                                }}
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </Box>
-                            </Fade>
-                        </Modal>
+                            </Paper>
+                        </Grid>
                     </Grid>
                 </Box>
             </Box>
@@ -571,6 +683,221 @@ export const Frame = () => {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            {/* Image Modal */}
+            <Modal
+                open={openImageModal}
+                onClose={handleCloseImage}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                    sx: { backdropFilter: "blur(8px)" },
+                }}
+            >
+                <Fade in={openImageModal}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            maxWidth: '90vw',
+                            maxHeight: '90vh',
+                            outline: 'none',
+                            p: 1,
+                            bgcolor: 'background.paper',
+                            borderRadius: 3,
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                        }}
+                    >
+                        <IconButton
+                            onClick={handleCloseImage}
+                            sx={{
+                                position: 'absolute',
+                                right: 8,
+                                top: 8,
+                                bgcolor: 'rgba(255, 255, 255, 0.8)',
+                                '&:hover': {
+                                    bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                },
+                                zIndex: 1,
+                            }}
+                        >
+                            <Close />
+                        </IconButton>
+                        <Box
+                            component="img"
+                            src={avatarUrl}
+                            alt="Profile"
+                            sx={{
+                                maxWidth: '100%',
+                                maxHeight: '85vh',
+                                objectFit: 'contain',
+                                borderRadius: 2,
+                                display: 'block',
+                            }}
+                        />
+                    </Box>
+                </Fade>
+            </Modal>
+
+            {/* Edit Profile Modal */}
+            <Modal
+                open={openEdit}
+                onClose={handleCloseEdit}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                    timeout: 500,
+                    sx: { backdropFilter: "blur(5px)" },
+                }}
+            >
+                <Fade in={openEdit}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '90%',
+                            maxWidth: 600,
+                            bgcolor: 'background.paper',
+                            borderRadius: 3,
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                            p: 4,
+                        }}
+                    >
+                        <Typography variant="h6" color="#027FC1" fontWeight="bold" mb={3}>
+                            Chỉnh sửa thông tin cá nhân
+                        </Typography>
+
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="body2" color="textSecondary" mb={1}>
+                                    Họ
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={editForm.lastName}
+                                    onChange={(e) => setEditForm(prev => ({ ...prev, lastName: e.target.value }))}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="body2" color="textSecondary" mb={1}>
+                                    Tên
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={editForm.firstName}
+                                    onChange={(e) => setEditForm(prev => ({ ...prev, firstName: e.target.value }))}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="body2" color="textSecondary" mb={1}>
+                                    Ngày sinh
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    type="date"
+                                    value={editForm.dateOfBirth}
+                                    onChange={(e) => setEditForm(prev => ({
+                                        ...prev,
+                                        dateOfBirth: e.target.value
+                                    }))}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} md={6}>
+                                <Typography variant="body2" color="textSecondary" mb={1}>
+                                    Giới tính
+                                </Typography>
+                                <Select
+                                    fullWidth
+                                    size="small"
+                                    value={editForm.gender}
+                                    onChange={(e) => setEditForm(prev => ({ ...prev, gender: e.target.value }))}
+                                    sx={{
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    <MenuItem value="Male">Nam</MenuItem>
+                                    <MenuItem value="Female">Nữ</MenuItem>
+                                    <MenuItem value="Other">Khác</MenuItem>
+                                </Select>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <Typography variant="body2" color="textSecondary" mb={1}>
+                                    Số điện thoại
+                                </Typography>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={editForm.phoneNumber}
+                                    onChange={(e) => setEditForm(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": {
+                                            borderRadius: 2,
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+
+                        <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                            <Button
+                                variant="outlined"
+                                onClick={handleCloseEdit}
+                                sx={{
+                                    borderRadius: 2,
+                                    borderColor: '#027FC1',
+                                    color: '#027FC1',
+                                    '&:hover': {
+                                        borderColor: '#1B9DF0',
+                                        bgcolor: 'rgba(27, 157, 240, 0.04)',
+                                    },
+                                }}
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={handleUpdateProfile}
+                                sx={{
+                                    borderRadius: 2,
+                                    bgcolor: '#027FC1',
+                                    '&:hover': {
+                                        bgcolor: '#1B9DF0',
+                                    },
+                                }}
+                            >
+                                Lưu thay đổi
+                            </Button>
+                        </Box>
+                    </Box>
+                </Fade>
+            </Modal>
         </>
     );
 };

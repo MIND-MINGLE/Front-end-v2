@@ -4,7 +4,7 @@ import { baseUrl, headers } from "../Url"
 import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 import { storage } from "../../services/firebase" // Đảm bảo đã cấu hình Firebase trong services/firebase.js
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { axiosCreate, axiosUpdate } from "../AxiosCRUD";
+import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD";
 
 const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
@@ -138,6 +138,21 @@ export const updateUserAvatar = async (file: File, accountId: string) => {
         }
     } catch (error) {
         console.error("Error updating avatar:", error)
+        return null
+    }
+}
+export const getAccountById = async (accountId: string) => {
+    const props = {
+        url: baseUrl + "/Account/" + accountId,
+        headers: headers
+    }
+    const result = await axiosRead(props)
+    if (result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else {
+        console.log(result.error)
         return null
     }
 }
