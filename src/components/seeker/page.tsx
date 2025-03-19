@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AccountProps, Appointment, Patient } from '../../interface/IAccount';
 import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
+import AppointmentTimer from '../common/appointmentTimer';
 
 
 const SeekerPage = (): JSX.Element => {
@@ -96,11 +97,9 @@ const SeekerPage = (): JSX.Element => {
         getPatient()
         getAppointment()
     },[])
-
-   
-
     return (
         <>
+            <AppointmentTimer getApp={isAppointment} />
             <Box
                 sx={{
                     background: "linear-gradient(180deg, #0077B6 0%, #1B9DF0 50%, #DFF6FF 100%)",

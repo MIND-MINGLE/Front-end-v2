@@ -1,3 +1,4 @@
+
 interface AccountProps{
     Role: string
     UserId: string
@@ -48,6 +49,14 @@ interface Patient {
   gender: string;
 }
 
+interface Sessison {
+  sessionId: string;
+  therapistId: string;
+  startTime: string;
+  endTime: string;
+  dayOfWeek: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY" ;
+  isActive: boolean;
+}
 
 // Interface for the appointment schema
 interface AppointmentRequest {
@@ -71,7 +80,8 @@ interface Appointment {
   status: "PENDING" | "APPROVED" | "DECLINED" | "CANCELED";
   totalFee: number;
   platformFee: number;
-  createdAt: string; // ISO 8601 date string
+  createdAt: string; // ISO 8601 date string;
+  session: Sessison
 }
 
 interface requestGroupChat{
@@ -114,4 +124,4 @@ interface UserInGroup {
 }
 
  
-export type {UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+export type {Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
