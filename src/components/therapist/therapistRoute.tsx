@@ -6,6 +6,8 @@ import SessionCreator from "./ProfessorCalendar/create-session";
 import BookingInformation from "./ProfessorCalendar/page";
 import PersonalInformation from "./ProfessorInfo/page";
 import TherapyChatPage from "../seeker/TherapyChat/page";
+import AppointmentList from "./ProfessorAppointment/appointmentList";
+import AppointmentDetails from "./ProfessorAppointment/appointmentDetails";
 
 
 export default function TherapistRoute() {
@@ -26,6 +28,9 @@ export default function TherapistRoute() {
         <Route path="/chat" element={<TherapyChatPage />} />
         <Route path="/session-calendar" element={<BookingInformation />} />
         <Route path="/session-calendar/create-session" element={<SessionCreator />} />
+        <Route path="/appointment" element={< AppointmentList />} />
+        <Route path="/appointment/:appointmentId" element={< AppointmentDetails />} />
+       
    </Routes>
   )
 }

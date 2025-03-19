@@ -3,7 +3,6 @@
 "use client";
 import { Box, Divider, Typography } from '@mui/material';
 import { JSX, useEffect, useState } from 'react';
-import NavigationRail from './NavBar';
 import Footer from '../coworking/Components/Footer/Footer';
 import CopyrightFooter from '../coworking/Components/CopyrightFooter/CopyrightFooter';
 import TherapyMatchingForm from './TherapyMatchingForm/TherapyMatchingForm';

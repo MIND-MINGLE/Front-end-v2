@@ -10,8 +10,9 @@ import { useNavigate } from "react-router";
 
 interface ChatProfileListProps {
   setCurrentChat: React.Dispatch<React.SetStateAction<ChatProps>>
+  isSeeker:boolean
 }
-const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
+const ChatProfileList = ({isSeeker, setCurrentChat }: ChatProfileListProps) => {
   const [profiles, setProfiles] = useState<ChatProfile[]>();
   const [onSelect, setOnSelect] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -38,9 +39,10 @@ const ChatProfileList = ({ setCurrentChat }: ChatProfileListProps) => {
     const usersInGroup = await getAllClientByChatGroupId( profile.chatGroupId)
     console.log("usersInGroup:",usersInGroup)
     if(usersInGroup.statusCode===200){
-      const otherUser:UserInGroup = usersInGroup.result.find(
-        (item:UserInGroup) => item.accountName !== profile.adminName
-      );
+      const otherUser:UserInGroup = isSeeker?
+       usersInGroup.result.find((item:UserInGroup) => item.accountName !== profile.adminName)
+       :
+       usersInGroup.result.find((item:UserInGroup) => item.accountName === profile.adminName)
       console.log("otherUser:",otherUser)
       if(otherUser){
         setCurrentChat({

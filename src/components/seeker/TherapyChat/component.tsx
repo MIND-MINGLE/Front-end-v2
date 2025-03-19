@@ -370,7 +370,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             <div ref={messagesEndRef} />
           </Box>
         </Paper>
-            {currentAppointment!=null&&(currentAppointment.status!=="CANCELED"&&currentAppointment.status!=="DECLINED")? 
+            {!currentAppointment?.emergencyEndId? 
                  <Box
                  display="flex"
                  alignItems="center"

@@ -41,7 +41,7 @@ const TherapyChatPage: React.FC = () => {
           flexDirection="column"
           justifyContent="center"
         >
-          <ChatProfileList setCurrentChat={setCurrentChat} />
+          <ChatProfileList isSeeker={isSeeker} setCurrentChat={setCurrentChat} />
         </Box>
 
         {/* Main Content */}
