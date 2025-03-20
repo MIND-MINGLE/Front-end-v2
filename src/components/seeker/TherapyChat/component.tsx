@@ -14,7 +14,6 @@ import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
-
 import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Therapist } from "../../../interface/IAccount";
 import { getCurrentAppointment } from "../../../api/Appointment/appointment";
 import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
@@ -43,6 +42,7 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
   const [therapist, setTherapist] = useState<Therapist>();
   const [patient, setPatient] = useState<Patient>();
   const [currentAppointment, setCurrentAppointment] = useState<Appointment>()
+  const [connectionStatus, setConnectionStatus] = useState("Loading...");
   const[alertIsLoading, setAlertIsLoading] = useState(false)
   const nav = useNavigate()
   useEffect(()=>{
@@ -56,6 +56,16 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
   }
     getAppointment()
   },[therapist,patient])
+  useEffect(()=>{
+    const getConnectionStatus = ()=>{
+      setConnectionStatus(hubConnection?.state === "Connected"
+        ? "Connected"
+        : hubConnection?.state === "Connecting"
+          ? "Connecting..."
+          : "Lost Connection")
+    }
+    getConnectionStatus()
+  },[hubConnection])
 
   useEffect(() => {
     const getTherapist = async ()=>{
@@ -105,6 +115,7 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
             return isDuplicate ? prev : [...prev, message];
           });
         });
+         // Thêm hiển thị trạng thái kết nối
   
         if (connection && currentChat?.chatGroupId) {
           setHubConnection(connection);
@@ -129,6 +140,7 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
         hubConnection.stop();
       }
     };
+    
   }, [currentChat?.chatGroupId]);
 
   useEffect(() => {
@@ -167,13 +179,6 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
   const handleFormatChange = (newFormat: "call" | "video") => {
     setFormat(newFormat);
   };
-
-  // Thêm hiển thị trạng thái kết nối
-  const connectionStatus = hubConnection?.state === "Connected"
-    ? "Đã kết nối"
-    : hubConnection?.state === "Connecting"
-      ? "Đang kết nối..."
-      : "Mất kết nối";
 
   // Added dialog handlers
   const handleOpenEmergencyDialog = () => {
@@ -377,7 +382,7 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
           padding: '4px 8px',
           borderRadius: '4px',
           fontSize: '12px',
-          backgroundColor: hubConnection?.state === "Connected" ? '#4caf50' : '#ff9800',
+          backgroundColor: connectionStatus === "Connected" ? '#4caf50' : '#ff9800',
           color: 'white',
           opacity: 0.8
         }}

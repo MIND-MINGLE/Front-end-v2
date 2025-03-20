@@ -34,6 +34,7 @@ import { updateUserAvatar } from "../../../api/Account/Account";
 import LoadingScreen from "../../common/LoadingScreen";
 import { getPatientByAccountId, updatePatientProfile } from "../../../api/Account/Seeker";
 import { getAccountById } from "../../../api/Account/Account";
+import { Accountlogout } from "../../../services/logout";
 
 interface PatientInfo {
     patientId: string;
@@ -49,15 +50,6 @@ interface AccountInfo {
     lastLogin: string;
     isEmailVerified: boolean;
     createdAt: string;
-}
-
-interface PatientUpdate {
-    id: string;
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    gender: string;
-    phoneNumber: string;
 }
 
 export const Frame = () => {
@@ -194,15 +186,11 @@ export const Frame = () => {
     const handleCloseEdit = () => {
         setOpenEdit(false);
     };
-
     const handleOpenImage = () => setOpenImageModal(true);
     const handleCloseImage = () => setOpenImageModal(false);
 
     const logout = () => {
-        sessionStorage.removeItem("user");
-        localStorage.removeItem("token");
-        localStorage.removeItem("patient")
-        sessionStorage.removeItem("account");
+        Accountlogout()
         nav("/", { replace: true });
     };
 

@@ -13,7 +13,6 @@ import {
     Box,
     Button,
     Card,
-    CardContent,
     CardMedia,
     Divider,
     Grid,
@@ -25,14 +24,13 @@ import {
     Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router";
+import { Accountlogout } from "../../../services/logout";
 
 
 export const Frame = () => {
     const nav = useNavigate();
     const logout = () => {
-        sessionStorage.removeItem("user");
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("account");
+        Accountlogout()
         nav("/");
     };
     return (
