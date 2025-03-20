@@ -15,17 +15,17 @@ export const NavigationRail = (): JSX.Element => {
         return location.pathname === path;
     };
 
-    const NavItem = ({ to, icon, label }: { to: string; icon: JSX.Element; label: string }) => (
+    const NavItem = ({ to, icon, label }: { to: string; icon: JSX.Element | null; label: string }) => (
         <Tooltip title={label} placement="right" arrow>
             <Link
                 to={to}
-                style={{
+                style={icon?{
                     textDecoration: "none",
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                }}
+                }:{}}  
             >
                 <Box
                     sx={{
@@ -76,8 +76,10 @@ export const NavigationRail = (): JSX.Element => {
                         }),
                     }}
                 >
-                    <Avatar
+                  
+                   <Avatar
                         sx={{
+                            opacity: icon?1:0,
                             bgcolor: isActive(to) ? "#1E73BE" : "transparent",
                             width: { xs: 50, md: 56 }, // Tăng kích thước avatar
                             height: { xs: 50, md: 56 },
@@ -86,6 +88,7 @@ export const NavigationRail = (): JSX.Element => {
                     >
                         {icon}
                     </Avatar>
+                  
                     <Typography
                         align="center"
                         variant="body2"
@@ -99,6 +102,8 @@ export const NavigationRail = (): JSX.Element => {
                         {label}
                     </Typography>
                 </Box>
+           
+
             </Link>
         </Tooltip>
     );
@@ -139,12 +144,11 @@ export const NavigationRail = (): JSX.Element => {
                             transform: "rotate(90deg) scale(1.2)", // Hiệu ứng xoay và phóng to
                             bgcolor: "#1565C0", // Màu đậm hơn khi hover
                         },
+                        backgroundImage:{}
                     }}
                 >
-                    <AddIcon sx={{
-                        color: "white", // Icon trắng
-                        fontSize: { xs: 24, md: 28 }, // Tăng kích thước icon
-                    }} />
+                    <NavItem to="/seeker/subscription" icon={null} label=""/>
+                    
                 </Avatar>
             </Stack>
 

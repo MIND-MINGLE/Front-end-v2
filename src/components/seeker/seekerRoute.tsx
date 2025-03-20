@@ -12,6 +12,7 @@ import TherapistSelection from './TherapyProfile/therapyConnector'
 import { TherapistProfile } from './TherapyProfile/viewtherapist'
 import BookAppointment from './TherapyProfile/bookAppointment'
 import NavigationRail from './NavBar'
+import SubscriptionPage from './subscription/subscriptionPage'
 
 export default function SeekerRoute() {
   const nav = useNavigate()
@@ -42,6 +43,7 @@ export default function SeekerRoute() {
             interference: '',
             urgency: ''
           }} />} />
+          <Route path='/subscription' element={<SubscriptionPage/>} />
           <Route path='/connector' element={<TherapistSelection/>} />
           <Route path='/therapist/:accountId' element={<TherapistProfile/>} />
           <Route path='/therapist/:therapistId/appointment' element={<BookAppointment/>} />
