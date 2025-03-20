@@ -4,106 +4,102 @@ import HealingIcon from "@mui/icons-material/Healing";
 import HistoryIcon from "@mui/icons-material/History";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
-import { Avatar, Box, Stack, Typography, Tooltip } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { JSX, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import "./css/navbar.css"
 
 export const NavigationRail = (): JSX.Element => {
     const location = useLocation();
-    const [packageName,setPackageName] = useState("")
-    useEffect(()=>{
-        const getPackage = async() =>{
-            const packageName = sessionStorage.getItem("package")
-            if(packageName==null){
-    
-            }else{
-                setPackageName(packageName)
-            }
-        }
-        getPackage()
-    },[])
+    const [packageName, setPackageName] = useState("");
 
-    const isActive = (path: string) => {
-        return location.pathname === path;
-    };
+    useEffect(() => {
+        const getPackage = async () => {
+            const packageName = sessionStorage.getItem("package");
+            if (packageName) {
+                setPackageName(packageName);
+            }
+        };
+        getPackage();
+    }, []);
+
+    const isActive = (path: string) => location.pathname === path;
 
     const NavItem = ({ to, icon, label }: { to: string; icon: JSX.Element | null; label: string }) => (
-        <Tooltip title={label} placement="right" arrow>
-            <Link
-                to={to}
-                style={icon?{
-                    textDecoration: "none",
-                    width: "100%",
+        <Link
+            to={to}
+            style={{
+                textDecoration: "none",
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+            }}
+        >
+            <Box
+                sx={{
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                }:{}}  
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        width: "100%",
-                        padding: "10px 0", // Tăng padding để mục lớn hơn
-                        position: "relative",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                            transform: "scale(1.1)", // Hiệu ứng phóng to
-                            "& .MuiAvatar-root": {
-                                bgcolor: "#1E73BE", // Màu nổi bật khi hover
-                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // Thêm bóng
-                            },
-                            "& .MuiTypography-root": {
-                                color: "#1E73BE",
-                                fontWeight: "bold",
-                            },
-                            "& .MuiSvgIcon-root": {
-                                color: "white", // Icon trắng khi hover
-                            },
+                    width: "100%",
+                    padding: "10px 0",
+                    position: "relative",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                        transform: "scale(1.1)",
+                        "& .MuiAvatar-root": {
+                            bgcolor: "#1E73BE",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
                         },
-                        ...(isActive(to) && {
-                            "&::before": {
-                                content: '""',
-                                position: "absolute",
-                                left: 0,
-                                width: "5px", // Thanh dọc đậm hơn
-                                height: "100%",
-                                background: "linear-gradient(180deg, #1E73BE 0%, #90CAF9 100%)", // Gradient cho thanh active
-                                borderTopRightRadius: "4px",
-                                borderBottomRightRadius: "4px",
-                            },
-                            "& .MuiAvatar-root": {
-                                bgcolor: "#1E73BE", // Màu nổi bật khi active
-                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)", // Thêm bóng
-                            },
-                            "& .MuiTypography-root": {
-                                color: "#1E73BE",
-                                fontWeight: "bold",
-                            },
-                            "& .MuiSvgIcon-root": {
-                                color: "white", // Icon trắng khi active
-                            },
-                        }),
+                        "& .MuiTypography-root": {
+                            color: "#1E73BE",
+                            fontWeight: "bold",
+                        },
+                        "& .MuiSvgIcon-root": {
+                            color: "white",
+                        },
+                    },
+                    ...(isActive(to) && {
+                        "&::before": {
+                            content: '""',
+                            position: "absolute",
+                            left: 0,
+                            width: "5px",
+                            height: "100%",
+                            background: "linear-gradient(180deg, #1E73BE 0%, #90CAF9 100%)",
+                            borderTopRightRadius: "4px",
+                            borderBottomRightRadius: "4px",
+                        },
+                        "& .MuiAvatar-root": {
+                            bgcolor: "#1E73BE",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                        },
+                        "& .MuiTypography-root": {
+                            color: "#1E73BE",
+                            fontWeight: "bold",
+                        },
+                        "& .MuiSvgIcon-root": {
+                            color: "white",
+                        },
+                    }),
+                }}
+            >
+                <Avatar
+                    sx={{
+                        bgcolor: isActive(to) ? "#1E73BE" : "transparent",
+                        width: { xs: 50, md: 56 },
+                        height: { xs: 50, md: 56 },
+                        transition: "all 0.3s ease",
                     }}
                 >
-                   <Avatar
-                        sx={{
-                            opacity: icon?1:0,
-                            bgcolor: isActive(to) ? "#1E73BE" : "transparent",
-                            width: { xs: 50, md: 56 }, // Tăng kích thước avatar
-                            height: { xs: 50, md: 56 },
-                            transition: "all 0.3s ease",
-                        }}
-                    >
-                        {icon}
-                    </Avatar>
-                  
+                    {icon}
+                </Avatar>
+                {label && (
                     <Typography
                         align="center"
                         variant="body2"
                         sx={{
-                            fontSize: { xs: "0.85rem", md: "1rem" }, // Tăng cỡ chữ
+                            fontSize: { xs: "0.85rem", md: "1rem" },
                             fontWeight: isActive(to) ? "bold" : "normal",
                             transition: "all 0.3s ease",
                             color: isActive(to) ? "#1E73BE" : "text.secondary",
@@ -111,61 +107,104 @@ export const NavigationRail = (): JSX.Element => {
                     >
                         {label}
                     </Typography>
-                </Box>
-           
-
-            </Link>
-        </Tooltip>
+                )}
+            </Box>
+        </Link>
     );
 
     return (
         <Box
             sx={{
-                gap:2,
+                gap: 2,
                 position: "fixed",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
                 alignItems: "center",
-                padding:"10px",
+                padding: "10px",
                 bgcolor: "white",
                 top: 0,
-                boxShadow: "4px 0 20px rgba(0,0,0,0.15)", // Bóng đậm hơn
-                width: { xs: "80px", md: "80px" }, // Tăng chiều rộng
-                marginLeft: 0,
-                background: "linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%)", // Gradient nhẹ cho nền
+                boxShadow: "4px 0 20px rgba(0,0,0,0.15)",
+                width: { xs: "80px", md: "80px" },
+                background: "linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%)",
                 transition: "all 0.3s ease",
                 zIndex: 1000,
                 "&:hover": {
-                    width: { xs: "85px", md: "100px" }, // Phóng to nhẹ khi hover vào rail
+                    width: { xs: "85px", md: "100px" },
                 },
             }}
         >
-            <Stack direction="column" alignItems="center">
-                <Avatar
-                    sx={{
-                        bgcolor: "#1E73BE", // Màu nổi bật cho nút Add
-                        width: { xs: 50, md: 50 },
-                        height: { xs: 50, md: 50 },
-                        boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)", // Bóng đậm
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                            scale:"120%",
-                            bgcolor: "#1565C0", // Màu đậm hơn khi hover
-                        },
-                        backgroundImage:packageName==="MinglePlus"?"url('/pack1.png')":packageName==="MinglePremium"?"url('/pack2.png')":"",
-                        backgroundSize:"100%",
-                    }}
-                >
-                    <NavItem to="/seeker/subscription" icon={packageName===""?<AddIcon/>:null} label=""/>
-                </Avatar>
-            </Stack>
+            {/* Buy Premium Package */}
+          <Stack direction="column" alignItems="center" sx={{ position: "relative" }} className="subscription-item">
+        <Avatar
+        sx={{
+            bgcolor: "#1E73BE",
+            width: { xs: 50, md: 50 },
+            height: { xs: 50, md: 50 },
+            boxShadow: "0 6px 15px rgba(0, 0, 0, 0.2)",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            "&:hover": {
+                scale: "120%",
+                bgcolor: "#1565C0",
+            },
+            backgroundImage: packageName === "MinglePlus" ? "url('/pack1.png')" : packageName === "MinglePremium" ? "url('/pack2.png')" : "",
+            backgroundSize: "100%",
+        }}
+    >
+        <NavItem to="/seeker/subscription" icon={packageName === "" ? <AddIcon /> : null} label="" />
+    </Avatar>
+    {/* Custom Tooltip */}
+    <Box
+    sx={{
+        position: "absolute",
+        top: "50%",
+        left: "100%",
+        transform: "translateY(-10%)",
+        marginLeft: "30px",
+        padding: "20px 25px", // Reduced padding to fit within 200px
+        border: "1px solid #1E73BE",
+        backgroundColor: "white",
+        borderRadius: "6px",
+        width: "300px",
+        opacity: 0,
+        transition: "opacity 0.3s ease",
+        pointerEvents: "none",
+        zIndex: 1001,
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+        whiteSpace: "normal", // Allows text to wrap
+    }}
+    className="custom-tooltip"
+>
+    <Typography
+        variant="h4" // Header style
+        sx={{
+            fontSize: "24px",
+            fontWeight: "bold",
+            color: "#1E73BE", // Distinct color for header
+            marginBottom: "8px", // Space between header and body
+        }}
+    >
+        Buy Subscription
+    </Typography>
+    <Typography
+        variant="h6" // Body style
+        sx={{
+            fontSize: "18px",
+            color: "#333", // Readable color for body text
+            lineHeight: 1.4, // Improves readability
+        }}
+    >
+        Purchase a monthly subscription! Enhance your sessions with video calling and lower costs on every appointment. Lighter costs, happier life!
+    </Typography>
+</Box>
+</Stack>
 
+            {/* Other Navigation Items */}
             <Stack
                 direction="column"
                 alignItems="center"
-                gap={4} // Tăng khoảng cách giữa các mục
+                gap={4}
                 width="100%"
                 sx={{
                     "& .MuiAvatar-root": {
@@ -174,10 +213,10 @@ export const NavigationRail = (): JSX.Element => {
                     },
                     "& .MuiTypography-root": {
                         fontSize: { xs: "0.85rem", md: "1rem" },
-                        display: { xs: "none", md: "block" }, // Ẩn text trên mobile
+                        display: { xs: "none", md: "block" },
                     },
                     "& .MuiSvgIcon-root": {
-                        fontSize: { xs: 24, md: 28 }, // Tăng kích thước icon
+                        fontSize: { xs: 24, md: 28 },
                         color: "text.secondary",
                     },
                 }}

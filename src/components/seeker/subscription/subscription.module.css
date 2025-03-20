@@ -1,0 +1,411 @@
+/* Container styles */
+.container {
+    min-height: 100vh;
+    /* background: linear-gradient(180deg, rgb(27, 157, 240) 100%, rgb(0, 99, 162) 0%); */
+    background: linear-gradient(0deg, rgb(0, 99, 162) 0%, rgb(27, 157, 240) 50%, rgb(255, 255, 255) 100% 100%);
+    padding-top: 1%;
+  }
+  
+  .wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Header styles */
+  .header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #000000;
+    line-height: 1.2;
+  }
+  
+  .highlight {
+    color: rgb(27, 157, 240);
+  }
+  
+  .subtitle {
+    margin-top: 1.25rem;
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.25rem;
+    color: #6f6f6f;
+  }
+  
+  /* Card container */
+  .cardsContainer {
+    margin-top: 3rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .cardsContainer {
+      grid-template-columns: 1fr 1fr;
+      max-width: 56rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  
+  /* Card styles - Plus */
+  .card {
+    border: 1px solid #1b9df0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cardHeader {
+    padding: 1.5rem;
+  }
+  
+  .cardTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0077b6;
+  }
+  
+  .cardDescription {
+    margin-top: 1rem;
+    color: #6b7280;
+  }
+  
+  .pricingContainer {
+    margin-top: 2rem;
+  }
+  
+  .price {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #111827;
+  }
+  
+  .billingPeriod {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+  }
+  
+  .buttonPlus {
+    margin-top: 2rem;
+    display: block;
+    width: 100%;
+    background-color: #1b9df0;
+    border: 1px solid #1b9df0;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .buttonPlus:hover {
+    background-color: #0077b6;
+  }
+  /* Enhanced Premium Card Styles */
+.cardPremium {
+    border: 2px solid #0077b6;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 20px rgba(0, 119, 182, 0.2);
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.4s ease,
+                border-color 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Add a subtle gradient border glow effect */
+  .cardPremium::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #0077b6, #1b9df0, #00d4ff);
+    z-index: -1;
+    border-radius: 0.85rem;
+    animation: glowBorder 3s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glowBorder {
+    0% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .cardPremium:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 25px 30px -5px rgba(0, 119, 182, 0.4);
+    border-color: #00d4ff;
+  }
+  
+  .cardHeaderPremium {
+    padding: 1.75rem 1.5rem;
+    background: linear-gradient(135deg, #0077b6 0%, #1b9df0 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Add subtle background animation */
+  .cardHeaderPremium::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+  
+  @keyframes pulseGlow {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.5);
+    }
+  }
+  
+  .cardTitlePremium {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  /* Add a "Premium" badge */
+  .cardTitlePremium::after {
+    content: 'BEST VALUE';
+    position: absolute;
+    top: -10px;
+    right: 0;
+    background-color: #FFD700;
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 3px;
+    transform: rotate(0deg);
+    animation: wiggle 2.5s ease-in-out infinite;
+  }
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(10deg);scale: 110%; }
+    50% { transform: rotate(5deg);scale: 150%; }
+  }
+  
+  .cardDescriptionPremium {
+    margin-top: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+  }
+  
+  .pricingContainerPremium {
+    margin-top: 2.25rem;
+    position: relative;
+  }
+  
+  .pricePremium {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    display: inline-block;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .billingPeriodPremium {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #00d4ff;
+    opacity: 0.9;
+  }
+  
+  .buttonPremium {
+    margin-top: 2.25rem;
+    display: block;
+    width: 100%;
+    background: linear-gradient(90deg, #FFFFFF 0%, #e6f7ff 100%);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0077b6;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .buttonPremium:hover {
+    background: #FFFFFF;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* Add button hover effect */
+  .buttonPremium::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+  
+  .buttonPremium:hover::after {
+    animation: ripple 1s ease-out;
+  }
+  
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(50, 50);
+      opacity: 0;
+    }
+  }
+  
+  /* Enhanced Features section for Premium */
+  .cardPremium .cardFeatures {
+    padding: 1.75rem;
+    border-top: 1px solid rgba(0, 119, 182, 0.2);
+    background-color: #f8fbff;
+  }
+  
+  .cardPremium .featuresTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0077b6;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .cardPremium .featuresList {
+    margin-top: 1.75rem;
+  }
+  
+  .cardPremium .featureItem {
+    color: #4b5563;
+    font-weight: 500;
+  }
+  
+  .cardPremium .checkIcon {
+    color: #00d4ff;
+    animation: fadeIn 0.5s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Features section */
+  .cardFeatures {
+    padding: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: #FFFFFF;
+    flex-grow: 1;
+  }
+  
+  .featuresTitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .featuresList {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .featureItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .checkIcon {
+    flex-shrink: 0;
+    height: 1.25rem;
+    width: 1.25rem;
+    color: #0077b6;
+  }
+  
+  /* Selected plan feedback */
+  .selectedPlan {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 0.5rem;
+    text-align: center;
+    color: #0077b6;
+    font-weight: 500;
+  }
+  
+  /* Footer */
+  .footer {
+    margin-top: 2.5rem;
+    text-align: center;
+    color: #6b7280;
+  }
+  
+  .link {
+    font-weight: 500;
+    color: #0077b6;
+    text-decoration: none;
+  }
+  
+  .link:hover {
+    color: #1b9df0;
+  }
