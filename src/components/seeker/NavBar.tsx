@@ -5,11 +5,23 @@ import HistoryIcon from "@mui/icons-material/History";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import { Avatar, Box, Stack, Typography, Tooltip } from "@mui/material";
-import { JSX } from "react";
+import { JSX, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 export const NavigationRail = (): JSX.Element => {
     const location = useLocation();
+    const [packageName,setPackageName] = useState("")
+    useEffect(()=>{
+        const getPackage = async() =>{
+            const packageName = sessionStorage.getItem("package")
+            if(packageName==null){
+    
+            }else{
+                setPackageName(packageName)
+            }
+        }
+        getPackage()
+    },[])
 
     const isActive = (path: string) => {
         return location.pathname === path;
@@ -32,7 +44,6 @@ export const NavigationRail = (): JSX.Element => {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: 1,
                         width: "100%",
                         padding: "10px 0", // Tăng padding để mục lớn hơn
                         position: "relative",
@@ -76,7 +87,6 @@ export const NavigationRail = (): JSX.Element => {
                         }),
                     }}
                 >
-                  
                    <Avatar
                         sx={{
                             opacity: icon?1:0,
@@ -111,12 +121,12 @@ export const NavigationRail = (): JSX.Element => {
     return (
         <Box
             sx={{
+                gap:2,
                 position: "fixed",
                 display: "flex",
                 flexDirection: "column",
                 height: "100%",
                 alignItems: "center",
-                gap: 2,
                 padding:"10px",
                 bgcolor: "white",
                 top: 0,
@@ -131,7 +141,7 @@ export const NavigationRail = (): JSX.Element => {
                 },
             }}
         >
-            <Stack direction="column" alignItems="center" gap={1}>
+            <Stack direction="column" alignItems="center">
                 <Avatar
                     sx={{
                         bgcolor: "#1E73BE", // Màu nổi bật cho nút Add
@@ -141,14 +151,14 @@ export const NavigationRail = (): JSX.Element => {
                         cursor: "pointer",
                         transition: "all 0.3s ease",
                         "&:hover": {
-                            transform: "rotate(90deg) scale(1.2)", // Hiệu ứng xoay và phóng to
+                            scale:"120%",
                             bgcolor: "#1565C0", // Màu đậm hơn khi hover
                         },
-                        backgroundImage:{}
+                        backgroundImage:packageName==="MinglePlus"?"url('/pack1.png')":packageName==="MinglePremium"?"url('/pack2.png')":"",
+                        backgroundSize:"100%",
                     }}
                 >
-                    <NavItem to="/seeker/subscription" icon={null} label=""/>
-                    
+                    <NavItem to="/seeker/subscription" icon={packageName===""?<AddIcon/>:null} label=""/>
                 </Avatar>
             </Stack>
 
