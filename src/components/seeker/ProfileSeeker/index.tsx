@@ -39,7 +39,7 @@ interface PatientInfo {
     patientId: string;
     firstName: string;
     lastName: string;
-    dateOfBirth: string;
+    dob: string;
     gender: string;
     phoneNumber: string;
 }
@@ -62,7 +62,7 @@ interface PatientUpdate {
 
 export const Frame = () => {
     const [openEdit, setOpenEdit] = useState(false);
-    const [profile, setProfile] = useState({
+    const [profile, setProfile] = useState<AccountInfo>({
         accountName: "",
         email: "",
         lastLogin: "",
@@ -84,7 +84,7 @@ export const Frame = () => {
         patientId: '',
         firstName: '',
         lastName: '',
-        dateOfBirth: '',
+        dob: '',
         gender: '',
         phoneNumber: ''
     });
@@ -92,7 +92,7 @@ export const Frame = () => {
         patientId: '',
         firstName: '',
         lastName: '',
-        dateOfBirth: '',
+        dob: '',
         gender: '',
         phoneNumber: ''
     });
@@ -140,7 +140,7 @@ export const Frame = () => {
                         patientId: patientResponse.result.patientId || "",
                         firstName: patientResponse.result.firstName || "",
                         lastName: patientResponse.result.lastName || "",
-                        dateOfBirth: patientResponse.result.dob || "",
+                        dob: patientResponse.result.dob || "",
                         gender: patientResponse.result.gender || "",
                         phoneNumber: patientResponse.result.phoneNumber || ""
                     });
@@ -178,7 +178,7 @@ export const Frame = () => {
         try {
             setEditForm({
                 ...patientInfo,
-                dateOfBirth: formatDateForEdit(patientInfo.dateOfBirth)
+                dob: formatDateForEdit(patientInfo.dob)
             });
             setOpenEdit(true);
         } catch (error) {
@@ -624,11 +624,12 @@ export const Frame = () => {
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
                                                 Ngày sinh
                                             </Typography>
-                                            <TextField
+                                            <TextField 
+                                                type="date"
                                                 variant="outlined"
                                                 size="small"
                                                 fullWidth
-                                                value={new Date(patientInfo.dateOfBirth).toLocaleDateString('vi-VN')}
+                                                value={new Date(patientInfo.dob).toLocaleDateString('vi-VN')}
                                                 disabled
                                                 sx={{
                                                     mt: 1,
@@ -839,11 +840,11 @@ export const Frame = () => {
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    type="date"
-                                    value={editForm.dateOfBirth || ''}
+                                    //type="date"
+                                    value={editForm.dob || ''}
                                     onChange={(e) => setEditForm(prev => ({
                                         ...prev,
-                                        dateOfBirth: e.target.value
+                                        dob: e.target.value
                                     }))}
                                     sx={{
                                         "& .MuiOutlinedInput-root": {

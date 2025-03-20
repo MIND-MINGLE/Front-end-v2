@@ -8,15 +8,13 @@ import Icon4 from "@mui/icons-material/MusicNote";
 import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Warning";
-import { Box, IconButton, InputAdornment, Paper, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Alert } from "@mui/material";
+import { Box, IconButton, InputAdornment, Paper, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+
 import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Therapist } from "../../../interface/IAccount";
 import { getCurrentAppointment } from "../../../api/Appointment/appointment";
 import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
@@ -26,10 +24,11 @@ import { useNavigate } from "react-router";
 
 interface RightComponentsProps {
   currentChat: ChatProps | null; // Cho phép null
+  setIsLoading:React.Dispatch<React.SetStateAction<boolean>>
 }
 
 
-const RightComponents = ({ currentChat }: RightComponentsProps) => {
+const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [showExtraComponent, setShowExtraComponent] = useState("");
   const [shrink, setShrink] = useState(false);
@@ -44,7 +43,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   const [therapist, setTherapist] = useState<Therapist>();
   const [patient, setPatient] = useState<Patient>();
   const [currentAppointment, setCurrentAppointment] = useState<Appointment>()
-  const[isLoading, setIsLoading] = useState(false)
+  const[alertIsLoading, setAlertIsLoading] = useState(false)
   const nav = useNavigate()
   useEffect(()=>{
     const getAppointment = async () => {
@@ -70,12 +69,13 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     const getPatient = async ()=>{
       if(currentChat!=null && currentChat?.patientId.trim()!==""){
         const response = await getPatientByAccountId(currentChat.patientId);
-        if(response.statusCode === 200){
+        if(response?.statusCode === 200){
           setPatient(response.result);
         }
       }
     }
     const initializeChat = async () => {
+      setIsLoading(true)
       try {
         // Fetch user data (same as V1)
         const userData = sessionStorage.getItem("account");
@@ -110,6 +110,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
           setHubConnection(connection);
           await connection.invoke("JoinGroup", currentChat.chatGroupId);
           console.log(`Joined group: ${currentChat.chatGroupId}`);
+          setError(null)
         } else if (!connection) {
           setError("Không thể kết nối SignalR");
         }
@@ -117,6 +118,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
         console.error("Lỗi khởi tạo chat:", error);
         setError("Không thể kết nối đến server chat");
       }
+      setIsLoading(false)
     };
   
     initializeChat();
@@ -192,60 +194,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
     setOpenEmergencyDialog(false);
   };
 
-  if (!currentChat || currentChat.chatGroupId.trim().length === 0) {
-    return (
-      <Box
-        sx={{
-          height: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: "-100px",
-          backgroundColor: "#ffffff",
-          gap: 3,
-          padding: 4,
-          position: "relative",
-          pt: "20%",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            animation: "float 3s ease-in-out infinite",
-            "@keyframes float": {
-              "0%, 100%": { transform: "translateY(0)" },
-              "50%": { transform: "translateY(-10px)" },
-            },
-          }}
-        >
-          <EmojiEmotionsOutlinedIcon sx={{ fontSize: 40, color: "#1E73BE", transform: "rotate(-10deg)" }} />
-          <ChatBubbleOutlineIcon sx={{ fontSize: 50, color: "#1E73BE" }} />
-          <SentimentSatisfiedAltIcon sx={{ fontSize: 40, color: "#1E73BE", transform: "rotate(10deg)" }} />
-        </Box>
-        <Typography variant="h4" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", marginBottom: 1 }}>
-          Chào mừng đến với Therapy Chat!
-        </Typography>
-        <Typography variant="body1" sx={{ color: "#666666", textAlign: "center", maxWidth: "500px", lineHeight: 1.6, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px" }}>
-          Hãy chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu. Các chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!
-        </Typography>
-        <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1.5, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px", maxWidth: "500px", border: "1px solid #e0e0e0" }}>
-          <Typography variant="h6" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", fontSize: "1.1rem" }}>
-            Mẹo nhỏ để có trải nghiệm tốt nhất:
-          </Typography>
-          <Box component="ul" sx={{ color: "#666666", m: 0, pl: 3, '& li': { marginBottom: '6px', '&:last-child': { marginBottom: 0 } } }}>
-            <li>Hãy mô tả rõ vấn đề bạn đang gặp phải</li>
-            <li>Đặt câu hỏi cụ thể để nhận được lời khuyên chính xác</li>
-            <li>Chia sẻ cảm xúc của bạn một cách chân thành</li>
-            <li>Lưu lại các lời khuyên hữu ích để tham khảo sau này</li>
-          </Box>
-        </Box>
-        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #1E73BE 0%, #90CAF9 100%)', opacity: 0.5 }} />
-      </Box>
-    );
-  }
-
-  if (error) {
+  if (error!=null) {
     return (
       <Box sx={{ p: 2, textAlign: "center" }}>
         <Typography color="error">{error}</Typography>
@@ -255,7 +204,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
   
 
   const handleEmergencyEnd= async()=>{
-    setIsLoading(true)
+    setAlertIsLoading(true)
     if(therapist!=undefined && patient!=undefined && currentAppointment!=undefined){
         const currentLocalAccount = sessionStorage.getItem('account')
         if(currentLocalAccount){
@@ -309,7 +258,7 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
             <IconComponentNode />
           </IconButton>
           <Typography variant="h6" color="#1d1b20" flex={1}>
-            {currentChat.name}
+            {currentChat?.name}
           </Typography>
           <Box display="flex" gap={2}>
             <IconButton onClick={handleOpenEmergencyDialog}>
@@ -486,12 +435,12 @@ const RightComponents = ({ currentChat }: RightComponentsProps) => {
         </DialogContent>
         <DialogActions>
           <Button 
-          loading={isLoading}
+          loading={alertIsLoading}
           onClick={handleCancelEmergency} color="primary">
             No
           </Button>
           <Button 
-            loading={isLoading}
+            loading={alertIsLoading}
           onClick={()=>{handleEmergencyEnd()}} color="error" variant="contained">
             Yes
           </Button>

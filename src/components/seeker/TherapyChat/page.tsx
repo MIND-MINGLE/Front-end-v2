@@ -1,8 +1,12 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import RightComponents from "./component";
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import EmojiEmotionsOutlinedIcon from '@mui/icons-material/EmojiEmotionsOutlined';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import ChatProfileList from "./tabs";
 import { ChatProps } from "../../../interface/IAccount";
+import LoadingScreen from "../../common/LoadingScreen";
 
 
 const TherapyChatPage: React.FC = () => {
@@ -13,6 +17,7 @@ const TherapyChatPage: React.FC = () => {
     therapistId:"",
     patientId:"",
   });
+  const [isLoading,setIsLoading] = useState<boolean>(false)
   const [isSeeker, setIsSeeker] = useState(false);
   useEffect(()=>{
     const sessionAccount = sessionStorage.getItem('account');
@@ -21,9 +26,12 @@ const TherapyChatPage: React.FC = () => {
         setIsSeeker(data.Role === "seeker")
     }
   },[])
+  if (true){
 
+  }
   return (
     <>
+    {isLoading? <LoadingScreen/>:null}
       <Box
         display="flex"
         flexDirection={{ md: "row" }}
@@ -41,7 +49,7 @@ const TherapyChatPage: React.FC = () => {
           flexDirection="column"
           justifyContent="center"
         >
-          <ChatProfileList isSeeker={isSeeker} setCurrentChat={setCurrentChat} />
+          <ChatProfileList setIsLoading={setIsLoading} isSeeker={isSeeker} setCurrentChat={setCurrentChat} />
         </Box>
 
         {/* Main Content */}
@@ -54,11 +62,67 @@ const TherapyChatPage: React.FC = () => {
           justifyContent="center" // Đảm bảo nội dung căn giữa
           bgcolor="#ffffff" // Màu nền chính
         >
-          <RightComponents currentChat={currentChat} />
+          {!currentChat || currentChat.chatGroupId.trim().length === 0?
+          <NoChatRoom/>:
+          <RightComponents setIsLoading={setIsLoading} currentChat={currentChat} />
+          }
+         
         </Box>
       </Box>
     </>
   );
+  function NoChatRoom(){
+    return(
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: "-100px",
+          backgroundColor: "#ffffff",
+          gap: 3,
+          padding: 4,
+          position: "relative",
+          pt: "20%",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            animation: "float 3s ease-in-out infinite",
+            "@keyframes float": {
+              "0%, 100%": { transform: "translateY(0)" },
+              "50%": { transform: "translateY(-10px)" },
+            },
+          }}
+        >
+          <EmojiEmotionsOutlinedIcon sx={{ fontSize: 40, color: "#1E73BE", transform: "rotate(-10deg)" }} />
+          <ChatBubbleOutlineIcon sx={{ fontSize: 50, color: "#1E73BE" }} />
+          <SentimentSatisfiedAltIcon sx={{ fontSize: 40, color: "#1E73BE", transform: "rotate(10deg)" }} />
+        </Box>
+        <Typography variant="h4" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", marginBottom: 1 }}>
+          Chào mừng đến với Therapy Chat!
+        </Typography>
+        <Typography variant="body1" sx={{ color: "#666666", textAlign: "center", maxWidth: "500px", lineHeight: 1.6, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px" }}>
+          Hãy chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu. Các chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!
+        </Typography>
+        <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1.5, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px", maxWidth: "500px", border: "1px solid #e0e0e0" }}>
+          <Typography variant="h6" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", fontSize: "1.1rem" }}>
+            Mẹo nhỏ để có trải nghiệm tốt nhất:
+          </Typography>
+          <Box component="ul" sx={{ color: "#666666", m: 0, pl: 3, '& li': { marginBottom: '6px', '&:last-child': { marginBottom: 0 } } }}>
+            <li>Hãy mô tả rõ vấn đề bạn đang gặp phải</li>
+            <li>Đặt câu hỏi cụ thể để nhận được lời khuyên chính xác</li>
+            <li>Chia sẻ cảm xúc của bạn một cách chân thành</li>
+            <li>Lưu lại các lời khuyên hữu ích để tham khảo sau này</li>
+          </Box>
+        </Box>
+        <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #1E73BE 0%, #90CAF9 100%)', opacity: 0.5 }} />
+      </Box>
+    )
+  }
 };
 
 export default TherapyChatPage;
