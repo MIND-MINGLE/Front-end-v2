@@ -3,7 +3,6 @@ import { Box, Typography, IconButton, Avatar } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getAllClientByChatGroupId, getGroupChatByAccountId } from "../../../api/ChatGroup/ChatGroupAPI";
 import { AccountProps, ChatProfile, ChatProps, UserInGroup } from "../../../interface/IAccount";
-import LoadingScreen from "../../common/LoadingScreen";
 import { useNavigate } from "react-router";
 
 
@@ -11,11 +10,11 @@ import { useNavigate } from "react-router";
 interface ChatProfileListProps {
   setCurrentChat: React.Dispatch<React.SetStateAction<ChatProps>>
   isSeeker:boolean
+  setIsLoading:React.Dispatch<React.SetStateAction<boolean>>
 }
-const ChatProfileList = ({isSeeker, setCurrentChat }: ChatProfileListProps) => {
+const ChatProfileList = ({setIsLoading,isSeeker, setCurrentChat }: ChatProfileListProps) => {
   const [profiles, setProfiles] = useState<ChatProfile[]>();
   const [onSelect, setOnSelect] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
   const nav = useNavigate()
   const returnHome = () => {
     nav("../")
@@ -62,7 +61,6 @@ const ChatProfileList = ({isSeeker, setCurrentChat }: ChatProfileListProps) => {
 
   return (
     <>
-      {isLoading ? <LoadingScreen /> : ""}
       <Box padding={0} width="100%" height="100vh" bgcolor="#D0E8FF" color="white">
         {/* Header */}
         <Box sx={{
@@ -79,8 +77,6 @@ const ChatProfileList = ({isSeeker, setCurrentChat }: ChatProfileListProps) => {
             <ArrowBackIcon />
           </IconButton>
         </Box>
-
-
         {/* Chat List */}
         <Box sx={{
           padding: "5px",

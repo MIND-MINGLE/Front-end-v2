@@ -22,38 +22,22 @@ const SeekerPage = (): React.JSX.Element => {
                 },
             }}
         >
-            {/* Part 1: Navigation Rail */}
-            <Box
-                width={{ xs: "80px", md: "110px" }} // Đồng bộ với NavigationRail
-                height="100vh"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                position="fixed" // Đảm bảo NavigationRail luôn cố định
-                top={0}
-                left={0}
-                zIndex={1000}
-            >
-                <NavigationRail />
-            </Box>
 
             {/* Part 2: Main Content */}
             <Box
                 sx={{
                     flex: 1,
-                    marginLeft: { xs: "80px", md: "110px" }, // Đẩy nội dung chính sang phải để không bị che bởi NavigationRail
+                    marginLeft: { xs: "80px", md: "100px" }, // Đẩy nội dung chính sang phải để không bị che bởi NavigationRail
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    padding: { xs: "20px", md: "40px" }, // Tăng padding trên desktop
-                    minHeight: "100vh",
+                    padding: { xs: "20px", md: "10px" }, // Tăng padding trên desktop
+                    minHeight: "auto",
                     background: "rgba(255, 255, 255, 0.1)", // Nền nhẹ để tạo chiều sâu
                     backdropFilter: "blur(5px)", // Hiệu ứng mờ nền
                 }}
             >
-                <Box sx={{ width: "100%", maxWidth: "1400px", marginTop: { xs: 5, md: 10 } }}>
                     <Frame />
-                </Box>
             </Box>
         </Box>
 
