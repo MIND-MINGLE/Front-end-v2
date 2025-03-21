@@ -8,10 +8,11 @@ import CopyrightFooter from '../coworking/Components/CopyrightFooter/CopyrightFo
 import TherapyMatchingForm from './TherapyMatchingForm/TherapyMatchingForm';
 import {Link} from 'react-router';
 import { AnimatePresence, motion } from "framer-motion";
-import { AccountProps, Appointment, Patient } from '../../interface/IAccount';
+import { AccountProps, Appointment, Patient, PurchasedPackaged } from '../../interface/IAccount';
 import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
 import AppointmentTimer from '../common/appointmentTimer';
+import { getPurchasedPackageByPatientId } from '../../api/Subscription/Subscription';
 
 
 const SeekerPage = (): JSX.Element => {
@@ -93,8 +94,24 @@ const SeekerPage = (): JSX.Element => {
                
             }
         }
+        const getSubscription = async() => {
+          const localData = sessionStorage.getItem('package');
+          if(!localData){
+              const patientAccount = localStorage.getItem('patient');
+              if(patientAccount){
+                  const data:Patient = JSON.parse(patientAccount)
+                  const pruchasedData = await getPurchasedPackageByPatientId(data.patientId)
+                  if(pruchasedData.statusCode === 200){
+                    const subscription:PurchasedPackaged = pruchasedData.result
+                    sessionStorage.setItem('package', subscription.subscription.packageName)
+                  }
+              }
+             
+          }
+      }
         getPatient()
         getAppointment()
+        getSubscription()
     },[])
     return (
         <>

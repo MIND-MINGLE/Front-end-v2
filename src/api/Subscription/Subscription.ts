@@ -41,10 +41,10 @@ export const addPurchasedPackage = async (data:PurchasedPackagedRequest) => {
 export const getPurchasedPackageByPatientId = async (patientId:string) => {
     const props = {
         data: null,
-        url: subtUrl+"/PurchasedPackage/patient/"+patientId,
+        url: subtUrl+"/PurchasedPackage/"+patientId,
         headers: headers
     }
-    const result = await axiosCreate(props)
+    const result = await axiosRead(props)
     if (result.success) {
         console.log(result.data)
         return result.data

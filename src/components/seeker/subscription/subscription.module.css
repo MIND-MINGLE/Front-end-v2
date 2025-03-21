@@ -150,17 +150,18 @@
   font-weight: 700;
   color: #1b9df0;
   text-align: center;
-  cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
+  z-index: 1000;
 }
 
 .buttonPlus:hover {
   background: #FFFFFF;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
 }
 
 .buttonPlus::after {
@@ -372,17 +373,18 @@
     font-weight: 700;
     color: #0077b6;
     text-align: center;
-    cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
+    z-index: 1000;
   }
   
   .buttonPremium:hover {
     background: #FFFFFF;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
   }
   
   /* Add button hover effect */
