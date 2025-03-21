@@ -121,5 +121,19 @@ interface UserInGroup {
   userInGroupId: string;
 }
 
+
+interface Subscription {
+  subscriptionId: string,
+      packageName: string,
+      price: number,
+      isDisabled: boolean
+}
+
+interface PurchasedPackagedRequest{
+  patientId: string,
+  subscriptionId: string,
+  }
+
+
  
-export type {Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+export type {PurchasedPackagedRequest,Subscription,Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
