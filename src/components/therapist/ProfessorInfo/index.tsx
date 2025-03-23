@@ -22,17 +22,196 @@ import {
     Select,
     TextField,
     Typography,
+    Snackbar,
+    Alert,
+    CircularProgress,
+    Skeleton,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { Accountlogout } from "../../../services/logout";
+import { getAccountById, updateUserAvatar } from "../../../api/Account/Account";
+import { useState, useRef, useEffect } from "react";
+import LoadingScreen from "../../common/LoadingScreen";
+import { getTherapistById } from "../../../api/Therapist/Therapist";
 
+interface TherapistProfile {
+    accountName: string;
+    email: string;
+    lastLogin: string;
+    isEmailVerified: boolean;
+    createdAt: string;
+}
+interface TherapistInfo {
+    therapistId: string;
+    firstName: string;
+    lastName: string;
+    dob: string;
+    gender: string;
+    phoneNumber: string;
+}
 
 export const Frame = () => {
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string>("");
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error'
+    });
+    const [loading, setLoading] = useState(true);
+    const [openImageModal, setOpenImageModal] = useState(false);
+    const [profile, setProfile] = useState<TherapistProfile>({
+        accountName: '',
+        email: '',
+        lastLogin: '',
+        isEmailVerified: false,
+        createdAt: ''
+    });
+    const [therapistInfo, setTherapistInfo] = useState<TherapistInfo>({
+        therapistId: '',
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: '',
+        phoneNumber: ''
+    });
+
     const nav = useNavigate();
     const logout = () => {
         Accountlogout()
-        nav("/");
+        nav("/", { replace: true });
     };
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const accountData = sessionStorage.getItem("account");
+                if (!accountData) {
+                    setError("Không tìm thấy thông tin tài khoản trong sessionStorage.");
+                    return;
+                }
+
+                const { UserId } = JSON.parse(accountData);
+                if (!UserId) {
+                    setError("Không tìm thấy UserId trong sessionStorage.");
+                    return;
+                }
+
+                // Fetch cả account và patient data
+                const [accountResponse, therapistResponse] = await Promise.all([
+                    getAccountById(UserId),
+                    getTherapistById(UserId)
+                ]);
+
+                // Xử lý account data
+                if (accountResponse?.result) {
+                    setProfile({
+                        accountName: accountResponse.result.accountName || "",
+                        email: accountResponse.result.email || "",
+                        lastLogin: accountResponse.result.lastLogin || "",
+                        isEmailVerified: accountResponse.result.isEmailVerified || false,
+                        createdAt: accountResponse.result.createdAt || "",
+                    });
+                    setAvatarUrl(accountResponse.result.avatar || "");
+                } else {
+                    setError("Dữ liệu tài khoản không hợp lệ.");
+                }
+
+                // Xử lý patient data
+                if (therapistResponse?.result) {
+                    setTherapistInfo({
+                        therapistId: therapistResponse.result.therapistId || "",
+                        firstName: therapistResponse.result.firstName || "",
+                        lastName: therapistResponse.result.lastName || "",
+                        dob: therapistResponse.result.dob || "",
+                        gender: therapistResponse.result.gender || "",
+                        phoneNumber: therapistResponse.result.phoneNumber || ""
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Đã xảy ra lỗi khi tải thông tin.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploadingAvatar(true);
+            setError(null);
+
+            const accountData = sessionStorage.getItem("account");
+            if (!accountData) {
+                throw new Error("Account information not found");
+            }
+
+            const { UserId } = JSON.parse(accountData);
+            if (!UserId) {
+                throw new Error("UserId not found");
+            }
+
+            // Tạo URL tạm thời cho file ảnh để preview
+            const tempUrl = URL.createObjectURL(file);
+
+            const result = await updateUserAvatar(file, UserId);
+
+            if (result?.isSuccess) {
+                setAvatarUrl(tempUrl);
+                setSnackbar({
+                    open: true,
+                    message: 'The avatar has been updated successfully!',
+                    severity: 'success'
+                });
+            } else {
+                // Nếu không có URL trong response, sử dụng URL tạm thời
+                setAvatarUrl(tempUrl);
+                setSnackbar({
+                    open: true,
+                    message: 'The image has been saved, but it may need to be refreshed to display correctly',
+                    severity: 'success'
+                });
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An error occurred while updating the avatar');
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'An error occurred while updating the avatar',
+                severity: 'error'
+            });
+            console.error('Error:', err);
+        } finally {
+            setUploadingAvatar(false);
+        }
+    };
+    const handleCloseSnackbar = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+    const handleOpenImage = () => setOpenImageModal(true);
+    const handleCloseImage = () => setOpenImageModal(false);
+    if (loading) {
+        return <LoadingScreen />;
+    }
+    if (error) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <Typography variant="h6" color="error">
+                    {error} - Check the console for more details.
+                </Typography>
+            </Box>
+        );
+    }
     return (
         <Box
             display="flex"
@@ -64,8 +243,16 @@ export const Frame = () => {
                         >
                             <Box display="flex" flexDirection="column" alignItems="center">
                                 <Box position="relative">
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleFileChange}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                    />
                                     <Avatar
-                                        src="/Ellipse 27.svg"
+                                        src={avatarUrl || "/Ellipse 27.svg"}
+                                        onClick={handleAvatarClick}
                                         sx={{
                                             width: 120,
                                             height: 120,
@@ -81,6 +268,7 @@ export const Frame = () => {
                                         }}
                                     />
                                     <IconButton
+                                        onClick={handleAvatarClick}
                                         sx={{
                                             position: 'absolute',
                                             bottom: 0,
@@ -93,6 +281,22 @@ export const Frame = () => {
                                         <Edit fontSize="small" sx={{ color: '#027FC1' }} />
                                     </IconButton>
                                 </Box>
+                                {uploadingAvatar && (
+                                    <Box
+                                        position="absolute"
+                                        top={0}
+                                        left={0}
+                                        right={0}
+                                        bottom={0}
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        bgcolor="rgba(255, 255, 255, 0.8)"
+                                        borderRadius="50%"
+                                    >
+                                        <CircularProgress size={40} />
+                                    </Box>
+                                )}
                                 <Typography
                                     variant="h5"
                                     color="#027FC1"
@@ -100,7 +304,7 @@ export const Frame = () => {
                                     fontWeight="bold"
                                     textAlign="center"
                                 >
-                                    Quỳnh Nguyễn
+                                    {`${therapistInfo.firstName} ${therapistInfo.lastName}`}
                                 </Typography>
                                 <Box
                                     sx={{
@@ -137,7 +341,7 @@ export const Frame = () => {
                                 >
                                     <Google sx={{ color: "#DB4437" }} />
                                     <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
-                                        aiquynh2812@gmail.com
+                                        {profile.email}
                                     </Typography>
                                     <IconButton size="small" sx={{ color: 'error.main' }}>
                                         <Delete fontSize="small" />
@@ -175,7 +379,7 @@ export const Frame = () => {
                                 >
                                     <Phone sx={{ color: "#027FC1" }} />
                                     <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
-                                        0123456789
+                                        {therapistInfo.phoneNumber || 'Chưa cập nhật số điện thoại'}
                                     </Typography>
                                     <IconButton size="small" sx={{ color: 'error.main' }}>
                                         <Delete fontSize="small" />
@@ -223,77 +427,58 @@ export const Frame = () => {
                             }}
                         >
                             <Typography variant="h6" color="#027FC1" fontWeight="medium" mb={4}>
-                                Thông tin cá nhân
+                                Personal Information
                             </Typography>
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                        Họ và tên
+                                        Full Name
                                     </Typography>
                                     <Box display="flex" alignItems="center" mt={1}>
                                         <TextField
                                             variant="outlined"
                                             size="small"
                                             fullWidth
-                                            value="Quỳnh Nguyễn"
+                                            value={`${therapistInfo.firstName} ${therapistInfo.lastName}`}
+                                            disabled
                                             sx={{
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: 2,
                                                 },
+                                                "& .Mui-disabled": {
+                                                    backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                                    color: "text.primary",
+                                                }
                                             }}
                                         />
-                                        <IconButton size="small" sx={{ ml: 1, color: '#027FC1' }}>
-                                            <Edit fontSize="small" />
-                                        </IconButton>
                                     </Box>
                                 </Grid>
 
                                 <Grid item xs={12} md={6}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                        Ngày sinh
+                                        Date of Birth
                                     </Typography>
-                                    <Box display="flex" gap={1} mt={1}>
-                                        <Select
-                                            variant="outlined"
-                                            size="small"
-                                            value={28}
-                                            sx={{
-                                                flex: 1,
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value={28}>28</MenuItem>
-                                        </Select>
-                                        <Select
-                                            variant="outlined"
-                                            size="small"
-                                            value={12}
-                                            sx={{
-                                                flex: 1,
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value={12}>12</MenuItem>
-                                        </Select>
-                                        <Select
-                                            variant="outlined"
-                                            size="small"
-                                            value={2000}
-                                            sx={{
-                                                flex: 1,
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                },
-                                            }}
-                                        >
-                                            <MenuItem value={2000}>2000</MenuItem>
-                                        </Select>
-                                    </Box>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="date"
+                                        value={therapistInfo.dob}
+                                        disabled
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        sx={{
+                                            mt: 1,
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: 2,
+                                            },
+                                            "& .Mui-disabled": {
+                                                backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                                color: "text.primary",
+                                            }
+                                        }}
+                                    />
                                 </Grid>
 
                                 <Grid item xs={12} md={6}>
@@ -304,41 +489,26 @@ export const Frame = () => {
                                         variant="outlined"
                                         size="small"
                                         fullWidth
-                                        value="female"
+                                        value={therapistInfo.gender || ''}
+                                        disabled
                                         sx={{
                                             mt: 1,
                                             "& .MuiOutlinedInput-root": {
                                                 borderRadius: 2,
                                             },
+                                            "& .Mui-disabled": {
+                                                backgroundColor: "rgba(0, 0, 0, 0.03)",
+                                                color: "text.primary",
+                                            }
                                         }}
                                     >
-                                        <MenuItem value="female">Female</MenuItem>
-                                        <MenuItem value="male">Male</MenuItem>
-                                        <MenuItem value="other">Other</MenuItem>
+                                        <MenuItem value="Male">Male</MenuItem>
+                                        <MenuItem value="Female">Female</MenuItem>
+                                        <MenuItem value="Others">Others</MenuItem>
                                     </Select>
                                 </Grid>
 
-                                <Grid item xs={12}>
-                                    <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                        Địa chỉ
-                                    </Typography>
-                                    <Box display="flex" alignItems="center" mt={1}>
-                                        <TextField
-                                            variant="outlined"
-                                            size="small"
-                                            fullWidth
-                                            value="58 Do Doc Loc, Hoa Xuan, Cam Le, Da Nang City"
-                                            sx={{
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                },
-                                            }}
-                                        />
-                                        <IconButton size="small" sx={{ ml: 1, color: '#027FC1' }}>
-                                            <Edit fontSize="small" />
-                                        </IconButton>
-                                    </Box>
-                                </Grid>
+
 
                                 <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
@@ -445,7 +615,7 @@ export const Frame = () => {
                                             >
                                                 <AddCircle fontSize="large" />
                                                 <Typography variant="body2">
-                                                    Thêm chứng chỉ
+                                                    Upload Certificate
                                                 </Typography>
                                             </Button>
                                         </Card>
@@ -456,6 +626,20 @@ export const Frame = () => {
                     </Grid>
                 </Grid>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

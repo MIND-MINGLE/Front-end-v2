@@ -33,9 +33,14 @@ interface Therapist {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  avatar: string;
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
+  account: Account
+}
+interface Account {
+  avatar: string;
 }
 interface Patient {
   patientId: string;
@@ -52,7 +57,7 @@ interface Sessison {
   therapistId: string;
   startTime: string;
   endTime: string;
-  dayOfWeek: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY" ;
+  dayOfWeek: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
   isActive: boolean;
 }
 
@@ -121,7 +126,6 @@ interface UserInGroup {
   userInGroupId: string;
 }
 
-
 interface Subscription {
   subscriptionId: string;
   packageName: string;
@@ -143,7 +147,6 @@ interface PurchasedPackagedRequest{
     startDate:string,
     endDate:string,
     }
-
 
  
 export type {PurchasedPackaged,PurchasedPackagedRequest,Subscription,Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
