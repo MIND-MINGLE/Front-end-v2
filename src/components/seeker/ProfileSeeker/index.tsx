@@ -214,12 +214,12 @@ export const Frame = () => {
 
             const accountData = sessionStorage.getItem("account");
             if (!accountData) {
-                throw new Error("Không tìm thấy thông tin tài khoản");
+                throw new Error("Account information not found");
             }
 
             const { UserId } = JSON.parse(accountData);
             if (!UserId) {
-                throw new Error("Không tìm thấy UserId");
+                throw new Error("UserId not found");
             }
 
             // Tạo URL tạm thời cho file ảnh để preview
@@ -232,7 +232,7 @@ export const Frame = () => {
                 setAvatarUrl(tempUrl);
                 setSnackbar({
                     open: true,
-                    message: 'Cập nhật ảnh đại diện thành công!',
+                    message: 'The avatar has been updated successfully!',
                     severity: 'success'
                 });
             } else {
@@ -240,15 +240,15 @@ export const Frame = () => {
                 setAvatarUrl(tempUrl);
                 setSnackbar({
                     open: true,
-                    message: 'Đã lưu ảnh nhưng có thể cần refresh để hiển thị chính xác',
+                    message: 'The image has been saved, but it may need to be refreshed to display correctly',
                     severity: 'success'
                 });
             }
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Đã xảy ra lỗi khi cập nhật avatar');
+            setError(err instanceof Error ? err.message : 'An error occurred while updating the avatar');
             setSnackbar({
                 open: true,
-                message: err instanceof Error ? err.message : 'Đã xảy ra lỗi khi cập nhật avatar',
+                message: err instanceof Error ? err.message : 'An error occurred while updating the avatar',
                 severity: 'error'
             });
             console.error('Error:', err);
@@ -270,7 +270,7 @@ export const Frame = () => {
             if (!accountData) {
                 setSnackbar({
                     open: true,
-                    message: 'Không tìm thấy thông tin tài khoản',
+                    message: 'Account information not found',
                     severity: 'error'
                 });
                 return;
@@ -280,7 +280,7 @@ export const Frame = () => {
             if (!UserId) {
                 setSnackbar({
                     open: true,
-                    message: 'Không tìm thấy ID người dùng',
+                    message: 'UserId not found',
                     severity: 'error'
                 });
                 return;
@@ -305,20 +305,20 @@ export const Frame = () => {
                 // Hiển thị thông báo thành công
                 setSnackbar({
                     open: true,
-                    message: 'Cập nhật thông tin thành công!',
+                    message: 'The information has been updated successfully!',
                     severity: 'success'
                 });
 
                 // Đóng modal
                 handleCloseEdit();
             } else {
-                throw new Error(response?.errorMessage || 'Cập nhật không thành công');
+                throw new Error(response?.errorMessage || 'Update failed');
             }
         } catch (error) {
             console.error('Error updating profile:', error);
             setSnackbar({
                 open: true,
-                message: error instanceof Error ? error.message : 'Có lỗi xảy ra khi cập nhật thông tin',
+                message: error instanceof Error ? error.message : 'An error occurred while updating the information',
                 severity: 'error'
             });
         } finally {
@@ -337,7 +337,7 @@ export const Frame = () => {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
                 <Typography variant="h6" color="error">
-                    {error} - Kiểm tra console để biết thêm chi tiết.
+                    {error} - Check the console for more details.
                 </Typography>
             </Box>
         );
@@ -494,12 +494,12 @@ export const Frame = () => {
                                 {/* Account Information Section */}
                                 <Box mb={4}>
                                     <Typography variant="h6" color="#027FC1" fontWeight="medium" mb={3}>
-                                        Thông tin tài khoản
+                                        Account Information
                                     </Typography>
                                     <Grid container spacing={3}>
                                         <Grid item xs={12}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Tên tài khoản
+                                                Account Name
                                             </Typography>
                                             <Box display="flex" alignItems="center" mt={1}>
                                                 <TextField
@@ -550,7 +550,7 @@ export const Frame = () => {
 
                                     <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
                                         <Typography variant="h6" color="#027FC1" fontWeight="medium">
-                                            Thông tin cá nhân
+                                            Personal Information
                                         </Typography>
                                         <IconButton
                                             size="small"
@@ -570,7 +570,7 @@ export const Frame = () => {
                                     <Grid container spacing={3}>
                                         <Grid item xs={12} md={6}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Họ
+                                                First Name
                                             </Typography>
                                             <TextField
                                                 variant="outlined"
@@ -590,7 +590,7 @@ export const Frame = () => {
 
                                         <Grid item xs={12} md={6}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Tên
+                                                Last Name
                                             </Typography>
                                             <TextField
                                                 variant="outlined"
@@ -610,20 +610,22 @@ export const Frame = () => {
 
                                         <Grid item xs={12} md={6}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Ngày sinh
+                                                Date of Birth
                                             </Typography>
-                                            <TextField 
-                                                type="date"
+                                            <TextField
+                                                type="text"
                                                 variant="outlined"
                                                 size="small"
                                                 fullWidth
-                                                value={new Date(patientInfo.dob).toLocaleDateString('vi-VN')}
+                                                value={patientInfo.dob}
                                                 disabled
                                                 sx={{
                                                     mt: 1,
                                                     "& .MuiOutlinedInput-root": {
                                                         borderRadius: 2,
-                                                        bgcolor: 'rgba(0, 0, 0, 0.02)'
+                                                        bgcolor: 'rgba(0, 0, 0, 0.02)',
+                                                        "&:hover fieldset": { borderColor: "#027FC1" },
+                                                        "&.Mui-focused fieldset": { borderColor: "#027FC1" },
                                                     },
                                                 }}
                                             />
@@ -631,7 +633,7 @@ export const Frame = () => {
 
                                         <Grid item xs={12} md={6}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Giới tính
+                                                Gender
                                             </Typography>
                                             <TextField
                                                 variant="outlined"
@@ -651,7 +653,7 @@ export const Frame = () => {
 
                                         <Grid item xs={12}>
                                             <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                                Số điện thoại
+                                                Phone Number
                                             </Typography>
                                             <TextField
                                                 variant="outlined"
@@ -789,7 +791,7 @@ export const Frame = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
                                 <Typography variant="body2" color="textSecondary" mb={1}>
-                                    Họ
+                                    First Name
                                 </Typography>
                                 <TextField
                                     fullWidth
@@ -806,7 +808,7 @@ export const Frame = () => {
 
                             <Grid item xs={12} md={6}>
                                 <Typography variant="body2" color="textSecondary" mb={1}>
-                                    Tên
+                                    Last Name
                                 </Typography>
                                 <TextField
                                     fullWidth
@@ -823,12 +825,12 @@ export const Frame = () => {
 
                             <Grid item xs={12} md={6}>
                                 <Typography variant="body2" color="textSecondary" mb={1}>
-                                    Ngày sinh
+                                    Date of Birth
                                 </Typography>
                                 <TextField
                                     fullWidth
                                     size="small"
-                                    //type="date"
+                                    type="date"
                                     value={editForm.dob || ''}
                                     onChange={(e) => setEditForm(prev => ({
                                         ...prev,
@@ -847,7 +849,7 @@ export const Frame = () => {
 
                             <Grid item xs={12} md={6}>
                                 <Typography variant="body2" color="textSecondary" mb={1}>
-                                    Giới tính
+                                    Gender
                                 </Typography>
                                 <Select
                                     fullWidth
@@ -858,15 +860,15 @@ export const Frame = () => {
                                         borderRadius: 2,
                                     }}
                                 >
-                                    <MenuItem value="Male">Nam</MenuItem>
-                                    <MenuItem value="Female">Nữ</MenuItem>
-                                    <MenuItem value="Other">Khác</MenuItem>
+                                    <MenuItem value="Male">Male</MenuItem>
+                                    <MenuItem value="Female">Female</MenuItem>
+                                    <MenuItem value="Other">Other</MenuItem>
                                 </Select>
                             </Grid>
 
                             <Grid item xs={12}>
                                 <Typography variant="body2" color="textSecondary" mb={1}>
-                                    Số điện thoại
+                                    Phone Number
                                 </Typography>
                                 <TextField
                                     fullWidth
@@ -896,7 +898,7 @@ export const Frame = () => {
                                     },
                                 }}
                             >
-                                Hủy
+                                Cancel
                             </Button>
                             <Button
                                 variant="contained"
@@ -909,7 +911,7 @@ export const Frame = () => {
                                     },
                                 }}
                             >
-                                {isSubmitDisabled ? 'Đang xử lý...' : 'Lưu thay đổi'}
+                                {isSubmitDisabled ? 'Processing...' : 'Save changes'}
                             </Button>
                         </Box>
                     </Box>
