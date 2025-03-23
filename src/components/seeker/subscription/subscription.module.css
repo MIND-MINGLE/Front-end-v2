@@ -55,71 +55,183 @@
   }
   
   /* Card styles - Plus */
-  .card {
-    border: 1px solid #1b9df0;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-    background-color: #FFFFFF;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.card {
+  border: 2px solid #1b9df0;
+  border-radius: 0.75rem;
+  box-shadow: 0 5px 15px rgba(27, 157, 240, 0.15);
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 0.4s ease,
+              border-color 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 25px -5px rgba(27, 157, 240, 0.3);
+  border-color: #1b9df0;
+}
+
+.cardHeader {
+  padding: 1.75rem 1.5rem;
+  background: #58b7f6;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardHeader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: pulseGlowPlus 4s ease-in-out infinite;
+}
+
+@keyframes pulseGlowPlus {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
   }
-  
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  50% {
+    opacity: 0.4;
+    transform: scale(1.5);
   }
-  
-  .cardHeader {
-    padding: 1.5rem;
+}
+
+.cardTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.cardDescription {
+  margin-top: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1rem;
+}
+
+.pricingContainer {
+  margin-top: 2.25rem;
+  position: relative;
+}
+
+.price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  display: inline-block;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.billingPeriod {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e6f7ff;
+  opacity: 0.9;
+}
+
+.buttonPlus {
+  margin-top: 2.25rem;
+  display: block;
+  width: 100%;
+  background: linear-gradient(90deg, #FFFFFF 0%, #f0f8ff 100%);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1b9df0;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.buttonPlus:hover {
+  background: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+}
+
+.buttonPlus::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.buttonPlus:hover::after {
+  animation: ripplePlus 1s ease-out;
+}
+
+@keyframes ripplePlus {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
   }
-  
-  .cardTitle {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #0077b6;
+  100% {
+    transform: scale(50, 50);
+    opacity: 0;
   }
-  
-  .cardDescription {
-    margin-top: 1rem;
-    color: #6b7280;
+}
+
+/* Features section */
+.card .cardFeatures {
+  padding: 1.75rem;
+  border-top: 1px solid rgba(27, 157, 240, 0.2);
+  background-color: #f8fbff;
+}
+
+.card .featuresTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1b9df0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.card .featuresList {
+  margin-top: 1.75rem;
+}
+
+.card .featureItem {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.card .checkIcon {
+  color: #1b9df0;
+  animation: fadeInPlus 0.5s ease-in;
+}
+
+@keyframes fadeInPlus {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  .pricingContainer {
-    margin-top: 2rem;
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .price {
-    font-size: 2.25rem;
-    font-weight: 800;
-    color: #111827;
-  }
-  
-  .billingPeriod {
-    font-size: 1rem;
-    font-weight: 500;
-    color: #6b7280;
-  }
-  
-  .buttonPlus {
-    margin-top: 2rem;
-    display: block;
-    width: 100%;
-    background-color: #1b9df0;
-    border: 1px solid #1b9df0;
-    border-radius: 0.375rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #FFFFFF;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .buttonPlus:hover {
-    background-color: #0077b6;
-  }
+}
   /* Enhanced Premium Card Styles */
 .cardPremium {
     border: 2px solid #0077b6;
@@ -261,17 +373,18 @@
     font-weight: 700;
     color: #0077b6;
     text-align: center;
-    cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
+    z-index: 1000;
   }
   
   .buttonPremium:hover {
     background: #FFFFFF;
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
   }
   
   /* Add button hover effect */

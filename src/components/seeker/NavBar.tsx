@@ -38,6 +38,7 @@ export const NavigationRail = (): JSX.Element => {
         >
             <Box
                 sx={{
+                    opacity:icon?1:0,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -148,7 +149,7 @@ export const NavigationRail = (): JSX.Element => {
                 scale: "120%",
                 bgcolor: "#1565C0",
             },
-            backgroundImage: packageName === "MinglePlus" ? "url('/pack1.png')" : packageName === "MinglePremium" ? "url('/pack2.png')" : "",
+            backgroundImage: packageName === "MindMingle Plus" ? "url('/pack1.png')" : packageName === "MindMingle Premium" ? "url('/pack2.png')" : "",
             backgroundSize: "100%",
         }}
     >

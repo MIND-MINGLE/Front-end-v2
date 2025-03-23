@@ -1,48 +1,61 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './subscription.module.css';
+import { Subscription } from '../../../interface/IAccount';
+import { getAllSubscription } from '../../../api/Subscription/Subscription';
+import LoadingScreen from '../../common/LoadingScreen';
+import { formatVnd } from '../../../services/common';
 
 export default function SubscriptionPage() {
   // Sample subscription data matching your schema
-  const [subscriptions, setSubscriptions] = useState([
+  const [subscriptionData,setSubscriptonData] = useState<Subscription[]>([])
+  const [isLoading,setIsLoading] = useState<boolean>(false)
+  const subscriptionsDetail = 
+  [
     {
-      subscriptionId: "plus-monthly",
-      packageName: "MindMingle Plus",
-      price: 9.99,
-      features: [
-        "100 activities per month",
-        "Basic analytics",
-        "Email support"
-      ],
+      features: ["10% discounts on each session", "Basic Audio Call", "Email support"],
       description: "Perfect for beginners and casual users",
-      isPremium: false
+      isPremium: false,
     },
     {
-      subscriptionId: "premium-monthly",
-      packageName: "MindMingle Premium",
-      price: 19.99,
       features: [
-        "Unlimited activities",
-        "Advanced analytics dashboard",
+        "30% discounts on each session",
+        "Background Music (Customization support)",
         "Priority 24/7 support",
-        "Exclusive premium content",
-        "Custom user profiles"
+        "Video calling chat",
+        "Custom your avatar",
       ],
       description: "For dedicated users seeking advanced features",
-      isPremium: true
+      isPremium: true,
+    },
+  ];
+  useEffect(()=>{
+    const getSubscription = async()=>{
+      setIsLoading(true)
+      const subData = await getAllSubscription()
+      if(subData.statusCode === 200){
+        const mergedSubscriptions = subData.result?.map((subData:Subscription, index:number) => ({
+          ...subData,
+          ...subscriptionsDetail[index],
+        }));
+        setSubscriptonData(mergedSubscriptions)
+      }
+      setIsLoading(false)
     }
-  ]);
+    getSubscription()
+  },[])
 
   // State to track selected subscription
-  const [selectedSubscription, setSelectedSubscription] = useState("");
+  const [selectedSubscription, setSelectedSubscription] = useState<Subscription>();
 
   // Handler for subscription selection
-  const handleSelectSubscription = (subscriptionId:string) => {
-    setSelectedSubscription(subscriptionId);
-    console.log(`Selected subscription: ${subscriptionId}`);
+  const handleSelectSubscription = (subscription:Subscription) => {
+    setSelectedSubscription(subscription);
+    console.log(`Selected subscription: ${subscription}`);
     // Here you would typically proceed to checkout or account update
   };
 
   return (
+    <>{isLoading?<LoadingScreen/>:null}
     <div className={styles.container}>
       <div className={styles.wrapper}>
         {/* Header */}
@@ -57,7 +70,7 @@ export default function SubscriptionPage() {
 
         {/* Subscription Cards */}
         <div className={styles.cardsContainer}>
-          {subscriptions.map((subscription) => (
+          {subscriptionData.map((subscription:Subscription) => (
             <div 
               key={subscription.subscriptionId}
               className={subscription.isPremium ? styles.cardPremium : styles.card}
@@ -71,7 +84,7 @@ export default function SubscriptionPage() {
                 </p>
                 <p className={subscription.isPremium ? styles.pricingContainerPremium : styles.pricingContainer}>
                   <span className={subscription.isPremium ? styles.pricePremium : styles.price}>
-                    ${subscription.price.toFixed(2)}
+                    {formatVnd(subscription.price)}
                   </span>
                   <span className={subscription.isPremium ? styles.billingPeriodPremium : styles.billingPeriod}>
                     /month
@@ -79,9 +92,10 @@ export default function SubscriptionPage() {
                 </p>
                 <button
                   className={subscription.isPremium ? styles.buttonPremium : styles.buttonPlus}
-                  onClick={() => handleSelectSubscription(subscription.subscriptionId)}
+                  style={{cursor: 'pointer'}}
+                  onClick={() => handleSelectSubscription(subscription)}
                 >
-                  {subscription.isPremium ? "Get Premium" : "Get Started"}
+                  {subscription.isPremium ? "Go Premium" : "Get Started"}
                 </button>
               </div>
               <div className={styles.cardFeatures}>
@@ -89,7 +103,7 @@ export default function SubscriptionPage() {
                   What's included
                 </h3>
                 <ul className={styles.featuresList}>
-                  {subscription.features.map((feature, index) => (
+                  {subscription.features?.map((feature, index) => (
                     <li key={index} className={styles.featureItem}>
                       <svg className={styles.checkIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -106,10 +120,9 @@ export default function SubscriptionPage() {
         {/* Selected plan feedback (optional) */}
         {selectedSubscription && (
           <div className={styles.selectedPlan}>
-            <p>You selected: {subscriptions.find(sub => sub.subscriptionId === selectedSubscription)?.packageName}</p>
+            <p>You selected: {selectedSubscription.packageName}</p>
           </div>
         )}
-
         {/* FAQ or additional info */}
         <div className={styles.footer}>
           <p>
@@ -121,5 +134,6 @@ export default function SubscriptionPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
