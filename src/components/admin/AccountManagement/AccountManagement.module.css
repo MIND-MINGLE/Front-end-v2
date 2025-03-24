@@ -1,0 +1,137 @@
+.container {
+  padding: 24px;
+}
+
+.title {
+  margin-bottom: 24px;
+  color: #1a237e;
+  font-weight: 600;
+}
+
+.tableContainer {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.tableHeader {
+  background-color: #f5f5f5 !important;
+  font-weight: 600 !important;
+  color: #1a237e !important;
+}
+
+.tableRow:hover {
+  background-color: #f8f9fa;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+}
+
+.errorContainer {
+  padding: 24px;
+  text-align: center;
+}
+
+.roleChip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.roleChip.ad {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.roleChip.doc {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.roleChip.seeker {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.statusChip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statusChip.active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.statusChip.inactive {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.controls {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 0 12px;
+  transition: all 0.3s ease;
+}
+
+.searchBox:focus-within {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+.searchIcon {
+  color: #666;
+  margin-right: 8px;
+}
+
+.searchInput {
+  flex: 1;
+}
+
+.searchInput input {
+  padding: 8px 0;
+}
+
+.roleFilter {
+  min-width: 150px;
+  background: white;
+  border-radius: 8px;
+}
+
+.searchBox:hover,
+.roleFilter:hover {
+  border-color: #1976d2;
+}
+
+.roleFilter .MuiSelect-select {
+  padding: 8px 12px;
+}
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+  }
+  
+  .roleFilter {
+    width: 100%;
+  }
+} 
