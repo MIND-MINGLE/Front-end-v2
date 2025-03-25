@@ -35,7 +35,7 @@ const AccountManagementPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(0);
-  const [rowsPerPage] = useState(15);
+  const [rowsPerPage] = useState(10);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
@@ -191,7 +191,7 @@ const AccountManagementPage: React.FC = () => {
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[15]}
+        rowsPerPageOptions={[10]}
       />
     </div>
   );
