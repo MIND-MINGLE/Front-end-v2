@@ -18,9 +18,9 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
   const [isLoading,setIsLoading] = useState(false)
   const nav = useNavigate()
 
-  // Retrieve accountId from LocalStorage when the component mounts
+  // Retrieve accountId from sesison when the component mounts
   useEffect(() => {
-    const storedAccountId = localStorage.getItem("account");
+    const storedAccountId = sessionStorage.getItem("account");
     if (storedAccountId) {
       setVerifyData((prev) => ({ ...prev, accountId: storedAccountId }));
     }

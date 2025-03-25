@@ -93,7 +93,7 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
       }
     }
     if (response != null) {
-      localStorage.setItem("account", response.result);
+      sessionStorage.setItem("account", response.result);
       onCreateAccount()
     }
     else {

@@ -126,8 +126,8 @@ export default function SubscriptionPage() {
       const uploadResult = await uploadBytes(storageRef, paymentImage);
       const imageUrl = await getDownloadURL(uploadResult.ref);
 
-      // Lấy patientId từ localStorage
-      const patient = localStorage.getItem('patient');
+      // Lấy patientId từ sessionStorage
+      const patient = sessionStorage.getItem('patient');
       const patientId = JSON.parse(patient || '{}').patientId;
       if (!patientId) {
         throw new Error('Patient information not found');

@@ -40,7 +40,7 @@ const GradientAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 // Styled button
-const AdminButton = styled(Button)(({ theme }) => ({
+const AdminButton = styled(Button)(({ }) => ({
   position: "absolute",
   top: 15,
   right: 40,
@@ -52,16 +52,14 @@ const AdminButton = styled(Button)(({ theme }) => ({
   },
   animation: "btnFade 20s infinite", 
   "@keyframes btnFade": {
-    "0%, 25%":  { opacity: 0.1 },
-    "25%,75%": { opacity: 0.9 }, 
-    "75%,100%": { opacity: 0.1 }, 
+    "0%, 30%":  { opacity: 0 },
+    "30%,60%": { opacity: 0.2 }, 
+    "60%,100%": { opacity: 0 }, 
   },
 }));
 
 const LandingPage = () => {
   const nav = useNavigate();
-  const [isButtonVisible, setIsButtonVisible] = useState(false); // State for button visibility
-
   const navigate = (role: string, url: string) => {
     localStorage.setItem("role", role);
     nav(url);
@@ -99,15 +97,7 @@ const LandingPage = () => {
     autoLogin();
   }, [nav]);
 
-  // Toggle button visibility every 10 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsButtonVisible((prev) => !prev); // Toggle visibility
-    }, 10000); // 10 seconds
-
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
-
+ 
   return (
     <Box
       sx={{
