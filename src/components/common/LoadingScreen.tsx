@@ -1,5 +1,5 @@
 import React from 'react';
-import  './css/LoadingScreen.css'; // Make sure to create this CSS file
+import  './css/loadingscreen.css'; // Make sure to create this CSS file
 
 const LoadingScreen: React.FC = () => {
   console.log('Loading...')
