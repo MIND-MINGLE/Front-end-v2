@@ -5,8 +5,6 @@
     { "path": "./tsconfig.node.json" }
   ],
  "compilerOptions": {
-    "skipLibCheck": true, // Skips checking of declaration files (e.g., node_modules)
-    "noEmitOnError": false, // Allows build to proceed even with errors
-    "strict": false // Disables strict type checking (optional, if you want less strict rules)
+  
   },
 }
