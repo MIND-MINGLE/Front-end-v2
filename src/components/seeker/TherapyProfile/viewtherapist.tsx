@@ -1,4 +1,4 @@
-"use client";
+
 import { Google, Phone } from "@mui/icons-material";
 import {
   Avatar,
@@ -18,8 +18,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getTherapistById } from "../../../api/Therapist/Therapist";
 import LoadingScreen from "../../common/LoadingScreen";
 import NavigationRail from "../NavBar";
+import styles from "./viewthera.module.css"
 import { formatVnd } from "../../../services/common";
-import styles from './viewTherapist.module.css';
+
 
 interface Therapist {
   therapistId: string;
