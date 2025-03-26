@@ -199,7 +199,6 @@ export const NavigationRail = (): JSX.Element => {
     >
        {packageName===""?"Buy Subscription":`Thank You!`}
     </Typography>
-   
        {packageName===""?
         <Typography
         variant="h6" // Body style
@@ -261,7 +260,11 @@ export const NavigationRail = (): JSX.Element => {
                 <NavItem to="/seeker" icon={<HomeIcon />} label="Home" />
                 <NavItem to="/seeker/therapy-chat" icon={<HealingIcon />} label="Therapy" />
                 <NavItem to="/seeker/history" icon={<HistoryIcon />} label="History" />
-                <NavItem to="/seeker/events" icon={<EventIcon />} label="Event" />
+                <div onClick={()=>alert("Feature Under Construction! Please Wait Calmly...")}>
+                    <NavItem to=""
+                    //to="/seeker/events" 
+                    icon={<EventIcon />} label="Event" />
+                </div>
                 <NavItem to="/seeker/profile" icon={<PersonIcon />} label="Profile" />
             </Stack>
         </Box>
