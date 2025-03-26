@@ -110,11 +110,8 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
 
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Checkbox className={styles.checkbox} />
-          <Typography className={styles.termsText}>
-            I agree to{" "}
-            <span className={styles.termsLink}>Terms of use</span>
-            {" "}and{" "}
-            <span className={styles.termsLink}>Privacy Policy</span>
+          <Typography className={styles.termsLink}>
+            Remember Me!?
           </Typography>
         </Box>
 
