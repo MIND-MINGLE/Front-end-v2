@@ -1,0 +1,127 @@
+.popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8); /* Darker overlay for drama */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out; /* Fade in the overlay */
+  }
+  
+  .popupContent {
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4); /* Vibrant gradient */
+    padding: 30px;
+    border-radius: 15px;
+    width: 450px;
+    max-width: 95%;
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.7), 0 0 40px rgba(78, 205, 196, 0.5); /* Glowing shadow */
+    position: relative;
+    animation: popIn 0.4s ease-out; /* Pop-in animation */
+    overflow: hidden; /* For glow effect */
+  }
+  
+  .popupHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .popupTitle {
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Text pop */
+  }
+  
+  .closeIcon {
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s, color 0.2s;
+  }
+  
+  .closeIcon:hover {
+    transform: scale(1.2);
+    color: #ffeb3b; /* Bright yellow on hover */
+  }
+  
+  .popupText {
+    margin: 0 0 20px;
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  .popupButton {
+    padding: 12px 30px;
+    background: #ffeb3b; /* Bright yellow button */
+    color: #333;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(255, 235, 59, 0.5);
+  }
+  
+  .popupButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 235, 59, 0.8);
+  }
+  
+  .popupGlow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    animation: glowPulse 3s infinite alternate;
+    z-index: -1; /* Behind content */
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes popIn {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    80% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes glowPulse {
+    0% {
+      transform: rotate(0deg) scale(1);
+      opacity: 0.5;
+    }
+    100% {
+      transform: rotate(360deg) scale(1.1);
+      opacity: 0.8;
+    }
+  }

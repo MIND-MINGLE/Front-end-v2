@@ -20,6 +20,7 @@ import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
 import { getTherapistById } from "../../../api/Therapist/Therapist";
 import { getPatientByAccountId } from "../../../api/Account/Seeker";
 import { useNavigate } from "react-router";
+import SubscriptionPopUp from "../../common/SubscriptionPopUp";
 
 interface RightComponentsProps {
   currentChat: ChatProps | null; // Cho phép null
@@ -44,6 +45,10 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
   const [currentAppointment, setCurrentAppointment] = useState<Appointment>()
   const [connectionStatus, setConnectionStatus] = useState("Loading...");
   const[alertIsLoading, setAlertIsLoading] = useState(false)
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handleOpenPopup = () => setIsPopupOpen(true);
+  const handleClosePopup = () => setIsPopupOpen(false);
   const nav = useNavigate()
   useEffect(()=>{
     const getAppointment = async () => {
@@ -206,7 +211,6 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
       </Box>
     );
   }
-  
 
   const handleEmergencyEnd= async()=>{
     setAlertIsLoading(true)
@@ -234,8 +238,25 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
     }
     setIsLoading(false)
   }
+  const handlePremiumFeature = ({extraComponent,format})=>{
+    const subcription = sessionStorage.getItem('subcription')
+    if(subcription){
+
+    }else{
+      handleOpenPopup
+    }
+    
+  }
 
   return (
+    <>
+    <SubscriptionPopUp
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+        title="This Is Subscription Feature Zone!"
+        content="Subscribe now for exclusive services and epic vibes!"
+      />
+   
     <Box display="flex" width="100%" height="100%" position="relative" bgcolor="white" overflow="hidden">
       {shrink && (
         <Box width="50%" bgcolor="#f0f0f0" height="100%">
@@ -452,6 +473,7 @@ const RightComponents = ({ setIsLoading,currentChat }: RightComponentsProps) => 
         </DialogActions>
       </Dialog>
     </Box>
+    </>
   );
 };
 

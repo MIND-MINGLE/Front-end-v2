@@ -116,21 +116,6 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
           {errorMessage}
         </Typography>
       )}
-
-      <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-        <Checkbox />
-        <Typography variant="body2" color="textSecondary">
-          I agree to{" "}
-          <Typography component="span" color="textPrimary" sx={{ fontWeight: "bold" }}>
-            Terms of use
-          </Typography>{" "}
-          and{" "}
-          <Typography component="span" color="textPrimary" sx={{ fontWeight: "bold" }}>
-            Privacy Policy
-          </Typography>
-        </Typography>
-      </Box>
-
       <Button
         variant="contained"
         color="primary"
