@@ -1,127 +1,236 @@
 .popupOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8); /* Darker overlay for drama */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease-in-out; /* Fade in the overlay */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6); /* Dark blue overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.popupContent {
+  width: 40vw;
+  min-height: 50vh;
+  background: linear-gradient(135deg, #0077b6, #1b9df0); /* Dark to light blue */
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 95vw;
+  box-shadow: 0 0 20px rgba(27, 157, 240, 0.7), 0 0 40px rgba(0, 119, 182, 0.5);
+  position: relative;
+  animation: popIn 0.4s ease-out;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.popupImageContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px; /* Space between image and header */
+}
+
+.popupImage {
+  width: 150px; /* Adjust size as needed */
+  height: 150px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5)); /* White glow */
+  animation: pulse 1.5s infinite; /* 1.5s duration for a natural heartbeat rhythm */
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.popupTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.closeIcon {
+  font-size: 30px;
+  color: #FFFFFF;
+  cursor: pointer⁠;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.closeIcon:hover {
+  transform: scale(1.2);
+  color: #1b9df0; /* Lighter blue on hover */
+}
+
+.popupText {
+  margin: 0 0 20px;
+  font-size: 18px;
+  color: #FFFFFF;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.popupButton {
+  padding: 12px 30px;
+  background: #ff0000; /* Lighter blue */
+  color: #FFFFFF; /* White text */
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(27, 157, 240, 0.5);
+}
+
+.acceptPopupButton {
+  padding: 12px 30px;
+  background: #FFFFFF; /* White */
+  color: #0077b6; /* Dark blue text */
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 119, 182, 0.5);
+}
+
+.popupButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(27, 157, 240, 0.8);
+}
+
+.acceptPopupButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 119, 182, 0.8);
+}
+
+.popupGlow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(27, 157, 240, 0.2) 0%, rgba(0, 119, 182, 0) 70%);
+  animation: glowPulse 3s infinite alternate;
+  z-index: -1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .popupContent {
-    background: linear-gradient(135deg, #ff6b6b, #4ecdc4); /* Vibrant gradient */
-    padding: 30px;
-    border-radius: 15px;
-    width: 450px;
-    max-width: 95%;
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.7), 0 0 40px rgba(78, 205, 196, 0.5); /* Glowing shadow */
-    position: relative;
-    animation: popIn 0.4s ease-out; /* Pop-in animation */
-    overflow: hidden; /* For glow effect */
+  to {
+    opacity: 1;
   }
-  
-  .popupHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
   }
-  
-  .popupTitle {
-    margin: 0;
-    font-size: 28px;
-    font-weight: bold;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Text pop */
-  }
-  
-  .closeIcon {
-    font-size: 30px;
-    color: #fff;
-    cursor: pointer;
-    transition: transform 0.2s, color 0.2s;
-  }
-  
-  .closeIcon:hover {
-    transform: scale(1.2);
-    color: #ffeb3b; /* Bright yellow on hover */
-  }
-  
-  .popupText {
-    margin: 0 0 20px;
-    font-size: 18px;
-    color: #fff;
-    line-height: 1.5;
-    text-align: center;
-  }
-  
-  .popupButton {
-    padding: 12px 30px;
-    background: #ffeb3b; /* Bright yellow button */
-    color: #333;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(255, 235, 59, 0.5);
-  }
-  
-  .popupButton:hover {
+  80% {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(255, 235, 59, 0.8);
+    opacity: 1;
   }
-  
-  .popupGlow {
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
-    animation: glowPulse 3s infinite alternate;
-    z-index: -1; /* Behind content */
+  100% {
+    transform: scale(1);
   }
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+}
+
+@keyframes glowPulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.5;
   }
-  
-  @keyframes popIn {
-    0% {
-      transform: scale(0.8);
-      opacity: 0;
-    }
-    80% {
-      transform: scale(1.05);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1);
-    }
+  100% {
+    transform: rotate(360deg) scale(1.1);
+    opacity: 0.8;
   }
-  
-  @keyframes glowPulse {
-    0% {
-      transform: rotate(0deg) scale(1);
-      opacity: 0.5;
-    }
-    100% {
-      transform: rotate(360deg) scale(1.1);
-      opacity: 0.8;
-    }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1); /* Starting size */
   }
+  10% {
+    transform: scale(1.2); /* First quick "thump" */
+  }
+  20% {
+    transform: scale(1); /* Back down briefly */
+  }
+  30% {
+    transform: scale(1.15); /* Second "thump", slightly smaller */
+  }
+  40% {
+    transform: scale(1); /* Return to normal */
+  }
+  100% {
+    transform: scale(1); /* Stay normal for the pause */
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .popupContent {
+    width: 80vw;
+    padding: 20px;
+  }
+
+  .popupImage {
+    width: 60px;
+    height: 60px;
+  }
+
+  .popupTitle {
+    font-size: 24px;
+  }
+
+  .popupText {
+    font-size: 16px;
+  }
+
+  .popupButton,
+  .acceptPopupButton {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .buttonContainer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .popupButton,
+  .acceptPopupButton {
+    width: 100%;
+  }
+
+  .popupImage {
+    width: 50px;
+    height: 50px;
+  }
+}

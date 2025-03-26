@@ -7,7 +7,7 @@ import TwilioVideo from "twilio-video";
 import { VideoCall } from "../../../api/Twilio/TwilioApi";
 
 interface CallPageProps {
-  format: "call" | "video"; // "call" cho NoVideo (audio), "video" cho WithVideo
+  format: "call" | "video"|null; // "call" cho NoVideo (audio), "video" cho WithVideo
   onFormatChange: (newFormat: "call" | "video") => void; // Callback để thay đổi format
 }
 
