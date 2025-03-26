@@ -142,6 +142,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
 
         <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Button
+          onClick={()=>{alert("Feature Under Contruction!")}}
             variant="outlined"
             startIcon={<GoogleIcon />}
             className={styles.googleButton}
@@ -149,6 +150,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
             Google
           </Button>
           <Button
+          onClick={()=>{alert("Feature Under Contruction!")}}
             variant="outlined"
             startIcon={<FacebookIcon />}
             className={styles.facebookButton}

@@ -248,7 +248,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
   };
 
   const handlePremiumFeature = (extraComponent: "video" | "call" | "music" | string, format: "video" | "call" | null) => {
-    const subscription = sessionStorage.getItem('subcription'); // Typo: should be 'subscription'
+    const subscription = sessionStorage.getItem('package'); 
     if (subscription) {
       if (subscription === "MindMingle Premium") {
         setFormat(format);
