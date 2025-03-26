@@ -1,4 +1,3 @@
-
 import { Google, Phone } from "@mui/icons-material";
 import {
   Avatar,
@@ -12,6 +11,8 @@ import {
   Typography,
   Container,
   Chip,
+  Dialog,
+  Tooltip,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -20,7 +21,14 @@ import LoadingScreen from "../../common/LoadingScreen";
 import NavigationRail from "../NavBar";
 import styles from "./viewthera.module.css"
 import { formatVnd } from "../../../services/common";
+import { getCredentialByTherapistId } from '../../../api/Credential/Credential';
+import { getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
 
+interface Specialization {
+  specializationId: string;
+  name: string;
+  description: string;
+}
 
 interface Therapist {
   therapistId: string;
@@ -30,12 +38,23 @@ interface Therapist {
   phoneNumber: string;
   dob: string;
   gender: string;
+  description: string;
   certificates?: string[];
   pricePerHour: number;
   account: {
     email: string;
     avatar: string;
   };
+  specializations?: Specialization[];
+}
+
+interface Credential {
+  credentialId: string;
+  imageUrl: string;
+  therapistId: string;
+  isDisabled: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const TherapistProfile = () => {
@@ -44,6 +63,9 @@ export const TherapistProfile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const nav = useNavigate();
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [openImageModal, setOpenImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
 
   const bookAppointment = (therapistId: string) => {
     nav(`../therapist/${therapistId}/appointment`);
@@ -51,11 +73,31 @@ export const TherapistProfile = () => {
 
   const fetchTherapist = async () => {
     try {
-      const response = await getTherapistById(accountId || "123");
-      if (response.statusCode === 200) {
-        setTherapist(response.result);
+      const therapistResponse = await getTherapistById(accountId || "123");
+
+      if (therapistResponse.statusCode === 200) {
+        setTherapist(therapistResponse.result);
+
+        // Gọi API lấy credentials
+        const credentialsResponse = await getCredentialByTherapistId(therapistResponse.result.therapistId);
+        if (credentialsResponse.isSuccess) {
+          const activeCredentials = credentialsResponse.result.filter(
+            (cred: Credential) => cred.isDisabled === 0
+          );
+          setCredentials(activeCredentials);
+        }
+
+        // Gọi API lấy specializations
+        const specializationsResponse = await getSpecializationByTherapistId(therapistResponse.result.therapistId);
+        if (specializationsResponse.isSuccess) {
+          // Cập nhật therapist state với specializations
+          setTherapist(prev => ({
+            ...prev!,
+            specializations: specializationsResponse.result.specializations
+          }));
+        }
       } else {
-        setError(response.error || "Failed to fetch therapist data");
+        setError(therapistResponse.error || "Failed to fetch therapist data");
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -68,6 +110,10 @@ export const TherapistProfile = () => {
   useEffect(() => {
     fetchTherapist();
   }, [accountId]);
+
+  const handleCloseImage = () => {
+    setOpenImageModal(false);
+  };
 
   if (loading) return <LoadingScreen />;
   if (error || !therapist) return <Typography color="error">{error || "Therapist not found"}</Typography>;
@@ -189,37 +235,56 @@ export const TherapistProfile = () => {
                       <Typography variant="h6" gutterBottom color="primary">
                         Professional Certificates
                       </Typography>
-                      <Box sx={{
-                        display: 'flex',
-                        gap: 2,
-                        overflowX: 'auto',
-                        pb: 2
-                      }}>
-                        {therapist.certificates?.map((cert, index) => (
-                          <Card
-                            key={index}
-                            sx={{
-                              minWidth: 200,
-                              borderRadius: 2,
-                              overflow: 'hidden'
-                            }}
-                          >
-                            <CardMedia
-                              component="img"
-                              height="150"
-                              image={cert}
-                              alt={`Certificate ${index + 1}`}
-                            />
-                          </Card>
-                        ))}
-                      </Box>
+                      {credentials.length > 0 ? (
+                        <Box sx={{
+                          display: 'flex',
+                          gap: 2,
+                          overflowX: 'auto',
+                          pb: 2
+                        }}>
+                          {credentials.map((cert) => (
+                            <Card
+                              key={cert.credentialId}
+                              sx={{
+                                minWidth: 200,
+                                borderRadius: 2,
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  transform: 'translateY(-4px)',
+                                  boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
+                                }
+                              }}
+                            >
+                              <CardMedia
+                                component="img"
+                                height="150"
+                                image={cert.imageUrl}
+                                alt={`Certificate ${cert.credentialId}`}
+                                sx={{
+                                  cursor: 'pointer',
+                                  objectFit: 'cover'
+                                }}
+                                onClick={() => {
+                                  setSelectedImage(cert.imageUrl);
+                                  setOpenImageModal(true);
+                                }}
+                              />
+                            </Card>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Typography variant="body1" color="text.secondary" sx={{ py: 2 }}>
+                          No certificates available
+                        </Typography>
+                      )}
 
                       <Typography variant="h6" gutterBottom color="primary" sx={{ mt: 3 }}>
                         About Me
                       </Typography>
                       <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                        Professional therapist with expertise in mental health counseling and cognitive behavioral therapy.
-                        Committed to providing a safe and supportive environment for clients to explore their concerns and work towards personal growth.
+                        {therapist.description}
                       </Typography>
 
                       <Box sx={{
@@ -228,11 +293,27 @@ export const TherapistProfile = () => {
                         flexWrap: 'wrap',
                         mt: 2
                       }}>
-                        <Chip label="Mental Health" color="primary" variant="outlined" />
-                        <Chip label="Anxiety" color="primary" variant="outlined" />
-                        <Chip label="Depression" color="primary" variant="outlined" />
-                        <Chip label="Relationship" color="primary" variant="outlined" />
-                        <Chip label="Stress Management" color="primary" variant="outlined" />
+                        {therapist.specializations?.map((spec) => (
+                          <Tooltip
+                            key={spec.specializationId}
+                            title={spec.description}
+                            arrow
+                            placement="top"
+                            enterDelay={200}
+                            leaveDelay={0}
+                          >
+                            <Chip
+                              label={spec.name}
+                              color="primary"
+                              variant="outlined"
+                              sx={{
+                                '&:hover': {
+                                  backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                                }
+                              }}
+                            />
+                          </Tooltip>
+                        ))}
                       </Box>
                     </CardContent>
                   </Card>
@@ -242,6 +323,32 @@ export const TherapistProfile = () => {
           </Card>
         </Container>
       </Box>
+
+      <Dialog
+        open={openImageModal}
+        onClose={handleCloseImage}
+        maxWidth="md"
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            overflow: 'hidden',
+            bgcolor: 'transparent',
+            boxShadow: 'none'
+          }
+        }}
+      >
+        <img
+          src={selectedImage}
+          alt="Certificate"
+          style={{
+            maxWidth: '100%',
+            maxHeight: '80vh',
+            objectFit: 'contain',
+            cursor: 'pointer'
+          }}
+          onClick={handleCloseImage}
+        />
+      </Dialog>
     </Box>
   );
 };

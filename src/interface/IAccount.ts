@@ -136,17 +136,22 @@ interface Subscription {
   isPremium: boolean;
 }
 
-interface PurchasedPackagedRequest{
+interface PurchasedPackagedRequest {
   patientId: string,
   subscriptionId: string,
-  }
-  interface PurchasedPackaged{
-    patientId: string,
-    subscriptionId: string,
-    subscription: Subscription,
-    startDate:string,
-    endDate:string,
-    }
+}
+interface PurchasedPackaged {
+  patientId: string,
+  subscriptionId: string,
+  subscription: Subscription,
+  startDate: string,
+  endDate: string,
+}
 
- 
-export type {PurchasedPackaged,PurchasedPackagedRequest,Subscription,Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+interface Credential {
+  credentialId: string;
+  imageUrl: string;
+  isDisabled: number;
+}
+
+export type { PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
