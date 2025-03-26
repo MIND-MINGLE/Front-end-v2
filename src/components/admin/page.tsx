@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import styles from './Dashboard.module.css';
 
 interface DashboardStats {
   totalRevenue: number;
@@ -82,12 +83,12 @@ const AdminDashboardPage: React.FC = () => {
   console.log('Revenue data:', stats?.revenueByMonth);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Typography className={styles.title}>
           Dashboard Overview
         </Typography>
-        <FormControl sx={{ minWidth: 120 }}>
+        <FormControl className={styles.timeRangeSelect}>
           <InputLabel>Time Range</InputLabel>
           <Select
             value={timeRange}
@@ -99,70 +100,76 @@ const AdminDashboardPage: React.FC = () => {
             <MenuItem value="year">This Year</MenuItem>
           </Select>
         </FormControl>
-      </Box>
+      </div>
 
-      {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#e3f2fd', height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <AttachMoney sx={{ fontSize: 40, color: '#1976d2' }} />
-                <Typography variant="h6" sx={{ ml: 1 }}>Total Revenue</Typography>
-              </Box>
-              <Typography variant="h4" sx={{ wordBreak: 'break-word' }}>
+          <Card className={styles.statsCard}>
+            <CardContent className={styles.cardContent}>
+              <div className={`${styles.cardIcon} ${styles.revenueIcon}`}>
+                <AttachMoney />
+              </div>
+              <Typography className={styles.cardValue}>
                 {formatCurrency(stats?.totalRevenue || 0)}
               </Typography>
+              <Typography className={styles.cardLabel}>
+                Total Revenue
+              </Typography>
             </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#f3e5f5', height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Person sx={{ fontSize: 40, color: '#9c27b0' }} />
-                <Typography variant="h6" sx={{ ml: 1 }}>Total Patients</Typography>
-              </Box>
-              <Typography variant="h4">
+          <Card className={styles.statsCard}>
+            <CardContent className={styles.cardContent}>
+              <div className={`${styles.cardIcon} ${styles.patientIcon}`}>
+                <Person />
+              </div>
+              <Typography className={styles.cardValue}>
                 {stats?.totalPatients || 0}
               </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#e8f5e9', height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Psychology sx={{ fontSize: 40, color: '#43a047' }} />
-                <Typography variant="h6" sx={{ ml: 1 }}>Total Therapists</Typography>
-              </Box>
-              <Typography variant="h4">
-                {stats?.totalTherapists || 0}
+              <Typography className={styles.cardLabel}>
+                Total Patients
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ bgcolor: '#fff3e0', height: '100%' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Assignment sx={{ fontSize: 40, color: '#ef6c00' }} />
-                <Typography variant="h6" sx={{ ml: 1 }}>Total Appointments</Typography>
-              </Box>
-              <Typography variant="h4">
+          <Card className={styles.statsCard}>
+            <CardContent className={styles.cardContent}>
+              <div className={`${styles.cardIcon} ${styles.therapistIcon}`}>
+                <Psychology />
+              </div>
+              <Typography className={styles.cardValue}>
+                {stats?.totalTherapists || 0}
+              </Typography>
+              <Typography className={styles.cardLabel}>
+                Total Therapists
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Card className={styles.statsCard}>
+            <CardContent className={styles.cardContent}>
+              <div className={`${styles.cardIcon} ${styles.appointmentIcon}`}>
+                <Assignment />
+              </div>
+              <Typography className={styles.cardValue}>
                 {stats?.totalAppointments || 0}
+              </Typography>
+              <Typography className={styles.cardLabel}>
+                Total Appointments
               </Typography>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
-      {/* Revenue Chart */}
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      <div className={styles.chartContainer}>
+        <Typography className={styles.chartTitle}>
           Revenue Trend
         </Typography>
         <ResponsiveContainer width="100%" height={400}>
@@ -170,30 +177,38 @@ const AdminDashboardPage: React.FC = () => {
             data={stats?.revenueByMonth || []}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
             <XAxis
               dataKey="month"
               tickFormatter={formatMonth}
               interval={0}
+              stroke="#666"
             />
-            <YAxis />
+            <YAxis stroke="#666" />
             <Tooltip
               formatter={(value) => formatCurrency(Number(value))}
               labelFormatter={formatMonth}
+              contentStyle={{
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '8px',
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+              }}
             />
             <Legend />
             <Line
               type="monotone"
               dataKey="revenue"
               stroke="#1976d2"
-              strokeWidth={2}
+              strokeWidth={3}
               name="Revenue"
-              dot={{ r: 6 }}
+              dot={{ r: 6, fill: '#1976d2' }}
+              activeDot={{ r: 8, fill: '#1976d2' }}
             />
           </LineChart>
         </ResponsiveContainer>
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 };
 

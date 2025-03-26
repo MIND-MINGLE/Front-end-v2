@@ -1,83 +1,31 @@
 .container {
-  padding: 24px;
+  padding: 32px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
 .title {
-  margin-bottom: 24px;
-  color: #1a237e;
-  font-weight: 600;
-}
-
-.tableContainer {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-  border-radius: 12px !important;
-  overflow: hidden;
-}
-
-.tableHeader {
-  background-color: #f5f5f5 !important;
+  font-size: 2rem !important;
   font-weight: 600 !important;
-  color: #1a237e !important;
+  color: #1a237e;
+  margin-bottom: 32px !important;
+  position: relative;
 }
 
-.tableRow:hover {
-  background-color: #f8f9fa;
-}
-
-.loadingContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-}
-
-.errorContainer {
-  padding: 24px;
-  text-align: center;
-}
-
-.roleChip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.roleChip.ad {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.roleChip.doc {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.roleChip.seeker {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.statusChip {
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.statusChip.active {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.statusChip.inactive {
-  background-color: #ffebee;
-  color: #c62828;
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #1a237e 0%, #3949ab 100%);
+  border-radius: 2px;
 }
 
 .controls {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   margin-bottom: 24px;
   align-items: center;
 }
@@ -86,44 +34,136 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  padding: 0 12px;
+  background-color: white;
+  padding: 8px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
-.searchBox:focus-within {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+.searchBox:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .searchIcon {
   color: #666;
-  margin-right: 8px;
+  margin-right: 12px;
 }
 
 .searchInput {
   flex: 1;
 }
 
-.searchInput input {
-  padding: 8px 0;
-}
-
 .roleFilter {
-  min-width: 150px;
-  background: white;
-  border-radius: 8px;
+  min-width: 200px !important;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.searchBox:hover,
-.roleFilter:hover {
-  border-color: #1976d2;
+.tableContainer {
+  background-color: white;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  margin-bottom: 24px;
 }
 
-.roleFilter .MuiSelect-select {
-  padding: 8px 12px;
+.tableHeader {
+  background-color: #f8f9fa !important;
+  font-weight: 600 !important;
+  color: #1a237e !important;
+  padding: 16px !important;
+}
+
+.tableRow {
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #f8f9fa !important;
+}
+
+.tableRow td {
+  padding: 16px !important;
+}
+
+.roleChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.ad {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.doc {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.seeker {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.statusChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.inactive {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #ffebee;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px;
+}
+
+/* Custom scrollbar */
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 
 @media (max-width: 600px) {
