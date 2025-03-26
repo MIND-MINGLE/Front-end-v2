@@ -49,7 +49,7 @@ const AdminDashboardPage: React.FC = () => {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://localhost:7252/api/Dashboard/stats', {
+      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Dashboard/stats', {
         params: { timeRange }
       });
       setStats(response.data);
