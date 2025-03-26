@@ -161,9 +161,9 @@ const SubscriptionManagementPage: React.FC = () => {
         setPendingPayments(response.data.items);
         setPaymentTotalCount(response.data.totalCount);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching pending payments:', err);
-      setSnackbarMessage('Error fetching pending payments');
+      setSnackbarMessage(err.response?.data?.errorMessage || 'Error fetching pending payments');
       setSnackbarSeverity('error');
       setOpenSnackbar(true);
     } finally {

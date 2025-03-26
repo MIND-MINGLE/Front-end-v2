@@ -91,6 +91,27 @@ const AccountManagementPage: React.FC = () => {
 
   const currentAccounts = filteredAccounts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  const getRoleName = (roleId: string) => {
+    switch (roleId) {
+      case 'ad':
+        return 'Admin';
+      case 'doc':
+        return 'Doctor';
+      case 'seeker':
+        return 'Seeker';
+      default:
+        return roleId;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -109,7 +130,7 @@ const AccountManagementPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Typography variant="h4" className={styles.title}>
+      <Typography className={styles.title}>
         Account Management
       </Typography>
 
@@ -129,7 +150,7 @@ const AccountManagementPage: React.FC = () => {
           />
         </Box>
 
-        <FormControl size="small" className={styles.roleFilter}>
+        <FormControl className={styles.roleFilter}>
           <InputLabel>Role</InputLabel>
           <Select
             value={selectedRole}
@@ -161,14 +182,13 @@ const AccountManagementPage: React.FC = () => {
               <TableRow
                 key={account.accountId}
                 className={styles.tableRow}
-                hover
               >
                 <TableCell>{account.accountId}</TableCell>
                 <TableCell>{account.accountName}</TableCell>
                 <TableCell>{account.email}</TableCell>
                 <TableCell>
                   <span className={`${styles.roleChip} ${styles[account.roleId]}`}>
-                    {account.roleId}
+                    {getRoleName(account.roleId)}
                   </span>
                 </TableCell>
                 <TableCell>
@@ -176,9 +196,7 @@ const AccountManagementPage: React.FC = () => {
                     {account.isDisabled ? 'Inactive' : 'Active'}
                   </span>
                 </TableCell>
-                <TableCell>
-                  {new Date(account.createdAt).toLocaleDateString('en-GB')}
-                </TableCell>
+                <TableCell>{formatDate(account.createdAt)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

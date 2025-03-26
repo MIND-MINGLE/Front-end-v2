@@ -104,84 +104,86 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
 
   return (
     <>
-      {isLoading ? <LoadingScreen /> : null}
+      {isLoading && <LoadingScreen />}
       <Box className={styles.container}>
         <Typography className={styles.title}>
-          Sign up to Mindmingle
+          Create your Mindmingle Account
         </Typography>
 
-        <Box>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                className={styles.inputField}
-                fullWidth
-                label="User Name"
-                placeholder="account123"
-                variant="outlined"
-                size="small"
-                value={formData.accountName}
-                onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
-                onBlur={() => handleBlur('accountName')}
-                error={touched.accountName && !!errors.accountName}
-                helperText={touched.accountName ? errors.accountName : ""}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                className={styles.inputField}
-                fullWidth
-                label="Email"
-                placeholder="mailname@gmail.com"
-                variant="outlined"
-                size="small"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                onBlur={() => handleBlur('email')}
-                error={touched.email && !!errors.email}
-                helperText={touched.email ? errors.email : ""}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                className={styles.inputField}
-                fullWidth
-                label="Password"
-                placeholder="Your password"
-                variant="outlined"
-                size="small"
-                type="password"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                onBlur={() => handleBlur('password')}
-                error={touched.password && !!errors.password}
-                helperText={touched.password ? errors.password : ""}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                className={styles.inputField}
-                fullWidth
-                label="Confirm Password"
-                placeholder="Confirm your password"
-                variant="outlined"
-                size="small"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                onBlur={() => handleBlur('confirmPassword')}
-                error={touched.confirmPassword && !!errors.confirmPassword}
-                helperText={touched.confirmPassword ? errors.confirmPassword : ""}
-              />
-            </Grid>
+        <Grid container spacing={2} className={styles.formGrid}>
+          <Grid item xs={12}>
+            <TextField
+              className={styles.inputField}
+              fullWidth
+              label="Username"
+              placeholder="Enter your username"
+              variant="outlined"
+              size="small"
+              value={formData.accountName}
+              onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+              onBlur={() => handleBlur('accountName')}
+              error={touched.accountName && !!errors.accountName}
+              helperText={touched.accountName ? errors.accountName : ""}
+            />
           </Grid>
-        </Box>
+          <Grid item xs={12}>
+            <TextField
+              className={styles.inputField}
+              fullWidth
+              label="Email"
+              placeholder="Enter your email"
+              variant="outlined"
+              size="small"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onBlur={() => handleBlur('email')}
+              error={touched.email && !!errors.email}
+              helperText={touched.email ? errors.email : ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              className={styles.inputField}
+              fullWidth
+              label="Password"
+              placeholder="Create a strong password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onBlur={() => handleBlur('password')}
+              error={touched.password && !!errors.password}
+              helperText={touched.password ? errors.password : ""}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              className={styles.inputField}
+              fullWidth
+              label="Confirm Password"
+              placeholder="Confirm your password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              onBlur={() => handleBlur('confirmPassword')}
+              error={touched.confirmPassword && !!errors.confirmPassword}
+              helperText={touched.confirmPassword ? errors.confirmPassword : ""}
+            />
+          </Grid>
+        </Grid>
 
         <Box className={styles.termsContainer}>
           <Checkbox
             checked={accept}
             onChange={handleAccept}
-            sx={{ '&.Mui-checked': { color: '#1976d2' } }}
+            sx={{
+              '&.Mui-checked': {
+                color: '#1976d2',
+              },
+            }}
           />
           <Typography className={styles.termsText}>
             I agree to{" "}
@@ -195,16 +197,7 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
           className={styles.submitButton}
           disabled={!isFormValid}
           variant="contained"
-          color="primary"
-          sx={{
-            mt: 3,
-            width: "100%",
-            py: 1,
-            fontSize: "1rem",
-            fontWeight: 500,
-            borderRadius: 1,
-          }}
-          onClick={() => { onSubmit() }}
+          onClick={onSubmit}
         >
           Create Account
         </Button>

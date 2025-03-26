@@ -1,0 +1,139 @@
+.container {
+  width: 450px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.title {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #1976d2;
+  text-align: center;
+  margin-bottom: 32px !important;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%);
+  border-radius: 2px;
+}
+
+.inputField {
+  margin-bottom: 20px !important;
+}
+
+.inputField :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.inputField :global(.MuiOutlinedInput-root:hover) {
+  background-color: #eeeeee;
+}
+
+.inputField :global(.MuiOutlinedInput-root.Mui-focused) {
+  background-color: white;
+}
+
+.signInButton {
+  width: 100%;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%) !important;
+  box-shadow: 0 4px 15px rgba(57, 73, 171, 0.35) !important;
+  transition: all 0.3s ease !important;
+}
+
+.signInButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(57, 73, 171, 0.45) !important;
+}
+
+.forgotButton {
+  width: 100%;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  margin-top: 16px !important;
+  text-transform: none !important;
+  border: 2px solid #e8eaf6 !important;
+  color: #1976d2 !important;
+}
+
+.forgotButton:hover {
+  background-color: #e8eaf6 !important;
+}
+
+.divider {
+  margin: 32px 0 !important;
+}
+
+.dividerText {
+  color: #666 !important;
+  font-weight: 500 !important;
+}
+
+.socialButton {
+  border-radius: 12px !important;
+  padding: 8px 24px !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  border: 2px solid #e8eaf6 !important;
+  color: #666 !important;
+  transition: all 0.3s ease !important;
+}
+
+.socialButton:hover {
+  background-color: #e8eaf6 !important;
+  transform: translateY(-2px);
+}
+
+.googleButton {
+  composes: socialButton;
+  color: #ea4335 !important;
+}
+
+.facebookButton {
+  composes: socialButton;
+  color: #1877f2 !important;
+}
+
+.errorMessage {
+  background-color: #ffebee;
+  color: #d32f2f !important;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px 0 !important;
+  font-size: 14px !important;
+  text-align: center;
+}
+
+.checkbox {
+  margin-right: 8px !important;
+}
+
+.termsText {
+  font-size: 14px !important;
+  color: #666 !important;
+}
+
+.termsLink {
+  color: #1976d2 !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+} 

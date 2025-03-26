@@ -93,6 +93,23 @@ const TherapistManagementPage: React.FC = () => {
     return `${firstName} ${lastName}`;
   };
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(price);
+  };
+
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -113,7 +130,7 @@ const TherapistManagementPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Typography variant="h4" className={styles.title}>
+      <Typography className={styles.title}>
         Therapist Management
       </Typography>
 
@@ -121,7 +138,7 @@ const TherapistManagementPage: React.FC = () => {
         <Box className={styles.searchBox}>
           <SearchIcon className={styles.searchIcon} />
           <TextField
-            placeholder="Search by name, phone, or specialization..."
+            placeholder="Search by name or phone number..."
             variant="standard"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -139,7 +156,6 @@ const TherapistManagementPage: React.FC = () => {
             value={selectedGender}
             onChange={(e) => setSelectedGender(e.target.value)}
             label="Gender"
-            size="small"
           >
             <MenuItem value="all">All Genders</MenuItem>
             <MenuItem value="Male">Male</MenuItem>
@@ -153,7 +169,7 @@ const TherapistManagementPage: React.FC = () => {
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell className={styles.tableHeader}>Therapist ID</TableCell>
+              <TableCell className={styles.tableHeader}>ID</TableCell>
               <TableCell className={styles.tableHeader}>Full Name</TableCell>
               <TableCell className={styles.tableHeader}>Phone Number</TableCell>
               <TableCell className={styles.tableHeader}>Date of Birth</TableCell>
@@ -166,12 +182,15 @@ const TherapistManagementPage: React.FC = () => {
               <TableRow
                 key={therapist.therapistId}
                 className={styles.tableRow}
-                hover
               >
                 <TableCell>{therapist.therapistId}</TableCell>
-                <TableCell>{getFullName(therapist.firstName, therapist.lastName)}</TableCell>
+                <TableCell>
+                  {getFullName(therapist.firstName, therapist.lastName)}
+                </TableCell>
                 <TableCell>{therapist.phoneNumber}</TableCell>
-                <TableCell>{therapist.dob}</TableCell>
+                <TableCell className={styles.dateCell}>
+                  {formatDate(therapist.dob)}
+                </TableCell>
                 <TableCell>
                   <span className={`${styles.genderChip} ${styles[therapist.gender]}`}>
                     {therapist.gender}
@@ -179,7 +198,7 @@ const TherapistManagementPage: React.FC = () => {
                 </TableCell>
                 <TableCell>
                   <span className={styles.priceChip}>
-                    {therapist.pricePerHour.toLocaleString('vi-VN')} VND
+                    {formatPrice(therapist.pricePerHour)}
                   </span>
                 </TableCell>
               </TableRow>
