@@ -11,7 +11,7 @@ import {
 import Footer from "../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
 import { useNavigate } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { AccountProps } from "../../interface/IAccount";
 
@@ -20,17 +20,14 @@ const roles = [
     title: "Therapist Seeker",
     image: "/Ellipse 30.svg",
     link: "/seeker/",
-    id:"seeker"
+    id: "seeker",
   },
-  { title: "Therapist", 
-    image: "/Ellipse 27.svg",
-    link: "/doctor/",
-    id:"doc"
-  },
-  { title: "Co-working Space Agent", 
-    image: "/Ellipse 33.svg", 
+  { title: "Therapist", image: "/Ellipse 27.svg", link: "/doctor/", id: "doc" },
+  {
+    title: "Co-working Space Agent",
+    image: "/Ellipse 33.svg",
     link: "/agent/",
-    id:"agent"
+    id: "agent",
   },
 ];
 
@@ -42,40 +39,65 @@ const GradientAvatar = styled(Avatar)(({ theme }) => ({
     "linear-gradient(180deg, rgba(2, 127, 193, 0.84) 0%, rgba(0, 180, 216, 0.66) 46.35%, rgba(0, 180, 216, 0.61) 74.48%, rgba(27, 157, 240, 0.66) 94.27%)",
 }));
 
+// Styled button
+const AdminButton = styled(Button)(({ }) => ({
+  position: "absolute",
+  top: 15,
+  right: 40,
+  opacity: 0.1, // Slightly transparent by default
+  transition: "opacity 0.5s ease-in-out", // Smooth transition for hover
+  "&:hover": {
+    animation:"none",
+    opacity: 0.6, // Solid on hover
+  },
+  animation: "btnFade 20s infinite", 
+  "@keyframes btnFade": {
+    "0%, 30%":  { opacity: 0 },
+    "30%,60%": { opacity: 0.2 }, 
+    "60%,100%": { opacity: 0 }, 
+  },
+}));
+
 const LandingPage = () => {
-const nav = useNavigate()
-const naviagate =(role:string,url:string)=>{
-  localStorage.setItem("role",role)
-  nav(url)
-}
-useEffect(()=>{
-  const autoLogin = ()=>{
-    const user = localStorage.getItem("token"); // Store user token in local. Don't worry it expired
-    if(!user){
-      console.error("No account found");
-      return false; 
-    }
-    else{
-      var token = jwtDecode<AccountProps>(user||"");
-      sessionStorage.setItem("account", JSON.stringify(token));
-      switch(token.Role){
-        case "seeker":
-          nav("/seeker/")
-          break;
-        case "doc":
-          nav("/doctor/")
-          break;
-        case "agent":
-          nav("/agent/")
-          break;
-        default:
-          nav("/")
+  const nav = useNavigate();
+  const navigate = (role: string, url: string) => {
+    localStorage.setItem("role", role);
+    nav(url);
+  };
+
+  // Auto-login logic
+  useEffect(() => {
+    const autoLogin = () => {
+      const user = localStorage.getItem("token");
+      if (!user) {
+        //console.error("No account found");
+        return false;
+      } else {
+        const token = jwtDecode<AccountProps>(user || "");
+        sessionStorage.setItem("account", JSON.stringify(token));
+        switch (token.Role) {
+          case "seeker":
+            nav("/seeker/");
+            break;
+          case "doc":
+            nav("/doctor/");
+            break;
+          case "agent":
+            nav("/agent/");
+            break;
+          case "ad":
+            nav("/admin/");
+            break;
+          default:
+            nav("/");
+        }
+        return true;
       }
-      return true; 
-    }
-  }
-  autoLogin()
-},[])
+    };
+    autoLogin();
+  }, [nav]);
+
+ 
   return (
     <Box
       sx={{
@@ -85,6 +107,13 @@ useEffect(()=>{
         position: "relative",
       }}
     >
+          <AdminButton 
+          onClick={()=>{
+            navigate("ad", "/admin/");
+          }}
+          variant="contained" color="primary">
+            Login As Admin
+          </AdminButton>
       <Box
         component="img"
         sx={{
@@ -118,9 +147,7 @@ useEffect(()=>{
       >
         {roles.map((role, index) => (
           <Grid item key={index}>
-            <Button
-              onClick={() => naviagate(role.id,role.link)}
-            >
+            <Button onClick={() => navigate(role.id, role.link)}>
               <Card
                 sx={{
                   width: 304,

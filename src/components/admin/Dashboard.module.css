@@ -1,0 +1,107 @@
+.container {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 2rem !important;
+  font-weight: 600 !important;
+  color: #1a237e;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #1a237e 0%, #3949ab 100%);
+  border-radius: 2px;
+}
+
+.statsCard {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.statsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+.cardContent {
+  padding: 24px !important;
+}
+
+.cardIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.revenueIcon {
+  background-color: rgba(25, 118, 210, 0.1);
+  color: #1976d2;
+}
+
+.patientIcon {
+  background-color: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+}
+
+.therapistIcon {
+  background-color: rgba(67, 160, 71, 0.1);
+  color: #43a047;
+}
+
+.appointmentIcon {
+  background-color: rgba(239, 108, 0, 0.1);
+  color: #ef6c00;
+}
+
+.cardValue {
+  font-size: 1.8rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+}
+
+.cardLabel {
+  color: #666;
+  font-size: 1rem !important;
+}
+
+.chartContainer {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 32px;
+}
+
+.chartTitle {
+  font-size: 1.4rem !important;
+  font-weight: 600 !important;
+  color: #1a237e;
+  margin-bottom: 24px !important;
+}
+
+.timeRangeSelect {
+  min-width: 150px !important;
+  background-color: white;
+  border-radius: 8px;
+} 

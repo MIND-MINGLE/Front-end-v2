@@ -1,0 +1,215 @@
+.container {
+  padding: 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: #1e293b;
+  margin-bottom: 32px !important;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  border-radius: 2px;
+}
+
+.controls {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 12px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.searchBox:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.searchIcon {
+  color: #64748b;
+  margin-right: 12px;
+}
+
+.searchInput input {
+  font-size: 0.95rem;
+}
+
+.genderFilter {
+  min-width: 180px !important;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.genderFilter :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.genderFilter :global(.MuiOutlinedInput-root:hover) {
+  background-color: #f8fafc;
+}
+
+.tableContainer {
+  background-color: white;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.tableHeader {
+  background-color: #f8fafc !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  padding: 16px 20px !important;
+  font-size: 0.95rem !important;
+}
+
+.tableRow {
+  transition: all 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.tableRow td {
+  padding: 16px 20px !important;
+  font-size: 0.95rem;
+}
+
+.genderChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.Male {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.Female {
+  background-color: #fce7f3;
+  color: #be185d;
+}
+
+.Other {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #fef2f2;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px;
+}
+
+/* Custom scrollbar */
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Pagination styling */
+:global(.MuiTablePagination-root) {
+  color: #475569 !important;
+}
+
+:global(.MuiTablePagination-select) {
+  background-color: white !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+}
+
+/* Empty state */
+.noDataContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+}
+
+.noDataIcon {
+  color: #94a3b8;
+  font-size: 48px !important;
+  margin-bottom: 16px;
+}
+
+.noDataText {
+  color: #64748b;
+  font-size: 1rem !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  .genderFilter {
+    width: 100%;
+  }
+} 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, Pagination, Typography, Container, Avatar } from '@mui/material';
+import { Grid, Pagination, Typography, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { Phone, Cake, Person, PriceCheck } from '@mui/icons-material';
 import styles from './therapistSelection.module.css';
@@ -100,8 +100,8 @@ const TherapistSelection: React.FC = () => {
                 <Grid item xs={12} sm={12} md={4} key={therapist.therapistId}>
                   <div className={styles.therapistCard}>
                     <div className={styles.avatar}>
-                      {therapist.avatar ? (
-                        <img src={therapist.avatar} alt={`${therapist.firstName} ${therapist.lastName}`} />
+                      {therapist.account.avatar ? (
+                        <img src={therapist.account.avatar} alt={`${therapist.firstName} ${therapist.lastName}`} />
                       ) : (
                         `${therapist.firstName?.[0]}${therapist.lastName?.[0]}`
                       )}

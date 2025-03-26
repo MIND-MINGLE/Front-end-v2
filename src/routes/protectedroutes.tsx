@@ -35,7 +35,7 @@ export default function ProtectedRoutes() {
 export function RoleProtectedRoute() {
   const data = sessionStorage.getItem("account");
   if (!data) {
-    console.error("No account found in localStorage. DIRTY LITTLE HACKER");
+    console.error("No account found in Storage. DIRTY LITTLE HACKER");
     return null; // Handle missing account case. DIRTY LITTLE HACKER
   }
 

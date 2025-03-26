@@ -22,7 +22,7 @@ const SeekerPage = (): JSX.Element => {
         const getAppointment = async () => {
             const localData = sessionStorage.getItem('appointment');
             if (!localData) {
-              const sessionAccount = localStorage.getItem('patient');
+              const sessionAccount = sessionStorage.getItem('patient');
               if (sessionAccount) {
                 try {
                   const data: Patient = JSON.parse(sessionAccount);
@@ -81,14 +81,14 @@ const SeekerPage = (): JSX.Element => {
             }
           };
         const getPatient = async() => {
-            const localData = localStorage.getItem('patient');
+            const localData = sessionStorage.getItem('patient');
             if(!localData){
                 const sessionAccount = sessionStorage.getItem('account');
                 if(sessionAccount){
                     const data:AccountProps = JSON.parse(sessionAccount)
                     const patientData = await getPatientByAccountId(data.UserId)
                     if(patientData.statusCode === 200){
-                        localStorage.setItem('patient', JSON.stringify(patientData.result))
+                        sessionStorage.setItem('patient', JSON.stringify(patientData.result))
                     }
                 }
                
@@ -97,7 +97,7 @@ const SeekerPage = (): JSX.Element => {
         const getSubscription = async() => {
           const localData = sessionStorage.getItem('package');
           if(!localData){
-              const patientAccount = localStorage.getItem('patient');
+              const patientAccount = sessionStorage.getItem('patient');
               if(patientAccount){
                   const data:Patient = JSON.parse(patientAccount)
                   const pruchasedData = await getPurchasedPackageByPatientId(data.patientId)

@@ -1,0 +1,21 @@
+.adminLayout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 280px; /* Phải bằng width của navbar */
+  padding: 24px;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* Thêm responsive nếu cần */
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0;
+    padding: 16px;
+  }
+} 

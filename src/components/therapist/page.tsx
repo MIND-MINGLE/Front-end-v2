@@ -10,14 +10,14 @@ import { getTherapistById } from '../../api/Therapist/Therapist';
 const TherapistPage: React.FC = () => {
   useEffect(() => {
     const getPatient = async() => {
-        const localData = localStorage.getItem('patient');
+        const localData = sessionStorage.getItem('patient');
         if(!localData){
             const sessionAccount = sessionStorage.getItem('account');
             if(sessionAccount){
                 const data:AccountProps = JSON.parse(sessionAccount)
                 const therapistData = await getTherapistById(data.UserId)
                 if(therapistData.statusCode === 200){
-                    localStorage.setItem('therapist', JSON.stringify(therapistData.result))
+                    sessionStorage.setItem('therapist', JSON.stringify(therapistData.result))
                 }
             }
            

@@ -14,14 +14,25 @@ export const NavigationRail = (): JSX.Element => {
     const [packageName, setPackageName] = useState("");
 
     useEffect(() => {
-        const getPackage = async () => {
-            const packageName = sessionStorage.getItem("package");
-            if (packageName) {
-                setPackageName(packageName);
+        const checkPackage = () => {
+            const storedPackage = sessionStorage.getItem("package");
+            if (storedPackage !== null) {
+                setPackageName(storedPackage);
+                return true; // Package found, stop checking
             }
+            return false; // Keep checking
         };
-        getPackage();
-    }, []);
+        if (checkPackage()) return;
+        // If not found initially, poll every 500ms
+        const interval = setInterval(() => {
+            if (checkPackage()) {
+                clearInterval(interval); // Stop polling once package is found
+            }
+        }, 500); // Check every 0.5 seconds
+
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
+    }, []); // Empty dependency array since we only run one on mount
 
     const isActive = (path: string) => location.pathname === path;
 

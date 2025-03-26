@@ -1,0 +1,222 @@
+.container {
+  padding: 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 2rem !important;
+  font-weight: 600 !important;
+  color: #1e293b;
+  margin-bottom: 32px !important;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  border-radius: 2px;
+}
+
+.controls {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.searchBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  padding: 12px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.searchBox:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.searchIcon {
+  color: #64748b;
+  margin-right: 12px;
+}
+
+.searchInput {
+  flex: 1;
+}
+
+.searchInput input {
+  padding: 8px 0;
+  font-size: 15px;
+}
+
+.genderFilter {
+  min-width: 180px !important;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.tableContainer {
+  background-color: white;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.tableHeader {
+  background-color: #f8fafc !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  padding: 16px 20px !important;
+  font-size: 0.95rem !important;
+}
+
+.tableRow td {
+  padding: 16px 20px !important;
+  font-size: 0.95rem;
+}
+
+.tableRow:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.genderChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
+}
+
+.Male {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.Female {
+  background-color: #fce7f3;
+  color: #be185d;
+}
+
+.Other {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.ratingChip {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #fff3e0;
+  color: #f57c00;
+  font-weight: 500;
+}
+
+.statusChip {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.statusChip.verified {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.statusChip.unverified {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.priceChip {
+  background-color: #ecfdf5;
+  color: #047857;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #fef2f2;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px;
+}
+
+/* Custom scrollbar */
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Pagination styling */
+.tableContainer :global(.MuiTablePagination-root) {
+  color: #475569;
+}
+
+.tableContainer :global(.MuiTablePagination-select) {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* Format date column */
+.dateCell {
+  font-family: 'Roboto Mono', monospace;
+  color: #475569;
+}
+
+/* Add hover effect to price */
+.priceChip:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+  }
+  
+  .genderFilter {
+    width: 100%;
+  }
+} 

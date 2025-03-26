@@ -1,0 +1,172 @@
+/* Modern styling for signup form */
+.container {
+  width: 450px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 40px auto;
+  max-width: 90%;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.title {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #1976d2;
+  text-align: center;
+  margin-bottom: 32px !important;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%);
+  border-radius: 2px;
+}
+
+.formField {
+  margin-bottom: 24px;
+}
+
+.termsContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.termsText {
+  font-size: 14px !important;
+  color: #666 !important;
+}
+
+.termsLink {
+  color: #1976d2 !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.termsLink:hover {
+  color: #1976d2 !important;
+  text-decoration: underline;
+}
+
+.submitButton {
+  width: 100%;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%) !important;
+  box-shadow: 0 4px 15px rgba(57, 73, 171, 0.35) !important;
+  transition: all 0.3s ease !important;
+  margin-top: 24px !important;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(57, 73, 171, 0.45) !important;
+}
+
+.submitButton:disabled {
+  background: linear-gradient(45deg, #97c9ef 0%, #c5cae9 100%) !important;
+  box-shadow: none !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom styles for input fields */
+.inputField {
+  width: 100%;
+}
+
+.inputField :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.inputField :global(.MuiOutlinedInput-root:hover) {
+  background-color: #eeeeee;
+}
+
+.inputField :global(.MuiOutlinedInput-root.Mui-focused) {
+  background-color: white;
+}
+
+.inputField :global(.MuiFormHelperText-root) {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.inputField :global(.MuiFormHelperText-root.Mui-error) {
+  background-color: #fff5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Animation for error messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inputField :global(.MuiFormHelperText-root.Mui-error) {
+  animation: slideIn 0.3s ease;
+}
+
+/* Grid spacing adjustments */
+.formGrid {
+  margin-top: -8px !important;
+}
+
+.formGrid :global(.MuiGrid-item) {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+/* Add styling for input labels */
+.inputField label {
+  font-weight: 500;
+  color: #555;
+}
+
+/* Add custom styling for focused state */
+.inputField .Mui-focused {
+  color: #1976d2 !important;
+}
+
+/* Add transition effect for grid items */
+.container .MuiGrid-item {
+  transition: transform 0.3s ease;
+}
+
+.container .MuiGrid-item:hover {
+  transform: translateY(-2px);
+}
