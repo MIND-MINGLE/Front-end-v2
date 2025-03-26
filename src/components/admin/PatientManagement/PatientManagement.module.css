@@ -1,16 +1,31 @@
 .container {
-  padding: 24px;
+  padding: 32px;
+  background-color: #f8fafc;
+  min-height: 100vh;
 }
 
 .title {
-  margin-bottom: 24px;
-  color: #1a237e;
-  font-weight: 600;
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  color: #1e293b;
+  margin-bottom: 32px !important;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  border-radius: 2px;
 }
 
 .controls {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   margin-bottom: 24px;
   align-items: center;
 }
@@ -19,111 +34,181 @@
   flex: 1;
   display: flex;
   align-items: center;
-  background: white;
-  border-radius: 8px;
-  padding: 8px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 12px 20px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
 }
 
 .searchBox:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .searchIcon {
-  color: #666;
+  color: #64748b;
   margin-right: 12px;
 }
 
-.searchInput {
-  flex: 1;
+.searchInput input {
+  font-size: 0.95rem;
 }
 
-.searchInput input {
-  padding: 8px 0;
-  font-size: 15px;
+.genderFilter {
+  min-width: 180px !important;
+  background-color: white;
+  border-radius: 12px;
+}
+
+.genderFilter :global(.MuiOutlinedInput-root) {
+  border-radius: 12px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.genderFilter :global(.MuiOutlinedInput-root:hover) {
+  background-color: #f8fafc;
 }
 
 .tableContainer {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
-  border-radius: 12px !important;
+  background-color: white;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .tableHeader {
-  background-color: #f5f5f5 !important;
+  background-color: #f8fafc !important;
   font-weight: 600 !important;
-  color: #1a237e !important;
+  color: #1e293b !important;
+  padding: 16px 20px !important;
+  font-size: 0.95rem !important;
+}
+
+.tableRow {
+  transition: all 0.2s ease;
 }
 
 .tableRow:hover {
-  background-color: #f8f9fa;
+  background-color: #f1f5f9 !important;
+}
+
+.tableRow td {
+  padding: 16px 20px !important;
+  font-size: 0.95rem;
+}
+
+.genderChip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+.Male {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.Female {
+  background-color: #fce7f3;
+  color: #be185d;
+}
+
+.Other {
+  background-color: #f1f5f9;
+  color: #475569;
 }
 
 .loadingContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  min-height: 400px;
 }
 
 .errorContainer {
-  padding: 24px;
-  text-align: center;
-}
-
-/* Thêm styles cho gender chips */
-.genderChip {
-  padding: 6px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background-color: #fef2f2;
   border-radius: 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  display: inline-block;
+  padding: 24px;
+  margin: 24px;
+}
+
+/* Custom scrollbar */
+.tableContainer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tableContainer::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.tableContainer::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Pagination styling */
+:global(.MuiTablePagination-root) {
+  color: #475569 !important;
+}
+
+:global(.MuiTablePagination-select) {
+  background-color: white !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+}
+
+/* Empty state */
+.noDataContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
   text-align: center;
 }
 
-.genderChip.Male {
-  background-color: #e3f2fd;
-  color: #1976d2;
+.noDataIcon {
+  color: #94a3b8;
+  font-size: 48px !important;
+  margin-bottom: 16px;
 }
 
-.genderChip.Female {
-  background-color: #fce4ec;
-  color: #d81b60;
+.noDataText {
+  color: #64748b;
+  font-size: 1rem !important;
 }
 
-.genderChip.Other {
-  background-color: #f5f5f5;
-  color: #616161;
-}
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
 
-.genderFilter {
-  min-width: 150px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Style cho Select */
-.genderFilter .MuiOutlinedInput-root {
-  border-radius: 8px;
-}
-
-.genderFilter .MuiOutlinedInput-notchedOutline {
-  border-color: transparent;
-}
-
-.genderFilter:hover .MuiOutlinedInput-notchedOutline {
-  border-color: #1976d2;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
   .controls {
     flex-direction: column;
+    gap: 16px;
   }
-  
+
+  .searchBox {
+    width: 100%;
+  }
+
   .genderFilter {
     width: 100%;
   }
