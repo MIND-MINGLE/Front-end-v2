@@ -5,8 +5,6 @@ import { getAllClientByChatGroupId, getGroupChatByAccountId } from "../../../api
 import { AccountProps, ChatProfile, ChatProps, UserInGroup } from "../../../interface/IAccount";
 import { useNavigate } from "react-router";
 
-
-
 interface ChatProfileListProps {
   setCurrentChat: React.Dispatch<React.SetStateAction<ChatProps>>
   isSeeker:boolean
