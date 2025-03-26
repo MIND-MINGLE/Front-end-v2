@@ -3,7 +3,6 @@ import {
     AddCircle,
     Delete,
     Edit,
-    Facebook,
     Google,
     Logout,
     Phone,
@@ -25,7 +24,7 @@ import {
     Snackbar,
     Alert,
     CircularProgress,
-    Skeleton,
+    Dialog,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { Accountlogout } from "../../../services/logout";
@@ -33,6 +32,8 @@ import { getAccountById, updateUserAvatar } from "../../../api/Account/Account";
 import { useState, useRef, useEffect } from "react";
 import LoadingScreen from "../../common/LoadingScreen";
 import { getTherapistById } from "../../../api/Therapist/Therapist";
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from "../../../services/firebase";
 
 interface TherapistProfile {
     accountName: string;
@@ -48,6 +49,18 @@ interface TherapistInfo {
     dob: string;
     gender: string;
     phoneNumber: string;
+    description: string;
+
+}
+
+// Thêm interface cho credential
+interface Credential {
+    credentialId: string;
+    imageUrl: string;
+    therapistId: string;
+    isDisabled: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export const Frame = () => {
@@ -60,7 +73,6 @@ export const Frame = () => {
         severity: 'success' as 'success' | 'error'
     });
     const [loading, setLoading] = useState(true);
-    const [openImageModal, setOpenImageModal] = useState(false);
     const [profile, setProfile] = useState<TherapistProfile>({
         accountName: '',
         email: '',
@@ -74,8 +86,16 @@ export const Frame = () => {
         lastName: '',
         dob: '',
         gender: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        description: ''
     });
+    const [openAvatarModal, setOpenAvatarModal] = useState(false);
+    const [credentials, setCredentials] = useState<Credential[]>([]);
+    const [selectedImage, setSelectedImage] = useState<string>("");
+    const [openImageModal, setOpenImageModal] = useState(false);
+    const [uploadingCredential, setUploadingCredential] = useState(false);
+    const credentialFileRef = useRef<HTMLInputElement>(null);
+    const [editingCredentialId, setEditingCredentialId] = useState<string | null>(null);
 
     const nav = useNavigate();
     const logout = () => {
@@ -83,8 +103,23 @@ export const Frame = () => {
         nav("/", { replace: true });
     };
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const handleAvatarClick = () => {
-        fileInputRef.current?.click();
+    const handleAvatarClick = (event: React.MouseEvent) => {
+        if ((event.target as HTMLElement).closest('button')) {
+            fileInputRef.current?.click();
+            return;
+        }
+        setOpenAvatarModal(true);
+    };
+    const fetchCredentials = async (therapistId: string) => {
+        try {
+            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${therapistId}`);
+            const data = await response.json();
+            if (data.isSuccess) {
+                setCredentials(data.result);
+            }
+        } catch (error) {
+            console.error("Error fetching credentials:", error);
+        }
     };
     useEffect(() => {
         const fetchData = async () => {
@@ -102,7 +137,7 @@ export const Frame = () => {
                     return;
                 }
 
-                // Fetch cả account và patient data
+                // Fetch tất cả dữ liệu cần thiết
                 const [accountResponse, therapistResponse] = await Promise.all([
                     getAccountById(UserId),
                     getTherapistById(UserId)
@@ -130,9 +165,16 @@ export const Frame = () => {
                         lastName: therapistResponse.result.lastName || "",
                         dob: therapistResponse.result.dob || "",
                         gender: therapistResponse.result.gender || "",
-                        phoneNumber: therapistResponse.result.phoneNumber || ""
+                        phoneNumber: therapistResponse.result.phoneNumber || "",
+                        description: therapistResponse.result.description || ""
                     });
                 }
+
+                // Fetch credentials sau khi có therapistId
+                if (therapistResponse?.result?.therapistId) {
+                    await fetchCredentials(therapistResponse.result.therapistId);
+                }
+
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Đã xảy ra lỗi khi tải thông tin.");
@@ -198,8 +240,118 @@ export const Frame = () => {
     const handleCloseSnackbar = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
-    const handleOpenImage = () => setOpenImageModal(true);
-    const handleCloseImage = () => setOpenImageModal(false);
+    const handleCloseAvatarModal = () => {
+        setOpenAvatarModal(false);
+    };
+    const handleCloseImage = () => {
+        setOpenImageModal(false);
+    };
+
+    // Thêm hàm upload ảnh lên Firebase
+    const uploadCredentialImage = async (file: File) => {
+        const timestamp = new Date().getTime();
+        const storageRef = ref(storage, `credentials/${timestamp}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
+    };
+
+    // Thêm hàm xử lý upload credential
+    const handleCredentialUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploadingCredential(true);
+            setError(null);
+
+            // Upload ảnh lên Firebase
+            const imageUrl = await uploadCredentialImage(file);
+
+            // Gọi API để thêm credential
+            const response = await fetch('https://mindmingle202.azurewebsites.net/api/Credential', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    therapistId: therapistInfo.therapistId,
+                    imageUrl: imageUrl
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.isSuccess) {
+                // Refresh danh sách credentials
+                await fetchCredentials(therapistInfo.therapistId);
+                setSnackbar({
+                    open: true,
+                    message: 'Certificate has been uploaded successfully!',
+                    severity: 'success'
+                });
+            } else {
+                throw new Error(data.errorMessage || 'Failed to upload certificate');
+            }
+        } catch (err) {
+            console.error('Error uploading credential:', err);
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'Failed to upload certificate',
+                severity: 'error'
+            });
+        } finally {
+            setUploadingCredential(false);
+        }
+    };
+
+    // Thêm hàm xử lý cập nhật credential
+    const handleCredentialEdit = async (event: React.ChangeEvent<HTMLInputElement>, credentialId: string) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setEditingCredentialId(credentialId);
+            setError(null);
+
+            // Upload ảnh mới lên Firebase
+            const imageUrl = await uploadCredentialImage(file);
+
+            // Gọi API để cập nhật credential
+            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${credentialId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    imageUrl: imageUrl
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.isSuccess) {
+                // Refresh danh sách credentials
+                await fetchCredentials(therapistInfo.therapistId);
+                setSnackbar({
+                    open: true,
+                    message: 'Certificate has been updated successfully!',
+                    severity: 'success'
+                });
+            } else {
+                throw new Error(data.errorMessage || 'Failed to update certificate');
+            }
+        } catch (err) {
+            console.error('Error updating credential:', err);
+            setSnackbar({
+                open: true,
+                message: err instanceof Error ? err.message : 'Failed to update certificate',
+                severity: 'error'
+            });
+        } finally {
+            setEditingCredentialId(null);
+        }
+    };
+
     if (loading) {
         return <LoadingScreen />;
     }
@@ -212,6 +364,12 @@ export const Frame = () => {
             </Box>
         );
     }
+    // Thêm hàm chuyển đổi định dạng ngày
+    const formatDateForInput = (dateStr: string) => {
+        if (!dateStr) return '';
+        const [day, month, year] = dateStr.split('/');
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    };
     return (
         <Box
             display="flex"
@@ -358,25 +516,6 @@ export const Frame = () => {
                                         '&:hover': { bgcolor: 'rgba(2, 127, 193, 0.04)' }
                                     }}
                                 >
-                                    <Facebook sx={{ color: "#4267B2" }} />
-                                    <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
-                                        QuynhNguyen.Facebook
-                                    </Typography>
-                                    <IconButton size="small" sx={{ color: 'error.main' }}>
-                                        <Delete fontSize="small" />
-                                    </IconButton>
-                                </Box>
-
-                                <Box
-                                    display="flex"
-                                    alignItems="center"
-                                    mb={2}
-                                    sx={{
-                                        p: 1.5,
-                                        borderRadius: 2,
-                                        '&:hover': { bgcolor: 'rgba(2, 127, 193, 0.04)' }
-                                    }}
-                                >
                                     <Phone sx={{ color: "#027FC1" }} />
                                     <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
                                         {therapistInfo.phoneNumber || 'Chưa cập nhật số điện thoại'}
@@ -463,7 +602,7 @@ export const Frame = () => {
                                         fullWidth
                                         size="small"
                                         type="date"
-                                        value={therapistInfo.dob}
+                                        value={formatDateForInput(therapistInfo.dob)}
                                         disabled
                                         InputLabelProps={{
                                             shrink: true,
@@ -483,7 +622,7 @@ export const Frame = () => {
 
                                 <Grid item xs={12} md={6}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                        Giới tính
+                                        Gender
                                     </Typography>
                                     <Select
                                         variant="outlined"
@@ -512,7 +651,7 @@ export const Frame = () => {
 
                                 <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
-                                        Giới thiệu
+                                        About your self
                                     </Typography>
                                     <Box display="flex" alignItems="center" mt={1}>
                                         <TextField
@@ -521,7 +660,7 @@ export const Frame = () => {
                                             fullWidth
                                             multiline
                                             rows={3}
-                                            value="Happy code, happy life, happy money"
+                                            value={therapistInfo.description || "Chưa có thông tin giới thiệu"}
                                             sx={{
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: 2,
@@ -536,54 +675,85 @@ export const Frame = () => {
 
                                 <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium" mb={2}>
-                                        Chứng chỉ
+                                        Certificates
                                     </Typography>
                                     <Box
                                         display="flex"
                                         gap={2}
                                         flexWrap="wrap"
                                     >
-                                        <Card
-                                            sx={{
-                                                width: 180,
-                                                borderRadius: 2,
-                                                overflow: 'hidden',
-                                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                                transition: 'all 0.3s ease',
-                                                '&:hover': {
-                                                    transform: 'translateY(-4px)',
-                                                    boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
-                                                }
-                                            }}
-                                        >
-                                            <CardMedia
-                                                component="img"
-                                                height="120"
-                                                image="/cert1.png"
-                                                alt="Certificate 1"
-                                            />
-                                        </Card>
-
-                                        <Card
-                                            sx={{
-                                                width: 180,
-                                                borderRadius: 2,
-                                                overflow: 'hidden',
-                                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                                transition: 'all 0.3s ease',
-                                                '&:hover': {
-                                                    transform: 'translateY(-4px)',
-                                                    boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
-                                                }
-                                            }}
-                                        >
-                                            <CardMedia
-                                                component="img"
-                                                height="120"
-                                                image="/cert2.png"
-                                                alt="Certificate 2"
-                                            />
-                                        </Card>
+                                        {credentials
+                                            .filter(credential => !credential.isDisabled)
+                                            .map((credential) => (
+                                                <Card
+                                                    key={credential.credentialId}
+                                                    sx={{
+                                                        width: 180,
+                                                        borderRadius: 2,
+                                                        overflow: 'hidden',
+                                                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                                        transition: 'all 0.3s ease',
+                                                        position: 'relative',
+                                                        '&:hover': {
+                                                            transform: 'translateY(-4px)',
+                                                            boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
+                                                        }
+                                                    }}
+                                                >
+                                                    <CardMedia
+                                                        component="img"
+                                                        height="120"
+                                                        image={credential.imageUrl}
+                                                        alt={`Certificate ${credential.credentialId}`}
+                                                        sx={{
+                                                            cursor: 'pointer',
+                                                        }}
+                                                        onClick={() => {
+                                                            setOpenImageModal(true);
+                                                            setSelectedImage(credential.imageUrl);
+                                                        }}
+                                                    />
+                                                    <Box
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 8,
+                                                            right: 8,
+                                                            bgcolor: 'rgba(255, 255, 255, 0.9)',
+                                                            borderRadius: '50%',
+                                                            width: 32,
+                                                            height: 32,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            cursor: 'pointer',
+                                                            transition: 'all 0.2s ease',
+                                                            '&:hover': {
+                                                                bgcolor: 'white',
+                                                                transform: 'scale(1.1)'
+                                                            }
+                                                        }}
+                                                    >
+                                                        <input
+                                                            type="file"
+                                                            id={`edit-credential-${credential.credentialId}`}
+                                                            onChange={(e) => handleCredentialEdit(e, credential.credentialId)}
+                                                            accept="image/*"
+                                                            style={{ display: 'none' }}
+                                                        />
+                                                        {editingCredentialId === credential.credentialId ? (
+                                                            <CircularProgress size={20} sx={{ color: '#027FC1' }} />
+                                                        ) : (
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={(e) => document.getElementById(`edit-credential-${credential.credentialId}`)?.click()}
+                                                                sx={{ color: '#027FC1' }}
+                                                            >
+                                                                <Edit fontSize="small" />
+                                                            </IconButton>
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                            ))}
 
                                         <Card
                                             sx={{
@@ -596,13 +766,23 @@ export const Frame = () => {
                                                 justifyContent: "center",
                                                 transition: 'all 0.3s ease',
                                                 cursor: 'pointer',
+                                                position: 'relative',
                                                 '&:hover': {
                                                     borderColor: '#1B9DF0',
                                                     backgroundColor: 'rgba(2, 127, 193, 0.04)'
                                                 }
                                             }}
                                         >
+                                            <input
+                                                type="file"
+                                                ref={credentialFileRef}
+                                                onChange={handleCredentialUpload}
+                                                accept="image/*"
+                                                style={{ display: 'none' }}
+                                            />
                                             <Button
+                                                onClick={() => credentialFileRef.current?.click()}
+                                                disabled={uploadingCredential}
                                                 sx={{
                                                     display: 'flex',
                                                     flexDirection: 'column',
@@ -613,10 +793,16 @@ export const Frame = () => {
                                                     }
                                                 }}
                                             >
-                                                <AddCircle fontSize="large" />
-                                                <Typography variant="body2">
-                                                    Upload Certificate
-                                                </Typography>
+                                                {uploadingCredential ? (
+                                                    <CircularProgress size={24} />
+                                                ) : (
+                                                    <>
+                                                        <AddCircle fontSize="large" />
+                                                        <Typography variant="body2">
+                                                            Upload Certificate
+                                                        </Typography>
+                                                    </>
+                                                )}
                                             </Button>
                                         </Card>
                                     </Box>
@@ -626,6 +812,56 @@ export const Frame = () => {
                     </Grid>
                 </Grid>
             </Box>
+            <Dialog
+                open={openAvatarModal}
+                onClose={handleCloseAvatarModal}
+                maxWidth="md"
+                PaperProps={{
+                    sx: {
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        bgcolor: 'transparent',
+                        boxShadow: 'none'
+                    }
+                }}
+            >
+                <img
+                    src={avatarUrl || "/Ellipse 27.svg"}
+                    alt="Avatar"
+                    style={{
+                        maxWidth: '100%',
+                        maxHeight: '80vh',
+                        objectFit: 'contain',
+                        cursor: 'pointer'
+                    }}
+                    onClick={handleCloseAvatarModal}
+                />
+            </Dialog>
+            <Dialog
+                open={openImageModal}
+                onClose={handleCloseImage}
+                maxWidth="md"
+                PaperProps={{
+                    sx: {
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        bgcolor: 'transparent',
+                        boxShadow: 'none'
+                    }
+                }}
+            >
+                <img
+                    src={selectedImage}
+                    alt="Certificate"
+                    style={{
+                        maxWidth: '100%',
+                        maxHeight: '80vh',
+                        objectFit: 'contain',
+                        cursor: 'pointer'
+                    }}
+                    onClick={handleCloseImage}
+                />
+            </Dialog>
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
