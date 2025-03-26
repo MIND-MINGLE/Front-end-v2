@@ -25,6 +25,16 @@ interface SeekerCreateProps {
   gender: string,
   phoneNumber: string
 }
+// Define the Therapist type based on your schema
+interface TherapistCreateProps {
+  accountId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  dob: string; // Formatted as "dd/MM/yyyy" from backend
+  gender: string;
+  pricePerHour: number;
+}
 
 // Define the Therapist type based on your schema
 interface Therapist {
@@ -154,4 +164,4 @@ interface Credential {
   isDisabled: number;
 }
 
-export type { PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

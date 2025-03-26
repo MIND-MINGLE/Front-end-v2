@@ -19,6 +19,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"; // Date ada
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"; // Required for DatePicker
 import { RegisterPatientAccount } from '../../../api/Account/Seeker';
 import { format, parse, isValid, isFuture } from "date-fns"; // date-fns utilities
+import { RegisterDocAccount } from "../../../api/Account/Account";
 
 // Styled components for custom styling
 const FormContainer = styled(Box)(({ theme }) => ({
@@ -137,10 +138,10 @@ const RegisterDoctorPage: React.FC = () => {
       pricePerHour:formData.pricePerHour
     };
 
-    const result = await RegisterPatientAccount(accountData);
+    const result = await RegisterDocAccount(accountData);
     setLoading(false);
     if (result!=null) {
-      setSnackbar({ open: true, message: "Account registered successfully!", severity: "success" });
+      setSnackbar({ open: true, message: "Therapist registered successfully!", severity: "success" });
       setTimeout(() => navigate("/login"), 1500);
     } else {
       setSnackbar({
