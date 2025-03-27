@@ -15,7 +15,7 @@ import PauseIcon from "@mui/icons-material/Pause";
 import YouTube, { YouTubeProps } from "react-youtube";
 
 interface MusicPlaylistProps {
-  onClose: () => void; // To toggle shrink in RightComponents
+  onClose: () => void;
 }
 
 const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
@@ -25,9 +25,9 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
 
   // Sample YouTube song list (replace with real video IDs)
   const songs = [
-    { name: "Zagreus (Out Of Tartarus - Lofi ver.)", videoId: "BhHVUJk2oao" }, // Rick Astley - Never Gonna Give You Up
-    { name: "Count Funkula (Danny Baranowsky)", videoId: "Fnb5DOOM8AA" }, // Ed Sheeran - Shape of You
-    { name: "Lap of Luxury (Hades II)", videoId: "EIsTrob6-04" }, // Luis Fonsi - Despacito
+    { name: "Zagreus (Out Of Tartarus - Lofi ver.)", videoId: "BhHVUJk2oao" }, 
+    { name: "Count Funkula (Danny Baranowsky)", videoId: "Fnb5DOOM8AA" },
+    { name: "Lap of Luxury (Hades II)", videoId: "EIsTrob6-04" }, 
   ];
 
   // YouTube player options
@@ -109,7 +109,6 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
         </Button>
       </Box>
 
-      {/* Song List */}
       <List>
         {songs.map((song, index) => (
           <ListItem key={index} onClick={() => playSong(song.videoId)}>
@@ -130,8 +129,6 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
           <ListItemText primary="Random From List" />
         </ListItem>
       </List>
-
-      {/* Back to Chat */}
       <ListItem onClick={handleBackToChat}>
         <IconButton>
           <ArrowBackIcon />
