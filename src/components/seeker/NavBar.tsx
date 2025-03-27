@@ -259,7 +259,11 @@ export const NavigationRail = (): JSX.Element => {
             >
                 <NavItem to="/seeker" icon={<HomeIcon />} label="Home" />
                 <NavItem to="/seeker/therapy-chat" icon={<HealingIcon />} label="Therapy" />
-                <NavItem to="/seeker/history" icon={<HistoryIcon />} label="History" />
+                <div onClick={()=>alert("Feature Under Construction! Please Wait Calmly...")}>
+                <NavItem to= ""
+                // "/seeker/history" 
+                icon={<HistoryIcon />} label="History" />
+                </div>
                 <div onClick={()=>alert("Feature Under Construction! Please Wait Calmly...")}>
                     <NavItem to=""
                     //to="/seeker/events" 

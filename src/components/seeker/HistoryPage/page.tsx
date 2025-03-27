@@ -1,10 +1,8 @@
-"use client";
 import {
   Box,
 } from "@mui/material";
-import NavigationRail from "../NavBar";
+import styles from "./HistoryView.module.css"
 import React from "react";
-import HistoryView from "./HistoryView/HistoryView";
 
 const HistoryPage: React.FC = () => {
   return (
@@ -17,34 +15,7 @@ const HistoryPage: React.FC = () => {
       position="relative"
       display="flex"
     >
-        <Box 
-            width="calc(100vw - 88px)"
-            height="99vh"
-            position="absolute"
-            top={0}
-            left="88px"
-            display="flex"
-            flexDirection="column"
-        >
-            <HistoryView />
-        </Box>
-      {/* Navigation Sidebar */}
-      <Box
-        width="88px"
-        height="2015px"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        gap={2}
-        pt={2}
-        pb={2}
-        position="absolute"
-        top={0}
-        left={0}
-        bgcolor="white"
-      >
-  
-      </Box>
+
     </Box>
   );
 };

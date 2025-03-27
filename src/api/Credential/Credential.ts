@@ -12,7 +12,7 @@ export const getCredentialByTherapistId = async (therapistId: string) => {
   }
   const result = await axiosRead(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result)
     return result.data
   }
   else {
