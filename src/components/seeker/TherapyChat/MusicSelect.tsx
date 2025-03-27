@@ -1,34 +1,142 @@
-import { Box, Typography, List, ListItem, ListItemText, IconButton } from "@mui/material";
+import { useState } from "react";
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  Button,
+} from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import PauseIcon from "@mui/icons-material/Pause";
+import YouTube, { YouTubeProps } from "react-youtube";
 
-const MusicPlaylist = () => {
+interface MusicPlaylistProps {
+  onClose: () => void;
+}
+
+const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
+  const [player, setPlayer] = useState<any>(null); // YouTube player instance
+  const [isPlaying, setIsPlaying] = useState(false); // Play/pause state
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null); // Current YouTube video ID
+
+  // Sample YouTube song list (replace with real video IDs)
+  const songs = [
+    { name: "Zagreus (Out Of Tartarus - Lofi ver.)", videoId: "BhHVUJk2oao" }, 
+    { name: "Count Funkula (Danny Baranowsky)", videoId: "Fnb5DOOM8AA" },
+    { name: "Lap of Luxury (Hades II)", videoId: "EIsTrob6-04" }, 
+  ];
+
+  // YouTube player options
+  const opts: YouTubeProps["opts"] = {
+    height: "0", // Hide video (audio only)
+    width: "0",
+    playerVars: {
+      autoplay: 0, // No autoplay due to browser restrictions
+      controls: 0, // Hide controls
+      modestbranding: 1, // Reduce YouTube branding
+    },
+  };
+
+  // When player is ready, store the instance
+  const onReady = (event: { target: any }) => {
+    setPlayer(event.target);
+  };
+
+  // Play a specific song
+  const playSong = (videoId: string) => {
+    if (player) {
+      if (currentVideoId !== videoId) {
+        player.loadVideoById(videoId);
+        setCurrentVideoId(videoId);
+      }
+      player.playVideo();
+      setIsPlaying(true);
+    }
+  };
+
+  // Pause the current song
+  const pauseSong = () => {
+    if (player) {
+      player.pauseVideo();
+      setIsPlaying(false);
+    }
+  };
+
+  // Play a random song
+  const playRandomSong = () => {
+    const randomIndex = Math.floor(Math.random() * songs.length);
+    playSong(songs[randomIndex].videoId);
+  };
+
+  // Handle back button
+  const handleBackToChat = () => {
+    console.log("Close This - Music continues in background");
+    onClose(); // Toggle shrink in RightComponents
+  };
+
   return (
-    <Box width="100%" height="100%" bgcolor="white" p={2}>
-      <Typography variant="subtitle1" color="gray">Now Playing...</Typography>
-      <Typography variant="h6" fontWeight="bold">HELLOHELL (Akatsuki Records)</Typography>
+    <Box width="100%" height="100%" bgcolor="white" p={2}
+    sx={{
+      position:"fixed",
+      zIndex:0
+    }}
+    >
+      {/* YouTube Player (hidden) */}
+      <YouTube opts={opts} onReady={onReady} />
+
+      {/* Now Playing Section */}
+      <Typography variant="subtitle1" color="gray">
+        Now Playing...
+      </Typography>
+      <Typography variant="h6" fontWeight="bold">
+        {currentVideoId ? songs.find((s) => s.videoId === currentVideoId)?.name : "Background Music"}
+      </Typography>
       <Box borderBottom={1} borderColor="gray" my={1} />
+
+      {/* Playback Controls */}
+      <Box display="flex" gap={1} mb={2}>
+        <Button
+          variant="contained"
+          startIcon={isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
+          onClick={() => (isPlaying ? pauseSong() : currentVideoId ? playSong(currentVideoId) : playRandomSong())}
+          disabled={!songs.length || !player}
+        >
+          {isPlaying ? "Pause" : "Play"}
+        </Button>
+      </Box>
+
       <List>
-        {["Song 1", "Song 2", "Song 3"].map((song, index) => (
-          <ListItem key={index}>
+        {songs.map((song, index) => (
+          <ListItem key={index} onClick={() => playSong(song.videoId)}>
             <IconButton>
               <StarBorderIcon />
             </IconButton>
-            <ListItemText primary={song} secondary="Menu description." />
+            <ListItemText
+              primary={song.name}
+              secondary="YouTube Song"
+              sx={{ color: currentVideoId === song.videoId ? "#0077b6" : "inherit" }} // Highlight current song
+            />
           </ListItem>
         ))}
-        <ListItem >
+        <ListItem onClick={playRandomSong}>
           <IconButton>
             <StarBorderIcon />
           </IconButton>
           <ListItemText primary="Random From List" />
         </ListItem>
       </List>
-      <ListItem  onClick={()=>{console.log("Close This")}}>
+      <ListItem onClick={handleBackToChat}>
         <IconButton>
           <ArrowBackIcon />
         </IconButton>
-        <ListItemText primary="Back to chat list" secondary="*ps: Don’t worry, your music still plays in the background :3" />
+        <ListItemText
+          primary="Back to chat list"
+          secondary="*ps: Don’t worry, your music still plays in the background :3"
+        />
       </ListItem>
     </Box>
   );
