@@ -7,53 +7,25 @@ import {
   Button,
   Pagination,
   Tooltip,
-  styled,
   Snackbar,
   Alert,
 } from "@mui/material";
-import Header from "../Header"; // Your existing header
+import Header from "../Header";
 import { Appointment, Therapist } from "../../../interface/IAccount";
 import { getAppointmentByTherapistId, patchAppointmentStatus } from "../../../api/Appointment/appointment";
 import LoadingScreen from "../../common/LoadingScreen";
-
-// Styled components
-const AppointmentCard = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderRadius: "12px",
-  background: "#FFFFFF",
-  boxShadow: "0 4px 12px rgba(0, 119, 182, 0.2)",
-  transition: "transform 0.3s, box-shadow 0.3s",
-  "&:hover": {
-    transform: "scale(1.02)",
-    boxShadow: "0 6px 16px rgba(0, 119, 182, 0.3)",
-  },
-}));
-
-const StatusBadge = styled(Typography)(({ status }: { status: string }) => ({
-  display: "inline-block",
-  padding: "4px 8px",
-  borderRadius: "8px",
-  fontSize: "12px",
-  fontWeight: "bold",
-  color: "#FFFFFF",
-  backgroundColor:
-    status === "PENDING"
-      ? "#ff9800" // Orange for pending
-      : status === "APPROVED"
-      ? "#4caf50" // Green for approved
-      : "#f44336", // Red for declined/canceled
-}));
-
-const ActionButton = styled(Button)(() => ({
-  margin: "0 8px",
-  borderRadius: "20px",
-  textTransform: "none",
-}));
+import styles from './appointmentList.module.css';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ComputerIcon from '@mui/icons-material/Computer';
+import PersonIcon from '@mui/icons-material/Person';
+import PaidIcon from '@mui/icons-material/Paid';
 
 export default function AppointmentList() {
   const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
-  const [isLoading,setIsLoading] = useState(false)
-  const [refresh,setRefresh] = useState(false)
+  const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "DECLINED">("PENDING");
+  const [isLoading, setIsLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -64,31 +36,36 @@ export default function AppointmentList() {
     getAppointment();
   }, [refresh]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
   const getAppointment = async () => {
     setIsLoading(true)
-      const sessionAccount = sessionStorage.getItem("therapist");
-      if (sessionAccount) {
-        try {
-          const data: Therapist = JSON.parse(sessionAccount);
-          const appointmentData = await getAppointmentByTherapistId(data.therapistId);
-          if (appointmentData.statusCode === 200) {
-            const appointments: Appointment[] = appointmentData.result;
-            setAppointmentList(appointments);
-          }
-        } catch (error) {
-          console.error("Error fetching appointments:", error);
+    const sessionAccount = sessionStorage.getItem("therapist");
+    if (sessionAccount) {
+      try {
+        const data: Therapist = JSON.parse(sessionAccount);
+        const appointmentData = await getAppointmentByTherapistId(data.therapistId);
+        if (appointmentData.statusCode === 200) {
+          const appointments: Appointment[] = appointmentData.result;
+          setAppointmentList(appointments);
         }
-      } else {
-        console.log("No therapist found");
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
       }
-      setIsLoading(false)
+    } else {
+      console.log("No therapist found");
     }
+    setIsLoading(false)
+  }
 
   // Pagination logic
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     console.log(event)
     setPage(value);
   };
+
   const handleApproved = async (appId: string) => {
     try {
       const response = await patchAppointmentStatus("Approved", appId);
@@ -131,131 +108,237 @@ export default function AppointmentList() {
     setSnackbarOpen(false);
   };
 
-  const paginatedAppointments = appointmentList.slice(
+  // Filter appointments based on active tab
+  const filteredAppointments = appointmentList.filter(
+    (appointment) => appointment.status === activeTab
+  );
+
+  const paginatedAppointments = filteredAppointments.slice(
     (page - 1) * itemsPerPage,
     page * itemsPerPage
   );
 
+  // Get count for each status
+  const getStatusCount = (status: string) => {
+    return appointmentList.filter((appointment) => appointment.status === status).length;
+  };
+
+  // Thêm hàm format số lượng
+  const formatCount = (count: number) => {
+    return count > 10 ? "10+" : count.toString();
+  };
+
+  // Cập nhật phần tabs trong component
+  const tabs = [
+    {
+      id: "PENDING",
+      label: "Pending",
+      count: formatCount(getStatusCount("PENDING"))
+    },
+    {
+      id: "APPROVED",
+      label: "Approved",
+      count: formatCount(getStatusCount("APPROVED"))
+    },
+    {
+      id: "DECLINED",
+      label: "Declined",
+      count: formatCount(getStatusCount("DECLINED"))
+    },
+  ] as const;
+
   return (
     <>
-    {isLoading?<LoadingScreen/>:null}
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg, #DFF6FF 0%, #FFFFFF 100%)",
-      }}
-    >
-      <Header />
+      {isLoading ? <LoadingScreen /> : null}
+      <Box className={styles.container}>
+        {/* Thêm clouds */}
+        <div className={`${styles.cloud} ${styles.cloud1}`}></div>
+        <div className={`${styles.cloud} ${styles.cloud2}`}></div>
+        <div className={`${styles.cloud} ${styles.cloud3}`}></div>
 
-      {/* Main Content */}
-      <Box sx={{ maxWidth: "1200px", margin: "0 auto", pt: 12, pb: 4, px: 2 }}>
-        <Typography
-          variant="h4"
-          color="#0077b6"
-          sx={{ textAlign: "center", mb: 4, fontWeight: "bold" }}
-        >
-          Appointment List
-        </Typography>
 
-        {appointmentList.length === 0 ? (
-          <Typography variant="h6" color="textSecondary" sx={{ textAlign: "center" }}>
-            No appointments found.
-          </Typography>
-        ) : (
-          <>
-            <Grid container spacing={3}>
-              {paginatedAppointments.map((appointment) => (
-                <Grid item xs={12} sm={6} md={4} key={appointment.appointmentId}>
-                  <AppointmentCard elevation={2}>
-                    <Typography variant="h6" color="#0077b6" gutterBottom>
-                      {appointment.patient?.firstName} {appointment.patient?.lastName}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Date: {new Date(appointment.session.startTime).toLocaleDateString()}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Time: {new Date(appointment.session.startTime).toLocaleTimeString()} -{" "}
-                      {new Date(appointment.session.endTime).toLocaleTimeString()}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Type: {appointment.appointmentType}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      Fee: {appointment.totalFee.toLocaleString()} VND
-                    </Typography>
-                    <Box sx={{ mt: 1 }}>
-                      <StatusBadge status={appointment.status}>
-                        {appointment.status}
-                      </StatusBadge>
-                    </Box>
-                    <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-                      <Tooltip title="Approve this appointment" arrow>
-                        <ActionButton
-                          variant="contained"
-                          sx={{ backgroundColor: "#4caf50", "&:hover": { backgroundColor: "#45a049" } }}
-                          disabled={appointment.status !== "PENDING"}
-                          onClick={()=>{handleApproved(appointment.appointmentId)}}
-                        >
-                          Approve
-                        </ActionButton>
-                      </Tooltip>
-                      <Tooltip title="Decline this appointment" arrow>
-                        <ActionButton
-                          variant="contained"
-                          sx={{ backgroundColor: "#f44336", "&:hover": { backgroundColor: "#e53935" } }}
-                          disabled={appointment.status !== "PENDING"}
-                          onClick={()=>{handleDeclined(appointment.appointmentId)}}
-                        >
-                          Decline
-                        </ActionButton>
-                      </Tooltip>
-                    </Box>
-                  </AppointmentCard>
-                </Grid>
+
+        <Header />
+
+        <Box className={styles.contentWrapper}>
+          <Box className={styles.titleContainer}>
+            <Typography component="h1" className={styles.titleDecoration}>
+              <span className={styles.pageTitle}>
+                Appointment Management
+              </span>
+            </Typography>
+            <Typography className={styles.titleSubtext}>
+              Manage your appointments efficiently
+            </Typography>
+          </Box>
+
+          {/* Tabs */}
+          <Box className={styles.tabContainer}>
+            <Box className={styles.tabs}>
+              {tabs.map((tab) => (
+                <Box
+                  key={tab.id}
+                  className={`${styles.tab} ${activeTab === tab.id ? styles.tabActive : ''}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                  <span className={styles.tabCount}>{tab.count}</span>
+                </Box>
               ))}
-            </Grid>
-
-            {/* Pagination */}
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-              <Pagination
-                count={Math.ceil(appointmentList.length / itemsPerPage)}
-                page={page}
-                onChange={handlePageChange}
-                color="primary"
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    color: "#0077b6",
-                    "&.Mui-selected": {
-                      backgroundColor: "#0077b6",
-                      color: "#FFFFFF",
-                    },
-                  },
-                }}
-              />
             </Box>
-          </>
-        )}
-      </Box>
-      {/* Snackbar for feedback */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000} // Hide after 3 seconds
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
+          </Box>
+
+          {filteredAppointments.length === 0 ? (
+            <Box className={styles.emptyState}>
+              <Typography variant="h6" color="text.secondary">
+                No {activeTab.toLowerCase()} appointments found
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <Grid container spacing={4}>
+                {paginatedAppointments.map((appointment) => (
+                  <Grid item xs={12} sm={6} md={4} key={appointment.appointmentId}>
+                    <Paper className={styles.appointmentCard} elevation={0}>
+                      <Box className={styles.cardHeader}>
+                        <Typography className={styles.patientName}>
+                          {appointment.patient?.firstName} {appointment.patient?.lastName}
+                        </Typography>
+                        <Typography
+                          className={`${styles.statusBadge} ${styles[`status${appointment.status.charAt(0) + appointment.status.slice(1).toLowerCase()}`]}`}
+                        >
+                          {appointment.status}
+                        </Typography>
+                      </Box>
+
+                      <Box className={styles.appointmentDetails}>
+                        {/* Date và Time Row */}
+                        <Box className={styles.detailsRow}>
+                          <Box className={styles.detailContainer}>
+                            <CalendarTodayIcon className={styles.detailIcon} />
+                            <span className={styles.dateValue}>
+                              {new Date(appointment.session.startTime).toLocaleDateString()}
+                            </span>
+                          </Box>
+
+                          <Box className={styles.detailContainer}>
+                            <AccessTimeIcon className={styles.detailIcon} />
+                            <Box className={styles.timeDetails}>
+                              <span className={styles.timeValue}>
+                                {new Date(appointment.session.startTime).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: false
+                                })}
+                              </span>
+                              <span className={styles.timeSeparator}>-</span>
+                              <span className={styles.timeValue}>
+                                {new Date(appointment.session.endTime).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  hour12: false
+                                })}
+                              </span>
+                            </Box>
+                          </Box>
+                        </Box>
+
+                        {/* Type và Fee Row */}
+                        <Box className={styles.detailsRow}>
+                          <Box className={styles.detailContainer}>
+                            {appointment.appointmentType === "ONLINE" ? (
+                              <ComputerIcon className={styles.detailIcon} />
+                            ) : (
+                              <PersonIcon className={styles.detailIcon} />
+                            )}
+                            <span className={styles.detailLabel}>Type:</span>
+                            <span className={`${styles.typeChip} ${appointment.appointmentType === "ONLINE"
+                              ? styles.typeOnline
+                              : styles.typeOffline
+                              }`}>
+                              {appointment.appointmentType}
+                            </span>
+                          </Box>
+
+                          <Box className={styles.detailContainer}>
+                            <PaidIcon className={styles.detailIcon} />
+                            <span className={styles.detailLabel}>Fee:</span>
+                            <span className={styles.feeValue}>
+                              {appointment.totalFee.toLocaleString()}
+                              <span className={styles.currencyLabel}>VND</span>
+                            </span>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Box className={styles.actionButtons}>
+                        {activeTab === "PENDING" && (
+                          <>
+                            <Tooltip title="Approve this appointment" arrow>
+                              <span>
+                                <Button
+                                  variant="contained"
+                                  className={`${styles.button} ${styles.approveButton}`}
+                                  onClick={() => handleApproved(appointment.appointmentId)}
+                                >
+                                  Approve
+                                </Button>
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Decline this appointment" arrow>
+                              <span>
+                                <Button
+                                  variant="contained"
+                                  className={`${styles.button} ${styles.declineButton}`}
+                                  onClick={() => handleDeclined(appointment.appointmentId)}
+                                >
+                                  Decline
+                                </Button>
+                              </span>
+                            </Tooltip>
+                          </>
+                        )}
+                      </Box>
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+
+              <Box className={styles.pagination}>
+                <Pagination
+                  count={Math.ceil(filteredAppointments.length / itemsPerPage)}
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  classes={{
+                    root: styles.pagination,
+                    item: styles.paginationItem
+                  }}
+                />
+              </Box>
+            </>
+          )}
+        </Box>
+
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
           onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          sx={{
-            width: "100%",
-            backgroundColor: snackbarSeverity === "success" ? "#4caf50" : "#f44336", // Green for success, red for error
-            color: "#FFFFFF",
-          }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+            sx={{
+              width: "100%",
+              backgroundColor: snackbarSeverity === "success" ? "#4caf50" : "#f44336",
+              color: "#FFFFFF",
+            }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
     </>
   );
 }
