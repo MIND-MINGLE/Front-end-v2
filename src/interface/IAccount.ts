@@ -153,11 +153,13 @@ interface PurchasedPackagedRequest {
   subscriptionId: string,
 }
 interface PurchasedPackaged {
+  purchasedPackageId: string;
   patientId: string,
   subscriptionId: string,
   subscription: Subscription,
   startDate: string,
   endDate: string,
+  isDisabled:boolean
 }
 
 interface Credential {

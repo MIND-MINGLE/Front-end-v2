@@ -8,16 +8,16 @@ import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { JSX, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./css/navbar.css"
+import { Subscription } from "../../interface/IAccount";
 
 export const NavigationRail = (): JSX.Element => {
     const location = useLocation();
-    const [packageName, setPackageName] = useState("");
-
+    const [currentPackage, setCurrentPackage] = useState<Subscription|null>(null);
     useEffect(() => {
         const checkPackage = () => {
             const storedPackage = sessionStorage.getItem("package");
             if (storedPackage !== null) {
-                setPackageName(storedPackage);
+                setCurrentPackage(JSON.parse(storedPackage));
                 return true; // Package found, stop checking
             }
             return false; // Keep checking
@@ -160,11 +160,11 @@ export const NavigationRail = (): JSX.Element => {
                 scale: "120%",
                 bgcolor: "#1565C0",
             },
-            backgroundImage: packageName === "MindMingle Plus" ? "url('/pack1.png')" : packageName === "MindMingle Premium" ? "url('/pack2.png')" : "",
+            backgroundImage: currentPackage?.packageName === "MindMingle Plus" ? "url('/pack1.png')" : currentPackage?.packageName === "MindMingle Premium" ? "url('/pack2.png')" : "",
             backgroundSize: "100%",
         }}
     >
-        <NavItem to="/seeker/subscription" icon={packageName === "" ? <AddIcon /> : null} label="" />
+        <NavItem to="/seeker/subscription" icon={currentPackage?.packageName === "" ? <AddIcon /> : null} label="" />
     </Avatar>
     {/* Custom Tooltip */}
     <Box
@@ -197,9 +197,9 @@ export const NavigationRail = (): JSX.Element => {
             marginBottom: "8px", // Space between header and body
         }}
     >
-       {packageName===""?"Buy Subscription":`Thank You!`}
+       {currentPackage?.packageName===""?"Buy Subscription":`Thank You!`}
     </Typography>
-       {packageName===""?
+       {currentPackage?.packageName===""?
         <Typography
         variant="h6" // Body style
         sx={{
@@ -229,7 +229,7 @@ export const NavigationRail = (): JSX.Element => {
             lineHeight: 1.4,
             fontWeight: "bold",
         }}>
-       {packageName}
+       {currentPackage?.packageName}
        </Typography>
        </>
     }
@@ -259,11 +259,10 @@ export const NavigationRail = (): JSX.Element => {
             >
                 <NavItem to="/seeker" icon={<HomeIcon />} label="Home" />
                 <NavItem to="/seeker/therapy-chat" icon={<HealingIcon />} label="Therapy" />
-                <div onClick={()=>alert("Feature Under Construction! Please Wait Calmly...")}>
-                <NavItem to= ""
-                // "/seeker/history" 
+                
+                <NavItem to= "/seeker/history" 
                 icon={<HistoryIcon />} label="History" />
-                </div>
+                
                 <div onClick={()=>alert("Feature Under Construction! Please Wait Calmly...")}>
                     <NavItem to=""
                     //to="/seeker/events" 

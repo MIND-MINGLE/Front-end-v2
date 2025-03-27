@@ -31,7 +31,7 @@ import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
-import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Therapist } from "../../../interface/IAccount";
+import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Subscription, Therapist } from "../../../interface/IAccount";
 import { getCurrentAppointment } from "../../../api/Appointment/appointment";
 import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
 import { getTherapistById } from "../../../api/Therapist/Therapist";
@@ -249,13 +249,14 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
   };
 
   const handlePremiumFeature = (extraComponent: "video" | "call" | "music" | string, format: "video" | "call" | null) => {
-    const subscription = sessionStorage.getItem('package'); 
-    if (subscription) {
-      if (subscription === "MindMingle Premium") {
+    const currentPackage = sessionStorage.getItem('package'); 
+    if (currentPackage) {
+      const subscription:Subscription = JSON.parse(currentPackage)
+      if (subscription.packageName === "MindMingle Premium") {
         setFormat(format);
         setShowExtraComponent(extraComponent);
         shrinkPage();
-      } else if (subscription === "MindMingle Plus") {
+      } else if (subscription.packageName === "MindMingle Plus") {
         if (format === "video" || extraComponent === "video") {
           handleOpenPopup();
           setFormat(format);

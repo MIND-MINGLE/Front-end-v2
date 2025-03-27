@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Subscription } from "../../interface/IAccount";
 
 interface SubscriptionTimerProps {
   checkSub: boolean; // Prop to trigger subscription check
 }
 
 export default function SubscriptionTimer({ checkSub }: SubscriptionTimerProps) {
-  const [subscription, setSubscription] = useState<string | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const navigate = useNavigate();
 
   // Fetch subscription from sessionStorage
@@ -15,7 +16,7 @@ export default function SubscriptionTimer({ checkSub }: SubscriptionTimerProps) 
     const getCurrentSubscription = () => {
       const subData = sessionStorage.getItem("package");
       if (subData) {
-        setSubscription(subData);
+        setSubscription(JSON.parse(subData));
       } else {
         setSubscription(null);
       }
@@ -47,7 +48,7 @@ export default function SubscriptionTimer({ checkSub }: SubscriptionTimerProps) 
         {subscription ? (
           <>
             <Typography variant="subtitle1" color="primary" gutterBottom>
-              Subscription: {subscription}
+              Subscription: {subscription.packageName}
             </Typography>
           </>
         ) : (
