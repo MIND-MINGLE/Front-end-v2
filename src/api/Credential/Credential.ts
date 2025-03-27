@@ -1,4 +1,4 @@
-import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD"
+import {  axiosRead } from "../AxiosCRUD"
 import { baseUrl, headers } from "../Url"
 
 const credentialUrl = baseUrl + "/Credential"

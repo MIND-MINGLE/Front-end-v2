@@ -23,12 +23,9 @@ const TherapyChatPage: React.FC = () => {
     const sessionAccount = sessionStorage.getItem('account');
     if(sessionAccount){
         const data = JSON.parse(sessionAccount)
-        setIsSeeker(data.Role === "seeker")
+        setIsSeeker(data.Role === "seeker"?true:false)
     }
-  },[])
-  if (true){
-
-  }
+  },[currentChat])
   return (
     <>
     {isLoading? <LoadingScreen/>:null}

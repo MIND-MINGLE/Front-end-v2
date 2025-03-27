@@ -25,7 +25,7 @@ const ChatProfileList = ({setIsLoading,isSeeker, setCurrentChat }: ChatProfileLi
         const account: AccountProps = JSON.parse(data); // Convert string back to object
         const accountId = account.UserId
         const response = await getGroupChatByAccountId(accountId);
-        console.log("Profile: ", response)
+        //console.log("Profile: ", response)
         setProfiles(response.result);
       }
       setIsLoading(false)
@@ -34,14 +34,15 @@ const ChatProfileList = ({setIsLoading,isSeeker, setCurrentChat }: ChatProfileLi
   }, []);
   const getChatGroupInfo = async (profile:ChatProfile) => {
     const usersInGroup = await getAllClientByChatGroupId( profile.chatGroupId)
-    console.log("usersInGroup:",usersInGroup)
+    console.log("usersInGroup:",profile)
     if(usersInGroup.statusCode===200){
       const otherUser:UserInGroup = isSeeker?
-       usersInGroup.result.find((item:UserInGroup) => item.accountName !== profile.adminName)
+       usersInGroup.result.find((item:UserInGroup) => item.clientId !== profile.adminId)
        :
        usersInGroup.result.find((item:UserInGroup) => item.accountName === profile.adminName)
-      console.log("otherUser:",otherUser)
+      console.log("otherUser:",usersInGroup)
       if(otherUser){
+        console.log("Open Chat with:",otherUser)
         setCurrentChat({
           chatGroupId: profile.chatGroupId,
           userInGroupId: profile.userInGroupId,

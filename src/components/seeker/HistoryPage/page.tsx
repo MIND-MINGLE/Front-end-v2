@@ -12,10 +12,9 @@ import HistorySubscription from "./HistoryView/history-subscription";
 
 // Styled components
 const HistoryContainer = styled(Box)(() => ({
-  marginLeft:"7vw",
+  marginLeft:"6vw",
   width: "92vw",
   height: "100vh",
-  overflow: "hidden",
   position: "relative",
   display: "flex",
   flexDirection: "column",
