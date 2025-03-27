@@ -126,7 +126,7 @@ const RegisterSeekerPage: React.FC = () => {
     if (!validateForm()) return;
 
     setLoading(true);
-    const accountId = localStorage.getItem("account");
+    const accountId = sessionStorage.getItem("account");
     const accountData = {
       accountId: accountId || "",
       firstName: formData.firstName,
@@ -140,7 +140,7 @@ const RegisterSeekerPage: React.FC = () => {
     setLoading(false);
     if (result!=null) {
       setSnackbar({ open: true, message: "Account registered successfully!", severity: "success" });
-      setTimeout(() => navigate("/"), 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } else {
       setSnackbar({
         open: true,

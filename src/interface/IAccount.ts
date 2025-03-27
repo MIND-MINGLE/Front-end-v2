@@ -25,6 +25,16 @@ interface SeekerCreateProps {
   gender: string,
   phoneNumber: string
 }
+// Define the Therapist type based on your schema
+interface TherapistCreateProps {
+  accountId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  dob: string; // Formatted as "dd/MM/yyyy" from backend
+  gender: string;
+  pricePerHour: number;
+}
 
 // Define the Therapist type based on your schema
 interface Therapist {
@@ -85,6 +95,8 @@ interface Appointment {
   platformFee: number;
   createdAt: string; // ISO 8601 date string;
   session: Sessison
+  patient: Patient | null,
+  therapist: Therapist | null
 }
 
 interface requestGroupChat {
@@ -136,17 +148,22 @@ interface Subscription {
   isPremium: boolean;
 }
 
-interface PurchasedPackagedRequest{
+interface PurchasedPackagedRequest {
   patientId: string,
   subscriptionId: string,
-  }
-  interface PurchasedPackaged{
-    patientId: string,
-    subscriptionId: string,
-    subscription: Subscription,
-    startDate:string,
-    endDate:string,
-    }
+}
+interface PurchasedPackaged {
+  patientId: string,
+  subscriptionId: string,
+  subscription: Subscription,
+  startDate: string,
+  endDate: string,
+}
 
- 
-export type {PurchasedPackaged,PurchasedPackagedRequest,Subscription,Sessison,UserInGroup,EmergencyEndRequest,ChatMessage,ChatProfile,ChatProps,AppointmentRequest,userInGroup,requestGroupChat,Appointment,AccountProps,AccountRequestProps,LoginProps,VerifyProps,SeekerCreateProps,Therapist,Patient}
+interface Credential {
+  credentialId: string;
+  imageUrl: string;
+  isDisabled: number;
+}
+
+export type {TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

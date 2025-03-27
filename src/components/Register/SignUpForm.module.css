@@ -1,33 +1,35 @@
 /* Modern styling for signup form */
 .container {
-  width: 600px;
-  background: #ffffff;
+  width: 450px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 48px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   margin: 40px auto;
   max-width: 90%;
   animation: fadeIn 0.6s ease-out;
 }
 
 .title {
+  font-size: 28px !important;
+  font-weight: 700 !important;
   color: #1976d2;
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 32px;
   text-align: center;
+  margin-bottom: 32px !important;
   position: relative;
 }
 
-.title:after {
-  content: "";
+.title::after {
+  content: '';
   position: absolute;
-  bottom: -12px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background: linear-gradient(90deg, #1976d2, #2196f3);
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%);
   border-radius: 2px;
 }
 
@@ -38,78 +40,47 @@
 .termsContainer {
   display: flex;
   align-items: center;
-  margin: 28px 0;
-  padding: 16px;
-  background: #f0f7ff;
-  border-radius: 12px;
-  border-left: 4px solid #1976d2;
+  margin-top: 16px;
 }
 
 .termsText {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 14px !important;
+  color: #666 !important;
 }
 
 .termsLink {
-  color: #1976d2;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
-  position: relative;
+  color: #1976d2 !important;
+  font-weight: 500 !important;
+  cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .termsLink:hover {
-  color: #1565c0;
-}
-
-.termsLink:after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  left: 0;
-  bottom: -2px;
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-  transform-origin: right;
-}
-
-.termsLink:hover:after {
-  transform: scaleX(1);
-  transform-origin: left;
+  color: #1976d2 !important;
+  text-decoration: underline;
 }
 
 .submitButton {
-  background: linear-gradient(45deg, #1976d2, #2196f3);
-  color: white;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 12px;
   width: 100%;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.25);
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  background: linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 94.27%) !important;
+  box-shadow: 0 4px 15px rgba(57, 73, 171, 0.35) !important;
+  transition: all 0.3s ease !important;
+  margin-top: 24px !important;
 }
 
 .submitButton:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4);
-}
-
-.submitButton:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(57, 73, 171, 0.45) !important;
 }
 
 .submitButton:disabled {
-  background: linear-gradient(45deg, #e0e0e0, #f0f0f0);
-  color: #aaa;
-  cursor: not-allowed;
-  box-shadow: none;
+  background: linear-gradient(45deg, #97c9ef 0%, #c5cae9 100%) !important;
+  box-shadow: none !important;
 }
 
 @keyframes fadeIn {
@@ -125,19 +96,59 @@
 
 /* Custom styles for input fields */
 .inputField {
-  background: #f8f9fa;
+  width: 100%;
+}
+
+.inputField :global(.MuiOutlinedInput-root) {
   border-radius: 12px;
+  background-color: #f5f5f5;
   transition: all 0.3s ease;
 }
 
-.inputField:hover {
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.inputField :global(.MuiOutlinedInput-root:hover) {
+  background-color: #eeeeee;
 }
 
-.inputField:focus-within {
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.15);
+.inputField :global(.MuiOutlinedInput-root.Mui-focused) {
+  background-color: white;
+}
+
+.inputField :global(.MuiFormHelperText-root) {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.inputField :global(.MuiFormHelperText-root.Mui-error) {
+  background-color: #fff5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Animation for error messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inputField :global(.MuiFormHelperText-root.Mui-error) {
+  animation: slideIn 0.3s ease;
+}
+
+/* Grid spacing adjustments */
+.formGrid {
+  margin-top: -8px !important;
+}
+
+.formGrid :global(.MuiGrid-item) {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 
 /* Add styling for input labels */

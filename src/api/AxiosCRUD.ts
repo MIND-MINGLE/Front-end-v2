@@ -25,7 +25,7 @@ const makeRequest = async (
             method,
             url,
             headers: headers || {}, // Default to empty object if no headers
-            data: method === "GET" || method === "DELETE" ? undefined : data, // Only send data for POST/PUT
+            data: method === "GET" || method === "PATCH"|| method === "DELETE" ? undefined : data, // Only send data for POST/PUT
             params: method === "GET" || method === "DELETE" ? data : undefined, // Use query params for GET/DELETE
         };
 
@@ -51,6 +51,8 @@ export const axiosRead = (props: AxiosProp) =>
 
 export const axiosUpdate = (props: AxiosProp) =>
     makeRequest("PUT", props.url, props.data, props.headers);
+export const axiosPatch = (props: AxiosProp) =>
+    makeRequest("PATCH", props.url, props.data, props.headers);
 
 export const axiosDelete = (props: AxiosProp) =>
     makeRequest("DELETE", props.url, props.data, props.headers);

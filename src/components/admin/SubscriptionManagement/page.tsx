@@ -28,7 +28,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import styles from './SubscriptionManagement.module.css';
 
-interface Subscription {
+interface Purchase {
   purchasedPackageId: string;
   patientId: string;
   subscriptionId: string;
@@ -42,7 +42,11 @@ interface Subscription {
     isDisabled: boolean;
   };
 }
-
+interface Subscription {
+  subscriptionId: string;
+  packageName: string;
+  price: number;
+}
 interface PaymentResponse {
   items: Payment[];
   totalCount: number;
@@ -54,6 +58,13 @@ interface PaymentResponse {
 interface Payment {
   paymentId: string;
   patientId: string;
+  appointment: {
+    appointmentId: string;
+  }
+  patient: {
+    firstName: string;
+    lastName: string;
+  };
   amount: number;
   therapistReceive: number;
   paymentUrl: string;
@@ -69,12 +80,13 @@ interface CreatePurchaseRequest {
 
 const SubscriptionManagementPage: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(15);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredSubscriptions, setFilteredSubscriptions] = useState<Subscription[]>([]);
+  const [filteredPurchases, setFilteredPurchases] = useState<Purchase[]>([]);
   const [openPayments, setOpenPayments] = useState(false);
   const [pendingPayments, setPendingPayments] = useState<Payment[]>([]);
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -90,42 +102,54 @@ const SubscriptionManagementPage: React.FC = () => {
 
   useEffect(() => {
     fetchSubscriptions();
+    fetchPurchases();
   }, []);
 
   useEffect(() => {
-    filterSubscriptions();
-  }, [searchTerm, subscriptions]);
+    filterPurchases();
+  }, [searchTerm, purchases]);
 
   const fetchSubscriptions = async () => {
+    try {
+      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Subscription');
+      if (response.data.statusCode === 200) {
+        setSubscriptions(response.data.result);
+      }
+    } catch (err) {
+      console.error('Error fetching subscriptions:', err);
+    }
+  };
+
+  const fetchPurchases = async () => {
     try {
       setLoading(true);
       const response = await axios.get('https://mindmingle202.azurewebsites.net/api/PurchasedPackage');
       if (response.data.statusCode === 200) {
-        setSubscriptions(response.data.result);
+        setPurchases(response.data.result);
       } else {
-        setError('Failed to fetch subscriptions');
+        setError('Failed to fetch purchases');
       }
     } catch (err) {
-      setError('Error fetching subscriptions');
+      setError('Error fetching purchases');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const filterSubscriptions = () => {
+  const filterPurchases = () => {
     if (!searchTerm) {
-      setFilteredSubscriptions(subscriptions);
+      setFilteredPurchases(purchases);
       return;
     }
 
     const searchLower = searchTerm.toLowerCase();
-    const filtered = subscriptions.filter(sub =>
+    const filtered = purchases.filter(sub =>
       sub.purchasedPackageId.toLowerCase().includes(searchLower) ||
       sub.patientId.toLowerCase().includes(searchLower) ||
       sub.subscription.packageName.toLowerCase().includes(searchLower)
     );
-    setFilteredSubscriptions(filtered);
+    setFilteredPurchases(filtered);
     setPage(0);
   };
 
@@ -158,14 +182,15 @@ const SubscriptionManagementPage: React.FC = () => {
       });
 
       if (response.data) {
-        setPendingPayments(response.data.items);
-        setPaymentTotalCount(response.data.totalCount);
+        const filteredPayments = response.data.items.filter(payment =>
+          payment.paymentStatus === "PENDING" && payment.appointment === null
+        );
+
+        setPendingPayments(filteredPayments);
+        setPaymentTotalCount(filteredPayments.length);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching pending payments:', err);
-      setSnackbarMessage('Error fetching pending payments');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
     } finally {
       setPaymentLoading(false);
     }
@@ -199,14 +224,17 @@ const SubscriptionManagementPage: React.FC = () => {
 
       if (response.status === 200) {
         if (action === 'PAID') {
-          const subscription = subscriptions[0];
-          if (subscription) {
+          const matchingSubscription = subscriptions.find(sub => sub.price === payment.amount);
+
+          if (matchingSubscription) {
             await createPurchasePackage({
               patientId: payment.patientId,
-              subscriptionId: subscription.subscriptionId
+              subscriptionId: matchingSubscription.subscriptionId
             });
             setSnackbarMessage('Payment has been approved and subscription created successfully');
-            await fetchSubscriptions();
+            await fetchPurchases();
+          } else {
+            throw new Error('No matching subscription found for this payment amount');
           }
         } else {
           setSnackbarMessage('Payment has been canceled successfully');
@@ -261,7 +289,7 @@ const SubscriptionManagementPage: React.FC = () => {
     );
   }
 
-  const currentSubscriptions = filteredSubscriptions.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const currentPurchases = filteredPurchases.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div className={styles.container}>
@@ -307,7 +335,7 @@ const SubscriptionManagementPage: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentSubscriptions.map((sub) => (
+            {currentPurchases.map((sub) => (
               <TableRow
                 key={sub.purchasedPackageId}
                 className={styles.tableRow}
@@ -335,7 +363,7 @@ const SubscriptionManagementPage: React.FC = () => {
 
       <TablePagination
         component="div"
-        count={filteredSubscriptions.length}
+        count={filteredPurchases.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
@@ -388,6 +416,7 @@ const SubscriptionManagementPage: React.FC = () => {
                     <TableRow>
                       <TableCell>Payment ID</TableCell>
                       <TableCell>Patient ID</TableCell>
+                      <TableCell>Patient Name</TableCell>
                       <TableCell>Amount</TableCell>
                       <TableCell>Payment Method</TableCell>
                       <TableCell>Payment Proof</TableCell>
@@ -397,8 +426,11 @@ const SubscriptionManagementPage: React.FC = () => {
                   <TableBody>
                     {pendingPayments.map((payment) => (
                       <TableRow key={payment.paymentId}>
-                        <TableCell>{payment.paymentId}</TableCell>
                         <TableCell>{payment.patientId}</TableCell>
+                        <TableCell>{payment.paymentId}</TableCell>
+                        <TableCell>
+                          {`${payment.patient.firstName} ${payment.patient.lastName}`}
+                        </TableCell>
                         <TableCell>{formatPrice(payment.amount)}</TableCell>
                         <TableCell>{payment.paymentMethod}</TableCell>
                         <TableCell>

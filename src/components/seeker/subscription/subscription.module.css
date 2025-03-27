@@ -5,6 +5,7 @@
     background: linear-gradient(0deg, rgb(0, 99, 162) 0%, rgb(27, 157, 240) 50%, rgb(255, 255, 255) 100% 100%);
     padding-top: 1%;
   }
+
   
   .wrapper {
     max-width: 1200px;
@@ -656,4 +657,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+}
+
+.cardActive {
+  border: 3px solid #ffe343; /* Gold border for the active package */
+  box-shadow: 0 0 15px rgba(255, 217, 0, 0.5); /* Glowing effect */
+  background: linear-gradient(135deg, rgba(255, 217, 0, 0.1), rgba(255, 255, 255, 0.9)); /* Subtle gradient */
+  transform: scale(1.02); /* Slightly larger */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  scale:105%
 }

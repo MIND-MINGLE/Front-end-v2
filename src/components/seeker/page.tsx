@@ -13,109 +13,121 @@ import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
 import AppointmentTimer from '../common/appointmentTimer';
 import { getPurchasedPackageByPatientId } from '../../api/Subscription/Subscription';
+import SubscriptionTimer from '../common/subscriptionHeader';
 
 
 const SeekerPage = (): JSX.Element => {
     const [isAppointment, setIsAppointment] = useState(false);
-
+    const [isSubscription, setIsSubscription] = useState(false)
     useEffect(() => {
-        const getAppointment = async () => {
-            const localData = sessionStorage.getItem('appointment');
-            if (!localData) {
-              const sessionAccount = localStorage.getItem('patient');
-              if (sessionAccount) {
-                try {
-                  const data: Patient = JSON.parse(sessionAccount);
-                  const appointmentData = await getAppointmentByPatientId(data.patientId);
-          
-                  if (appointmentData.statusCode === 200) {
-                    const appointments: Appointment[] = appointmentData.result;
-          
-                    // Check if appointments is an array and has any active appointments
-                    if (Array.isArray(appointments) && appointments.length > 0) {
-                      // Look for any appointment that is NOT DECLINED or CANCELED
-                      const hasActiveAppointment = appointments.some(
-                        (appointment) =>
-                          appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED'
-                      );
-          
-                      if (hasActiveAppointment) {
-                        sessionStorage.setItem('appointment', JSON.stringify(appointments));
-                        setIsAppointment(true);
-                      } else {
-                        setIsAppointment(false);
-                      }
-                    } else {
-                      // No appointments exist
-                      setIsAppointment(false);
-                    }
-                  } else {
-                    console.error('Failed to fetch appointments:', appointmentData);
-                    setIsAppointment(false);
-                  }
-                } catch (error) {
-                  console.error('Error fetching appointments:', error);
-                  setIsAppointment(false);
-                }
-              } else {
-                console.log('No patient found');
-                setIsAppointment(false);
-              }
-            } else {
-              // If localData exists, parse it and check for active appointments
-              try {
-                const appointments: Appointment[] = JSON.parse(localData);
-                if (Array.isArray(appointments) && appointments.length > 0) {
-                  const hasActiveAppointment = appointments.some(
-                    (appointment) =>
-                      appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED'
-                  );
-                  setIsAppointment(hasActiveAppointment);
-                } else {
-                  setIsAppointment(false);
-                }
-              } catch (error) {
-                console.error('Error parsing local appointment data:', error);
-                setIsAppointment(false);
-              }
-            }
-          };
         const getPatient = async() => {
-            const localData = localStorage.getItem('patient');
+            const localData = sessionStorage.getItem('patient');
             if(!localData){
                 const sessionAccount = sessionStorage.getItem('account');
                 if(sessionAccount){
                     const data:AccountProps = JSON.parse(sessionAccount)
                     const patientData = await getPatientByAccountId(data.UserId)
                     if(patientData.statusCode === 200){
-                        localStorage.setItem('patient', JSON.stringify(patientData.result))
+                        sessionStorage.setItem('patient', JSON.stringify(patientData.result))
                     }
                 }
-               
             }
+            getSubscription()
+            getAppointment()
         }
-        const getSubscription = async() => {
-          const localData = sessionStorage.getItem('package');
-          if(!localData){
-              const patientAccount = localStorage.getItem('patient');
-              if(patientAccount){
-                  const data:Patient = JSON.parse(patientAccount)
-                  const pruchasedData = await getPurchasedPackageByPatientId(data.patientId)
-                  if(pruchasedData.statusCode === 200){
-                    const subscription:PurchasedPackaged = pruchasedData.result
-                    sessionStorage.setItem('package', subscription.subscription.packageName)
-                  }
-              }
-             
-          }
-      }
         getPatient()
-        getAppointment()
-        getSubscription()
     },[])
+    const getAppointment = async () => {
+      const localData = sessionStorage.getItem('appointment');
+      if (!localData) {
+        const sessionAccount = sessionStorage.getItem('patient');
+        if (sessionAccount) {
+          try {
+            const data: Patient = JSON.parse(sessionAccount);
+            const appointmentData = await getAppointmentByPatientId(data.patientId);
+    
+            if (appointmentData.statusCode === 200) {
+              const appointments: Appointment[] = appointmentData.result;
+    
+              // Check if appointments is an array and has any active appointments
+              if (Array.isArray(appointments) && appointments.length > 0) {
+                // Look for any appointment that is NOT DECLINED or CANCELED
+                const hasActiveAppointment = appointments.some(
+                  (appointment) =>
+                    appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED'
+                );
+    
+                if (hasActiveAppointment) {
+                  const activeAppointments: Appointment[] = appointments.filter(appointment => appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED')
+                  sessionStorage.setItem('appointment', JSON.stringify(activeAppointments));
+                  setIsAppointment(true);
+                } else {
+                  sessionStorage.removeItem('appointment');
+                  setIsAppointment(false);
+                }
+              } else {
+                // No appointments exist
+                sessionStorage.removeItem('appointment');
+                setIsAppointment(false);
+              }
+            } else {
+              console.error('Failed to fetch appointments:', appointmentData);
+              sessionStorage.removeItem('appointment');
+              setIsAppointment(false);
+            }
+          } catch (error) {
+            console.error('Error fetching appointments:', error);
+            sessionStorage.removeItem('appointment');
+            setIsAppointment(false);
+          }
+        } else {
+          console.log('No patient found');
+          sessionStorage.removeItem('appointment');
+          setIsAppointment(false);
+        }
+      } else {
+        // If localData exists, parse it and check for active appointments
+        try {
+          const appointments: Appointment[] = JSON.parse(localData);
+          if (Array.isArray(appointments) && appointments.length > 0) {
+            const hasActiveAppointment = appointments.some(
+              (appointment) =>
+                appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED'
+            );
+            setIsAppointment(hasActiveAppointment);
+          } else {
+            setIsAppointment(false);
+          }
+        } catch (error) {
+          console.error('Error parsing local appointment data:', error);
+          setIsAppointment(false);
+        }
+      }
+    };
+    const getSubscription = async() => {
+      const localData = sessionStorage.getItem('package');
+      if(!localData){
+          const patientAccount = sessionStorage.getItem('patient');
+          if(patientAccount){
+              const data:Patient = JSON.parse(patientAccount)
+              const pruchasedData = await getPurchasedPackageByPatientId(data.patientId)
+              if(pruchasedData.statusCode === 200){
+                const subscription:PurchasedPackaged = pruchasedData.result
+                sessionStorage.setItem('package', subscription.subscription.packageName)
+                setIsSubscription(true)
+              }
+              else{
+                sessionStorage.removeItem('package')
+              }
+          }
+      }else{
+        setIsSubscription(false)
+      }
+  }
     return (
         <>
-            <AppointmentTimer getApp={isAppointment} />
+            <SubscriptionTimer checkSub={isSubscription}/>
+            <AppointmentTimer popUp={isAppointment} getApp={isAppointment} />
             <Box
                 sx={{
                     background: "linear-gradient(180deg, #0077B6 0%, #1B9DF0 50%, #DFF6FF 100%)",
