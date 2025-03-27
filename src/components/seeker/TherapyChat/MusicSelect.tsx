@@ -111,8 +111,8 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
 
       <List>
         {songs.map((song, index) => (
-          <ListItem key={index} onClick={() => playSong(song.videoId)}>
-            <IconButton>
+          <ListItem sx={{cursor:"pointer"}} key={index} onClick={() => playSong(song.videoId)}>
+            <IconButton >
               <StarBorderIcon />
             </IconButton>
             <ListItemText
@@ -122,7 +122,7 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
             />
           </ListItem>
         ))}
-        <ListItem onClick={playRandomSong}>
+        <ListItem sx={{cursor:"pointer"}} onClick={playRandomSong}>
           <IconButton>
             <StarBorderIcon />
           </IconButton>
