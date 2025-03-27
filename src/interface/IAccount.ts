@@ -95,6 +95,8 @@ interface Appointment {
   platformFee: number;
   createdAt: string; // ISO 8601 date string;
   session: Sessison
+  patient: Patient | null,
+  therapist: Therapist | null
 }
 
 interface requestGroupChat {

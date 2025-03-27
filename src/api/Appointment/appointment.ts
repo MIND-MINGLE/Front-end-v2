@@ -1,11 +1,10 @@
 
 import { AppointmentRequest } from "../../interface/IAccount"
-import { axiosCreate, axiosRead } from "../AxiosCRUD"
+import { axiosCreate, axiosPatch, axiosRead } from "../AxiosCRUD"
 import { baseUrl,headers } from "../Url"
 
 
 const appointmenttUrl = baseUrl + "/Appointment"
-
 
 export const RegisterAppointment = async(data:AppointmentRequest)=> {
     const props = {
@@ -65,6 +64,30 @@ export const getCurrentAppointment = async(therapistId:string,patientId:string)=
     }
     console.log(appointmenttUrl+"/"+therapistId+"/"+patientId)
     const result = await axiosRead(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+
+}
+export const patchAppointmentStatus = async(status:"Canceled"|"Approved"|"Declined",appointmentId:string)=> {
+    var statusURL = ""
+    switch(status){
+        case "Canceled": statusURL="canceled";break;
+        case "Approved":statusURL="approved";break;
+        case "Declined": statusURL="declined";break;
+        default: return null;
+    }
+    const props = {
+        data: null,
+        url: appointmenttUrl+`/status-${statusURL}`+"/"+appointmentId,
+        headers: headers
+    }
+    const result = await axiosPatch(props)
     if(result.success) {
         console.log(result.data)
         return result.data

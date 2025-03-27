@@ -61,7 +61,7 @@ const Header: React.FC = () => {
       </Link>
       {/* Navigation buttons */}
       <div className={styles.navButtons}>
-        <Link to="session-calendar">
+        <Link to="/doctor/session-calendar">
           <button className={styles.createButton}>
             Create
           </button>

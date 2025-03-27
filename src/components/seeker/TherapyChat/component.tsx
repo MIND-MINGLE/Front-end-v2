@@ -38,6 +38,7 @@ import { getTherapistById } from "../../../api/Therapist/Therapist";
 import { getPatientByAccountId } from "../../../api/Account/Seeker";
 import { useNavigate } from "react-router";
 import SubscriptionPopUp from "../../common/SubscriptionPopUp";
+import AppointmentTimer from "../../common/appointmentTimer";
 
 interface RightComponentsProps {
   currentChat: ChatProps | null;
@@ -326,6 +327,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
             <Typography variant="h6" color="#1d1b20" flex={1}>
               {currentChat?.name}
             </Typography>
+          {currentAppointment?.emergencyEndId===null && currentAppointment?.status==="APPROVED"?
             <Box display="flex" gap={2}>
               <IconButton onClick={handleOpenEmergencyDialog}>
                 <Icon1 color="error" />
@@ -343,6 +345,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
                 <Icon5 />
               </IconButton>
             </Box>
+          :null}
           </Box>
           <Paper
             elevation={0}
@@ -385,7 +388,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
               <div ref={messagesEndRef} />
             </Box>
           </Paper>
-          {!currentAppointment?.emergencyEndId ? (
+          {currentAppointment?.emergencyEndId===null && currentAppointment?.status==="APPROVED" ? (
             <Box
               display="flex"
               alignItems="center"
@@ -428,7 +431,14 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
                 sx={{ borderRadius: "10px", border: "2px solid #0077b6" }}
               />
             </Box>
-          ) : null}
+          ) :
+          <>
+          <AppointmentTimer getApp={true} popUp={false} />
+           <Typography variant="h4" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", marginBottom: 1 }}>
+                    Appointment Has Not Started Yet
+            </Typography>
+            </>
+          }
         </Box>
 
         <Box

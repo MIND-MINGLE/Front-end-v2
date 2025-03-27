@@ -14,28 +14,27 @@ import {
   Select,
   MenuItem,
   Typography,
+  Tooltip,
 } from '@mui/material';
-import NavigationRail from '../NavBar';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPatientByAccountId } from '../../../api/Account/Seeker';
 import { getTherapistByTherapistId } from '../../../api/Therapist/Therapist';
 import { Appointment, AppointmentRequest, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
 import { formatVnd } from '../../../services/common';
-import { RegisterAppointment } from '../../../api/Appointment/appointment';
+import { getAppointmentByTherapistId, RegisterAppointment } from '../../../api/Appointment/appointment';
 import { addUserInGroup, createGroupChat } from '../../../api/ChatGroup/ChatGroupAPI';
 
 // Interface for the session schema
 interface Session {
   sessionId: string;
   therapistId: string;
-  startTime: string; // ISO string from C# DateTime (assumed UTC)
-  endTime: string; // ISO string from C# DateTime (assumed UTC)
+  startTime: string; // ISO string (UTC)
+  endTime: string; // ISO string (UTC)
   dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 }
 
-
 const BookingAppointment: React.FC = () => {
-  const { therapistId } = useParams<{ therapistId: string }>(); // Get therapistId from URL
+  const { therapistId } = useParams<{ therapistId: string }>();
   const [patient, setPatient] = useState<Patient>();
   const [therapist, setTherapist] = useState<Therapist | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -44,6 +43,7 @@ const BookingAppointment: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [appointmentList, setAppointmentList] = useState<Appointment[]>([]); // Initialized as empty array
   const [appointmentType, setAppointmentType] = useState<'OFFLINE' | 'ONLINE'>('OFFLINE');
   const nav = useNavigate();
   const monthNames = [
@@ -51,50 +51,72 @@ const BookingAppointment: React.FC = () => {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  // Fetch data from BE
+  const checkAppointment = () => {
+    const appointment = sessionStorage.getItem("appointment");
+    if (appointment) {
+      const appointments: Appointment[] = JSON.parse(appointment);
+      if (appointments.length > 0) {
+        nav('/');
+        return true;
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
-    const fetchAccount = async () => {
-      const account = sessionStorage.getItem('account');
-      if (account) {
-        const accountData = JSON.parse(account);
-        const patientData = await getPatientByAccountId(accountData.UserId);
-        if (patientData) {
-          setPatient(patientData.result);
-        } else {
-          setError('No patient found for this account.');
-        }
-      }
-      if (therapistId) {
-        const therapist = await getTherapistByTherapistId(therapistId);
-        if (therapist) {
-          setTherapist(therapist.result);
-          console.log('Therapist data:', therapist.result);
-        }
-      }
-    };
+    checkAppointment();
 
-    const fetchSessions = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
-      if (therapistId) {
-        const sessionData = await GetAllSessionByTherapistId(therapistId);
-        if (sessionData) {
-          // Normalize C# DateTime (assumed UTC) to UTC ISO strings
-          setSessions(sessionData.map((s: Session) => ({
-            ...s,
-            startTime: ensureUtc(s.startTime),
-            endTime: ensureUtc(s.endTime),
-          })));
-        } else {
-          setError('No sessions available for this therapist.');
+      try {
+        // Fetch patient
+        const account = sessionStorage.getItem('account');
+        if (account) {
+          const accountData = JSON.parse(account);
+          const patientData = await getPatientByAccountId(accountData.UserId);
+          if (patientData?.statusCode === 200) {
+            setPatient(patientData.result);
+          } else {
+            setError('No patient found for this account.');
+          }
         }
-      } else {
-        setError('No therapist ID provided.');
+
+        // Fetch therapist and related data
+        if (therapistId) {
+          const therapistData = await getTherapistByTherapistId(therapistId);
+          if (therapistData?.statusCode === 200) {
+            setTherapist(therapistData.result);
+            // Fetch appointments
+            const appointmentRes = await getAppointmentByTherapistId(therapistId);
+            if (appointmentRes.statusCode === 200) {
+              setAppointmentList(appointmentRes.result);
+            }
+            // Fetch sessions
+            const sessionData = await GetAllSessionByTherapistId(therapistId);
+            if (sessionData) {
+              setSessions(sessionData.map((s: Session) => ({
+                ...s,
+                startTime: ensureUtc(s.startTime),
+                endTime: ensureUtc(s.endTime),
+              })));
+            } else {
+              setError('No sessions available for this therapist.');
+            }
+          } else {
+            setError('Therapist not found.');
+          }
+        } else {
+          setError('No therapist ID provided.');
+        }
+      } catch (err) {
+        setError('An error occurred while fetching data.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
-    fetchAccount();
-    fetchSessions();
+    fetchData();
   }, [therapistId]);
 
   const ensureUtc = (isoString: string): string => {
@@ -104,7 +126,6 @@ const BookingAppointment: React.FC = () => {
     return isoString;
   };
 
-  // Generate calendar days in UTC
   const getCalendarDays = (date: Date) => {
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
@@ -127,23 +148,34 @@ const BookingAppointment: React.FC = () => {
     return days;
   };
 
-  // Calculate fees based on session duration and pricePerHour
   const calculateFees = (session: Session, pricePerHour: number) => {
     const start = new Date(session.startTime);
     const end = new Date(session.endTime);
     const durationMs = end.getTime() - start.getTime();
-    const durationHours = durationMs / (1000 * 60 * 60); // Convert milliseconds to hours
+    const durationHours = durationMs / (1000 * 60 * 60);
 
     const baseFee = durationHours * pricePerHour;
-    const platformFee = baseFee * 0.2; // 20% additional charge
+    const platformFee = baseFee * 0.2;
     const totalFee = baseFee + platformFee;
 
     return { totalFee: Math.round(totalFee), platformFee: Math.round(platformFee) };
   };
 
+  const isSessionBooked = (sessionId: string) => {
+    return appointmentList.some(app => 
+      app.sessionId === sessionId && 
+      app.status !== 'DECLINED' && 
+      app.status !== 'CANCELED'
+    );
+  };
+
+  const isSessionInPast = (session: Session) => {
+    const now = new Date();
+    return new Date(session.endTime) < now;
+  };
+
   const calendarDays = getCalendarDays(currentMonth);
 
-  // Navigation handlers
   const handlePrevMonth = () => {
     setCurrentMonth(new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() - 1, 1)));
   };
@@ -152,23 +184,23 @@ const BookingAppointment: React.FC = () => {
     setCurrentMonth(new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() + 1, 1)));
   };
 
-  // Handle session selection
   const handleSessionClick = (session: Session) => {
-    setSelectedSession(session);
-    setOpenDialog(true);
+    if (!isSessionBooked(session.sessionId) && !isSessionInPast(session)) {
+      setSelectedSession(session);
+      setOpenDialog(true);
+    }
   };
 
-  // Handle dialog confirmation
   const handleConfirmAppointment = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     if (selectedSession && patient && therapist) {
       const { totalFee, platformFee } = calculateFees(selectedSession, therapist.pricePerHour || 0);
       const appointment: AppointmentRequest = {
         patientId: patient.patientId,
         therapistId: therapist.therapistId,
-        coWorkingSpaceId: null, // Nullable, set to null for now
+        coWorkingSpaceId: null,
         sessionId: selectedSession.sessionId,
-        emergencyEndId: null, // Nullable, set to null
+        emergencyEndId: null,
         appointmentType: appointmentType,
         totalFee: totalFee,
         platformFee: platformFee,
@@ -176,48 +208,42 @@ const BookingAppointment: React.FC = () => {
 
       try {
         const response = await RegisterAppointment(appointment);
-
-        if (response.statusCode===200) {
-          alert('Appointment booked successfully!');
-          const groupchat = {
-            adminId: therapist.accountId
-          }
+        if (response.statusCode === 200) {
+          const groupchat = { adminId: therapist.accountId };
           const responseGroupchat = await createGroupChat(groupchat);
           if (responseGroupchat.statusCode === 200) {
-            console.log('Groupchat created successfully!',);
-            const userInGroupData:userInGroup = {
+            const userInGroupData: userInGroup = {
               clientId: patient.accountId,
-              chatGroupId: responseGroupchat.result.chatGroupId
-            }
-            console.log('UserInGroupData:', userInGroupData);
-            const response = await addUserInGroup(userInGroupData)
-            if (response.statusCode === 200) {
-              console.log('User added to group successfully!');
-              nav("/seeker/therapy-chat",{replace: true})
+              chatGroupId: responseGroupchat.result.chatGroupId,
+            };
+            const responseUser = await addUserInGroup(userInGroupData);
+            if (responseUser.statusCode === 200) {
+              alert('Appointment booked successfully!');
+              nav("/seeker/therapy-chat", { replace: true });
+            } else {
+              setError('Failed to add user to group.');
             }
           } else {
-            setError('Failed to create groupchat. Please try again.');
+            setError('Failed to create group chat.');
           }
         } else {
-          setError('Failed to book appointment. Please try again.');
+          setError('Failed to book appointment.');
         }
       } catch (err) {
         setError('An error occurred while booking the appointment.');
         console.error(err);
       }
-
-      setOpenDialog(false);
-      setSelectedSession(null);
-      setAppointmentType('OFFLINE'); // Reset to default
     }
-    setIsLoading(false)
+    setOpenDialog(false);
+    setSelectedSession(null);
+    setAppointmentType('OFFLINE');
+    setIsLoading(false);
   };
 
-  // Handle dialog cancellation
   const handleCancelAppointment = () => {
     setOpenDialog(false);
     setSelectedSession(null);
-    setAppointmentType('OFFLINE'); // Reset to default
+    setAppointmentType('OFFLINE');
   };
 
   return (
@@ -255,23 +281,30 @@ const BookingAppointment: React.FC = () => {
               {day && <span>{day.getUTCDate()}</span>}
               {day &&
                 sessions
-                  .filter((s) => {
-                    const sessionDate = new Date(s.startTime);
-                    return sessionDate.toDateString() === day.toDateString();
-                  })
-                  .map((s, idx) => (
-                    <div
-                      key={idx}
-                      className={styles.sessionBlock}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSessionClick(s);
-                      }}
-                    >
-                      {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} -{' '}
-                      {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
-                    </div>
-                  ))}
+                  .filter((s) => new Date(s.startTime).getUTCDate() === day.getUTCDate())
+                  .map((s, idx) => {
+                    const booked = isSessionBooked(s.sessionId);
+                    const past = isSessionInPast(s);
+                    return (
+                      <Tooltip
+                        key={idx}
+                        title={booked ? "This session is booked" : past ? "This session is in the past" : "Click to book"}
+                        arrow
+                      >
+                        <div
+                          className={`${styles.sessionBlock} ${booked ? styles.bookedSession : ''} ${past ? styles.pastSession : ''}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSessionClick(s);
+                          }}
+                          style={{ cursor: booked || past ? 'not-allowed' : 'pointer' }}
+                        >
+                          {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} -{' '}
+                          {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                        </div>
+                      </Tooltip>
+                    );
+                  })}
             </div>
           ))}
         </div>
@@ -284,13 +317,13 @@ const BookingAppointment: React.FC = () => {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">
-            Confirm Appointment
-          </DialogTitle>
+          <DialogTitle id="alert-dialog-title">Confirm Appointment</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Are you sure you want to book an appointment with{' '}
-              {therapist ? `Therapist: ${therapist.firstName}` : 'this therapist'} for{' '}
+              {therapist ? `Therapist: ${therapist.firstName}` : 'this therapist'}
+              </DialogContentText>
+              <DialogContentText id="alert-dialog-description">
               {selectedSession && new Date(selectedSession.startTime).toLocaleString('en-US', {
                 dateStyle: 'full',
                 timeStyle: 'short',
@@ -302,6 +335,7 @@ const BookingAppointment: React.FC = () => {
                 timeZone: 'UTC',
               })}?
             </DialogContentText>
+            <DialogContentText id="alert-dialog-description">
             {therapist && selectedSession && (
               <>
                 <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
@@ -316,6 +350,7 @@ const BookingAppointment: React.FC = () => {
                 </Typography>
               </>
             )}
+            </DialogContentText>
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel id="appointment-type-label">Appointment Type</InputLabel>
               <Select
@@ -345,4 +380,3 @@ const BookingAppointment: React.FC = () => {
 };
 
 export default BookingAppointment;
-

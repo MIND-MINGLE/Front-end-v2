@@ -20,7 +20,6 @@ const SeekerPage = (): JSX.Element => {
     const [isAppointment, setIsAppointment] = useState(false);
     const [isSubscription, setIsSubscription] = useState(false)
     useEffect(() => {
-      
         const getPatient = async() => {
             const localData = sessionStorage.getItem('patient');
             if(!localData){
@@ -30,12 +29,11 @@ const SeekerPage = (): JSX.Element => {
                     const patientData = await getPatientByAccountId(data.UserId)
                     if(patientData.statusCode === 200){
                         sessionStorage.setItem('patient', JSON.stringify(patientData.result))
-                        getSubscription()
-                        getAppointment()
                     }
                 }
-               
             }
+            getSubscription()
+            getAppointment()
         }
         getPatient()
     },[])
@@ -60,25 +58,31 @@ const SeekerPage = (): JSX.Element => {
                 );
     
                 if (hasActiveAppointment) {
-                  sessionStorage.setItem('appointment', JSON.stringify(appointments));
+                  const activeAppointments: Appointment[] = appointments.filter(appointment => appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED')
+                  sessionStorage.setItem('appointment', JSON.stringify(activeAppointments));
                   setIsAppointment(true);
                 } else {
+                  sessionStorage.removeItem('appointment');
                   setIsAppointment(false);
                 }
               } else {
                 // No appointments exist
+                sessionStorage.removeItem('appointment');
                 setIsAppointment(false);
               }
             } else {
               console.error('Failed to fetch appointments:', appointmentData);
+              sessionStorage.removeItem('appointment');
               setIsAppointment(false);
             }
           } catch (error) {
             console.error('Error fetching appointments:', error);
+            sessionStorage.removeItem('appointment');
             setIsAppointment(false);
           }
         } else {
           console.log('No patient found');
+          sessionStorage.removeItem('appointment');
           setIsAppointment(false);
         }
       } else {
@@ -112,6 +116,9 @@ const SeekerPage = (): JSX.Element => {
                 sessionStorage.setItem('package', subscription.subscription.packageName)
                 setIsSubscription(true)
               }
+              else{
+                sessionStorage.removeItem('package')
+              }
           }
       }else{
         setIsSubscription(false)
@@ -120,7 +127,7 @@ const SeekerPage = (): JSX.Element => {
     return (
         <>
             <SubscriptionTimer checkSub={isSubscription}/>
-            <AppointmentTimer getApp={isAppointment} />
+            <AppointmentTimer popUp={isAppointment} getApp={isAppointment} />
             <Box
                 sx={{
                     background: "linear-gradient(180deg, #0077B6 0%, #1B9DF0 50%, #DFF6FF 100%)",

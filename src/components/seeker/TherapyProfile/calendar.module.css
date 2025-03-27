@@ -5,6 +5,25 @@
   margin: 0 auto;
   font-family: 'Roboto, Helvetica, Arial, sans-serif';
 }
+.bookedSession {
+  background-color: #ff9800; /* Orange for booked sessions */
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.pastSession {
+  background-color: #cccccc; /* Grey for past sessions */
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sessionBlock {
+  padding: 4px;
+  margin: 2px 0;
+  background-color: #0077b6;
+  color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
 .header {
   display: flex;
@@ -96,13 +115,25 @@
   padding: 4px 8px;
   margin-top: 6px;
   border-radius: 8px;
-  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
+  text-align: center;
+  font-size: 14px;
 }
 
 .sessionBlock:hover {
   background: linear-gradient(180deg, rgb(0, 99, 162) 0%, rgb(7, 137, 220) 100%);
+}
+.bookedSession {
+  background: #ff0000 !important; /* Orange for booked sessions */
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.pastSession {
+  background: #909090 !important;  /* Grey for past sessions */
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .formOverlay {

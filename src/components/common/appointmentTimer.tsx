@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom"; // Import for navigation
 
 interface AppointmentTimerProps {
   getApp: boolean;
+  popUp:boolean;
 }
 
-export default function AppointmentTimer({ getApp }: AppointmentTimerProps) {
+export default function AppointmentTimer({ getApp,popUp }: AppointmentTimerProps) {
   const [currentApp, setCurrentApp] = useState<Appointment | null>(null);
   const [timeLeft, setTimeLeft] = useState<{
     days: number;
@@ -26,6 +27,8 @@ export default function AppointmentTimer({ getApp }: AppointmentTimerProps) {
         const appointments: Appointment[] = JSON.parse(currentList);
         setCurrentApp(appointments[0]); // Set the first appointment
         console.log("currentApp: ", appointments[0]);
+      }else{
+        setCurrentApp(null)
       }
     };
     getCurrentAppointment();
@@ -66,18 +69,25 @@ export default function AppointmentTimer({ getApp }: AppointmentTimerProps) {
     navigate("therapy-chat"); // Navigate to the chat page (adjust the path as needed)
   };
 
-  // Render nothing if no appointment is set
-  if (!currentApp) {
-    return null;
-  }
-
   return (
+    <>
+    {currentApp?
     <>
       <Paper
         elevation={3}
-        sx={{
+        sx={popUp?{ 
           position: "fixed",
           top: 16,
+          right: 16,
+          padding: 2,
+          backgroundColor: "#fff",
+          borderRadius: 2,
+          zIndex: 1000,
+          minWidth: "200px",
+          textAlign: "center",
+        }:{
+          position: "fixed",
+          bottom: 16,
           right: 16,
           padding: 2,
           backgroundColor: "#fff",
@@ -126,7 +136,7 @@ export default function AppointmentTimer({ getApp }: AppointmentTimerProps) {
         </Box>
       </Paper>
 
-      {/* Dialog for when the timer reaches zero */}
+      {popUp?
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
@@ -147,6 +157,11 @@ export default function AppointmentTimer({ getApp }: AppointmentTimerProps) {
           </Button>
         </DialogActions>
       </Dialog>
+      :null}
     </>
+   
+    :
+    null}
+     </>
   );
 }
