@@ -25,13 +25,15 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
 import { HubConnection } from "@microsoft/signalr";
-import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Therapist } from "../../../interface/IAccount";
+import { AccountProps, Appointment, ChatMessage, ChatProps, EmergencyEndRequest, Patient, Subscription, Therapist } from "../../../interface/IAccount";
 import { getCurrentAppointment } from "../../../api/Appointment/appointment";
 import { createEmergencyEnd } from "../../../api/EmergencyEnd/EmergencyEnd";
 import { getTherapistById } from "../../../api/Therapist/Therapist";
@@ -57,13 +59,16 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
   const [hubConnection, setHubConnection] = useState<HubConnection | null>(null);
   const [openEmergencyDialog, setOpenEmergencyDialog] = useState(false);
   const [emergencyReason, setEmergencyReason] = useState("");
-  const [customEmergencyReason, setCustomEmergencyReason] = useState(""); // For "Other" option
+  const [customEmergencyReason, setCustomEmergencyReason] = useState("");
   const [therapist, setTherapist] = useState<Therapist>();
   const [patient, setPatient] = useState<Patient>();
   const [currentAppointment, setCurrentAppointment] = useState<Appointment>();
   const [connectionStatus, setConnectionStatus] = useState("Loading...");
   const [alertIsLoading, setAlertIsLoading] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [signalRInitialized, setSignalRInitialized] = useState(false); // Track SignalR connection separately
 
   const handleOpenPopup = () => setIsPopupOpen(true);
   const handleClosePopup = () => setIsPopupOpen(false);
@@ -83,15 +88,19 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
 
   useEffect(() => {
     const getConnectionStatus = () => {
-      setConnectionStatus(
+      const newStatus =
         hubConnection?.state === "Connected"
           ? "Connected"
           : hubConnection?.state === "Connecting"
           ? "Connecting..."
-          : "Lost Connection"
-      );
+          : "Lost Connection";
+      setConnectionStatus(newStatus);
+      setSnackbarMessage(newStatus);
+      setSnackbarOpen(true);
     };
-    getConnectionStatus();
+    if (hubConnection) {
+      getConnectionStatus();
+    }
   }, [hubConnection]);
 
   useEffect(() => {
@@ -111,7 +120,13 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
         }
       }
     };
-    const initializeChat = async () => {
+    getTherapist();
+    getPatient();
+  }, [currentChat?.therapistId, currentChat?.patientId]);
+
+  // Load previous messages immediately
+  useEffect(() => {
+    const fetchMessages = async () => {
       setIsLoading(true);
       try {
         const userData = sessionStorage.getItem("account");
@@ -130,7 +145,20 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
             setError("Không thể tải tin nhắn");
           }
         }
+      } catch (error) {
+        console.error("Lỗi tải tin nhắn:", error);
+        setError("Không thể tải tin nhắn từ server");
+      }
+      setIsLoading(false);
+    };
 
+    fetchMessages();
+  }, [currentChat?.chatGroupId, setIsLoading]);
+
+  // Initialize SignalR only at appointment start
+  useEffect(() => {
+    const initializeSignalR = async () => {
+      try {
         const connection = await connectToChatHub((message) => {
           setMessages((prev) => {
             const isDuplicate = prev.some(
@@ -149,21 +177,37 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
           setError("Không thể kết nối SignalR");
         }
       } catch (error) {
-        console.error("Lỗi khởi tạo chat:", error);
+        console.error("Lỗi khởi tạo SignalR:", error);
         setError("Không thể kết nối đến server chat");
       }
-      setIsLoading(false);
     };
 
-    initializeChat();
-    getTherapist();
-    getPatient();
+    if (currentAppointment?.session.startTime && !signalRInitialized) {
+      const startTime = new Date(currentAppointment.session.startTime).getTime();
+      const now = new Date().getTime();
+      const timeUntilStart = startTime - now;
+
+      if (timeUntilStart <= 0) {
+        // Appointment has started or passed, initialize SignalR immediately
+        initializeSignalR();
+        setSignalRInitialized(true);
+      } else {
+        // Schedule SignalR initialization for when the appointment starts
+        const timer = setTimeout(() => {
+          initializeSignalR();
+          setSignalRInitialized(true);
+        }, timeUntilStart);
+        
+        return () => clearTimeout(timer); // Cleanup timer on unmount or change
+      }
+    }
+
     return () => {
       if (hubConnection) {
         hubConnection.stop();
       }
     };
-  }, [currentChat?.chatGroupId]);
+  }, [currentAppointment?.session.startTime, currentChat?.chatGroupId, signalRInitialized]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -208,8 +252,8 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
 
   const handleCloseEmergencyDialog = () => {
     setOpenEmergencyDialog(false);
-    setEmergencyReason(""); // Reset reason on close
-    setCustomEmergencyReason(""); // Reset custom reason
+    setEmergencyReason("");
+    setCustomEmergencyReason("");
   };
 
   const handleCancelEmergency = () => {
@@ -224,7 +268,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
       const currentLocalAccount = sessionStorage.getItem('account');
       if (currentLocalAccount) {
         const currentAccount: AccountProps = JSON.parse(currentLocalAccount);
-        const finalReason = reason || emergencyReason; // Use provided reason or state
+        const finalReason = reason || emergencyReason;
         const emergencyEndRequest: EmergencyEndRequest = {
           appointmentId: currentAppointment.appointmentId,
           accountId: currentAccount.UserId,
@@ -249,13 +293,14 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
   };
 
   const handlePremiumFeature = (extraComponent: "video" | "call" | "music" | string, format: "video" | "call" | null) => {
-    const subscription = sessionStorage.getItem('package'); 
-    if (subscription) {
-      if (subscription === "MindMingle Premium") {
+    const currentPackage = sessionStorage.getItem('package'); 
+    if (currentPackage) {
+      const subscription: Subscription = JSON.parse(currentPackage);
+      if (subscription.packageName === "MindMingle Premium") {
         setFormat(format);
         setShowExtraComponent(extraComponent);
         shrinkPage();
-      } else if (subscription === "MindMingle Plus") {
+      } else if (subscription.packageName === "MindMingle Plus") {
         if (format === "video" || extraComponent === "video") {
           handleOpenPopup();
           setFormat(format);
@@ -270,6 +315,13 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
     }
   };
 
+  const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
   if (error) {
     return (
       <Box sx={{ p: 2, textAlign: "center" }}>
@@ -278,7 +330,6 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
     );
   }
 
-  // Predefined emergency reasons
   const emergencyReasons = [
     "Technical Issue",
     "Patient Unresponsive",
@@ -327,11 +378,13 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
             <Typography variant="h6" color="#1d1b20" flex={1}>
               {currentChat?.name}
             </Typography>
-          {currentAppointment?.emergencyEndId===null && currentAppointment?.status==="APPROVED"?
+         
             <Box display="flex" gap={2}>
+            {currentAppointment?.emergencyEndId===null && currentAppointment?.status==="APPROVED"?
               <IconButton onClick={handleOpenEmergencyDialog}>
                 <Icon1 color="error" />
               </IconButton>
+              :null}
               <IconButton onClick={() => handlePremiumFeature("call", "call")}>
                 <Icon2 />
               </IconButton>
@@ -345,7 +398,6 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
                 <Icon5 />
               </IconButton>
             </Box>
-          :null}
           </Box>
           <Paper
             elevation={0}
@@ -441,21 +493,24 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
           }
         </Box>
 
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 70,
-            right: 20,
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '12px',
-            backgroundColor: connectionStatus === "Connected" ? '#4caf50' : '#ff9800',
-            color: 'white',
-            opacity: 0.8,
-          }}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          {connectionStatus}
-        </Box>
+          <Alert
+            onClose={handleSnackbarClose}
+            severity={
+              connectionStatus === "Connected" ? "success" :
+              connectionStatus === "Connecting..." ? "info" :
+              "warning"
+            }
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
 
         {error && (
           <Box
@@ -475,7 +530,6 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
           </Box>
         )}
 
-        {/* Updated Emergency End Dialog with Dropdown */}
         <Dialog
           open={openEmergencyDialog}
           onClose={handleCloseEmergencyDialog}

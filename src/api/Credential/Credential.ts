@@ -1,4 +1,4 @@
-import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD"
+import {  axiosRead } from "../AxiosCRUD"
 import { baseUrl, headers } from "../Url"
 
 const credentialUrl = baseUrl + "/Credential"
@@ -12,7 +12,7 @@ export const getCredentialByTherapistId = async (therapistId: string) => {
   }
   const result = await axiosRead(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result)
     return result.data
   }
   else {

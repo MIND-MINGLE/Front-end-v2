@@ -33,7 +33,7 @@ const createPayment = async (paymentData: PaymentRequest) => {
 export default function SubscriptionPage() {
   const [subscriptionData, setSubscriptionData] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [currentPackage, setCurrentPackage] = useState<string | null>(null); // Store packageName 
+  const [currentPackage, setCurrentPackage] = useState<Subscription | null>(null); // Store packageName 
 
   const subscriptionsDetail = [
     {
@@ -59,9 +59,9 @@ export default function SubscriptionPage() {
       setIsLoading(true);
       try {
         // Get current package from sessionStorage
-        const storedPackage = sessionStorage.getItem("package");
-        if (storedPackage) {
-          setCurrentPackage(storedPackage); // Assuming this is packageName or subscriptionId
+        const currentPackage = sessionStorage.getItem("package");
+        if (currentPackage) {
+          setCurrentPackage(JSON.parse(currentPackage)); // Assuming this is packageName or subscriptionId
         }
 
         // Fetch subscription data
@@ -179,7 +179,7 @@ export default function SubscriptionPage() {
 
           <div className={styles.cardsContainer}>
             {subscriptionData.map((subscription: Subscription) => {
-              const isActive = currentPackage === subscription.packageName;
+              const isActive = currentPackage?.packageName === subscription.packageName;
               return (
                 <div
                   key={subscription.subscriptionId}

@@ -73,32 +73,38 @@ export const TherapistProfile = () => {
 
   const fetchTherapist = async () => {
     try {
-      const therapistResponse = await getTherapistById(accountId || "123");
-
-      if (therapistResponse.statusCode === 200) {
-        setTherapist(therapistResponse.result);
-
-        // Gọi API lấy credentials
-        const credentialsResponse = await getCredentialByTherapistId(therapistResponse.result.therapistId);
-        if (credentialsResponse.isSuccess) {
-          const activeCredentials = credentialsResponse.result.filter(
-            (cred: Credential) => cred.isDisabled === 0
-          );
-          setCredentials(activeCredentials);
+      if(accountId){
+        const therapistResponse = await getTherapistById(accountId);
+        if (therapistResponse.statusCode === 200) {
+          const therapist = therapistResponse.result
+          setTherapist(therapistResponse.result);
+          // Gọi API lấy credentials
+          const credentialsResponse = await getCredentialByTherapistId(therapist.therapistId);
+          console.log("Your Credit: ",credentialsResponse)
+          if (credentialsResponse!=null&&credentialsResponse.statusCode === 200) {
+            const activeCredentials = credentialsResponse.result.filter(
+              (cred: Credential) => cred.isDisabled === 0
+            );
+            setCredentials(activeCredentials);
+          }
+  
+          // Gọi API lấy specializations
+          const specializationsResponse = await getSpecializationByTherapistId(therapist.therapistId);
+          if (specializationsResponse!=null&&specializationsResponse.statusCode === 200) {
+            // Cập nhật therapist state với specializations
+            setTherapist(prev => ({
+              ...prev!,
+              specializations: specializationsResponse.result.specializations
+            }));
+          }
+        } else {
+          setError(therapistResponse.error || "Failed to fetch therapist data");
         }
-
-        // Gọi API lấy specializations
-        const specializationsResponse = await getSpecializationByTherapistId(therapistResponse.result.therapistId);
-        if (specializationsResponse.isSuccess) {
-          // Cập nhật therapist state với specializations
-          setTherapist(prev => ({
-            ...prev!,
-            specializations: specializationsResponse.result.specializations
-          }));
-        }
-      } else {
-        setError(therapistResponse.error || "Failed to fetch therapist data");
+      }else{
+        alert("Try Again")
+        nav(-1);
       }
+      
     } catch (err) {
       setError("An unexpected error occurred");
       console.error(err);
