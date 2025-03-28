@@ -182,7 +182,7 @@ export default function AppointmentList() {
                   onClick={() => setActiveTab(tab.id)}
                 >
                   {tab.label}
-                  <span className={styles.tabCount}>{tab.count}</span>
+                  <span className={activeTab === tab.id ? styles.tabCountActive:styles.tabCount}>{tab.count}</span>
                 </Box>
               ))}
             </Box>
@@ -198,7 +198,11 @@ export default function AppointmentList() {
             <>
               <Grid container spacing={4}>
                 {paginatedAppointments.map((appointment) => (
-                  <Grid item xs={12} sm={6} md={4} key={appointment.appointmentId}>
+                  <Grid item xs={12} sm={6}
+                  md={
+                    paginatedAppointments.length>2?4:paginatedAppointments.length<2?12:6
+                  } 
+                  key={appointment.appointmentId}>
                     <Paper className={styles.appointmentCard} elevation={0}>
                       <Box className={styles.cardHeader}>
                         <Typography className={styles.patientName}>
@@ -311,8 +315,7 @@ export default function AppointmentList() {
                   onChange={handlePageChange}
                   color="primary"
                   classes={{
-                    root: styles.pagination,
-                    item: styles.paginationItem
+                    root: styles.pagination
                   }}
                 />
               </Box>

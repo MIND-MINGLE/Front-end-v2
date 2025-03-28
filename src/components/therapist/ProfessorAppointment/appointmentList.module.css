@@ -11,84 +11,14 @@
   }
 }
 
-/* Animation cho mây */
-@keyframes moveCloud {
-  from {
-    left: -200px;
-  }
-  to {
-    left: calc(100% + 200px);
-  }
-}
-
 .container {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(-45deg, #b6e3ff, #c4e5ff, #d4eeff, #e6f4ff);
+  background: linear-gradient(-90deg, #b6e3ff, #c4e5ff, #d4eeff, #e6f4ff);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
 }
-
-/* Styles cho mây */
-.cloud {
-  width: 200px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 200px;
-  position: absolute;
-  filter: blur(3px);
-  z-index: 0;
-}
-
-.cloud::before,
-.cloud::after {
-  content: '';
-  position: absolute;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-}
-
-.cloud::before {
-  width: 80px;
-  height: 80px;
-  top: -30px;
-  left: 30px;
-}
-
-.cloud::after {
-  width: 100px;
-  height: 100px;
-  top: -40px;
-  right: 30px;
-}
-
-.cloud1 {
-  top: 15%;
-  left: -200px;
-  transform: scale(0.6);
-  opacity: 0.6;
-  animation: moveCloud 25s linear infinite;
-}
-
-.cloud2 {
-  top: 45%;
-  left: -200px;
-  transform: scale(0.8);
-  opacity: 0.7;
-  animation: moveCloud 35s linear infinite;
-  animation-delay: 5s;
-}
-
-.cloud3 {
-  top: 75%;
-  left: -200px;
-  transform: scale(0.5);
-  opacity: 0.5;
-  animation: moveCloud 30s linear infinite;
-  animation-delay: 10s;
-}
-
 /* Đảm bảo content wrapper nằm trên clouds */
 .contentWrapper {
   position: relative;
@@ -111,7 +41,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   margin-bottom: 8px;
   position: relative;
   display: inline-block;
@@ -357,7 +286,12 @@
 
 /* Thêm styles cho tabs */
 .tabContainer {
+  display: flex;
   margin-bottom: 32px;
+  width: 100%;
+  align-self: center;
+  align-content: center;
+ justify-content: center;
 }
 
 .tabs {
@@ -365,13 +299,14 @@
   gap: 16px;
   padding: 0 16px;
   border-bottom: 1px solid #E2E8F0;
+  
 }
 
 .tab {
   padding: 12px 24px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
-  color: #64748B;
+  color: #888888;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
@@ -391,10 +326,24 @@
   padding: 0 8px;
   margin-left: 8px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
-  background-color: #E2E8F0;
+  background-color: #dbdbdb;
   color: #475569;
+}
+.tabCountActive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 20px;
+  padding: 0 8px;
+  margin-left: 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #1976d2;
+  color: #ffffff;
 }
 
 /* Style cho type chip */
