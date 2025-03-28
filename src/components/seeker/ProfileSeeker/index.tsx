@@ -564,6 +564,7 @@ export const Frame = () => {
                                                 }
                                             }}
                                         >
+                                            Edit Profile
                                             <Edit fontSize="medium" />
                                         </IconButton>
                                     </Box>
