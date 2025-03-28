@@ -25,6 +25,11 @@ import {
     Alert,
     CircularProgress,
     Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    FormControl,
+    InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { Accountlogout } from "../../../services/logout";
@@ -96,6 +101,15 @@ export const Frame = () => {
     const [uploadingCredential, setUploadingCredential] = useState(false);
     const credentialFileRef = useRef<HTMLInputElement>(null);
     const [editingCredentialId, setEditingCredentialId] = useState<string | null>(null);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [editForm, setEditForm] = useState({
+        firstName: '',
+        lastName: '',
+        dob: '',
+        gender: '',
+        description: ''
+    });
+    const [updating, setUpdating] = useState(false);
 
     const nav = useNavigate();
     const logout = () => {
@@ -352,6 +366,79 @@ export const Frame = () => {
         }
     };
 
+    const handleOpenEditDialog = () => {
+        setEditForm({
+            firstName: therapistInfo.firstName,
+            lastName: therapistInfo.lastName,
+            dob: formatDateForInput(therapistInfo.dob),
+            gender: therapistInfo.gender,
+            description: therapistInfo.description
+        });
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+    };
+
+    const handleFormChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement | { value: unknown }>) => {
+        setEditForm(prev => ({
+            ...prev,
+            [field]: event.target.value
+        }));
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            setUpdating(true);
+            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Therapist/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: therapistInfo.therapistId,
+                    firstName: editForm.firstName,
+                    lastName: editForm.lastName,
+                    dob: editForm.dob,
+                    gender: editForm.gender,
+                    phoneNumber: therapistInfo.phoneNumber,
+                    description: editForm.description
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.isSuccess) {
+                setTherapistInfo(prev => ({
+                    ...prev,
+                    firstName: editForm.firstName,
+                    lastName: editForm.lastName,
+                    dob: editForm.dob,
+                    gender: editForm.gender,
+                    description: editForm.description
+                }));
+
+                setSnackbar({
+                    open: true,
+                    message: 'Profile updated successfully!',
+                    severity: 'success'
+                });
+                handleCloseEditDialog();
+            } else {
+                throw new Error(data.errorMessage || 'Failed to update profile');
+            }
+        } catch (error) {
+            setSnackbar({
+                open: true,
+                message: error instanceof Error ? error.message : 'Failed to update profile',
+                severity: 'error'
+            });
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     if (loading) {
         return <LoadingScreen />;
     }
@@ -565,9 +652,27 @@ export const Frame = () => {
                                 },
                             }}
                         >
-                            <Typography variant="h6" color="#027FC1" fontWeight="medium" mb={4}>
-                                Personal Information
-                            </Typography>
+                            <Box display="flex" alignItems="center" justifyContent="space-between" mb={4}>
+                                <Typography variant="h6" color="#027FC1" fontWeight="medium">
+                                    Personal Information
+                                </Typography>
+                                <Button
+                                    startIcon={<Edit />}
+                                    onClick={handleOpenEditDialog}
+                                    variant="outlined"
+                                    color="primary"
+                                    size="small"
+                                    sx={{
+                                        borderRadius: 2,
+                                        textTransform: 'none',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(2, 127, 193, 0.04)'
+                                        }
+                                    }}
+                                >
+                                    Edit Profile
+                                </Button>
+                            </Box>
 
                             <Grid container spacing={3}>
                                 <Grid item xs={12}>
@@ -647,8 +752,6 @@ export const Frame = () => {
                                     </Select>
                                 </Grid>
 
-
-
                                 <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium">
                                         About your self
@@ -660,6 +763,7 @@ export const Frame = () => {
                                             fullWidth
                                             multiline
                                             rows={3}
+                                            disabled
                                             value={therapistInfo.description || "Chưa có thông tin giới thiệu"}
                                             sx={{
                                                 "& .MuiOutlinedInput-root": {
@@ -667,9 +771,9 @@ export const Frame = () => {
                                                 },
                                             }}
                                         />
-                                        <IconButton size="small" sx={{ ml: 1, color: '#027FC1' }}>
+                                        {/* <IconButton size="small" sx={{ ml: 1, color: '#027FC1' }}>
                                             <Edit fontSize="small" />
-                                        </IconButton>
+                                        </IconButton> */}
                                     </Box>
                                 </Grid>
 
@@ -861,6 +965,121 @@ export const Frame = () => {
                     }}
                     onClick={handleCloseImage}
                 />
+            </Dialog>
+            <Dialog
+                open={openEditDialog}
+                onClose={handleCloseEditDialog}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                        padding: 2
+                    }
+                }}
+            >
+                <DialogTitle sx={{ pb: 1 }}>
+                    Edit Profile Information
+                </DialogTitle>
+
+                <DialogContent>
+                    <Grid container spacing={2} sx={{ mt: 1 }}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="First Name"
+                                value={editForm.firstName}
+                                onChange={handleFormChange('firstName')}
+                                variant="outlined"
+                                size="small"
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Last Name"
+                                value={editForm.lastName}
+                                onChange={handleFormChange('lastName')}
+                                variant="outlined"
+                                size="small"
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Date of Birth"
+                                type="date"
+                                value={editForm.dob}
+                                onChange={handleFormChange('dob')}
+                                variant="outlined"
+                                size="small"
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <FormControl fullWidth size="small">
+                                <InputLabel>Gender</InputLabel>
+                                <Select
+                                    value={editForm.gender}
+                                    onChange={handleFormChange('gender')}
+                                    label="Gender"
+                                >
+                                    <MenuItem value="Male">Male</MenuItem>
+                                    <MenuItem value="Female">Female</MenuItem>
+                                    <MenuItem value="Others">Others</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label="Description"
+                                value={editForm.description}
+                                onChange={handleFormChange('description')}
+                                variant="outlined"
+                                size="small"
+                                multiline
+                                rows={4}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+
+                <DialogActions sx={{ px: 3, pb: 3 }}>
+                    <Button
+                        onClick={handleCloseEditDialog}
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            minWidth: 100
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleUpdateProfile}
+                        variant="contained"
+                        disabled={updating}
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            minWidth: 100,
+                            bgcolor: '#027FC1',
+                            '&:hover': {
+                                bgcolor: '#0266A2'
+                            }
+                        }}
+                    >
+                        {updating ? 'Updating...' : 'Save Changes'}
+                    </Button>
+                </DialogActions>
             </Dialog>
             <Snackbar
                 open={snackbar.open}

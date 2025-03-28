@@ -74,6 +74,10 @@ const TherapistSelection: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.cloud + ' ' + styles.cloud1}></div>
+      <div className={styles.cloud + ' ' + styles.cloud2}></div>
+      <div className={styles.cloud + ' ' + styles.cloud3}></div>
+
       <Container maxWidth="md">
         <Typography variant="h4" className={styles.pageTitle}>
           <span className={styles.gradientText}>Choose Your Therapist</span>
