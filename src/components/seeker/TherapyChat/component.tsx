@@ -382,16 +382,19 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
          
             <Box display="flex" gap={2}>
             {currentAppointment?.emergencyEndId===null && currentAppointment?.status==="APPROVED"?
+              <>
               <IconButton onClick={handleOpenEmergencyDialog}>
                 <Icon1 color="error" />
               </IconButton>
-              :null}
+             
               <IconButton onClick={() => handlePremiumFeature("call", "call")}>
                 <Icon2 />
               </IconButton>
               <IconButton onClick={() => handlePremiumFeature("call", "video")}>
                 <Icon3 />
               </IconButton>
+              </>
+               :null}
               <IconButton onClick={() => handlePremiumFeature("music", null)}>
                 <Icon4 />
               </IconButton>
