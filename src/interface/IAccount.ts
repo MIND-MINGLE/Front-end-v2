@@ -34,6 +34,7 @@ interface TherapistCreateProps {
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
+  description:string
 }
 
 // Define the Therapist type based on your schema
@@ -90,7 +91,7 @@ interface Appointment {
   sessionId: string;
   emergencyEndId: string | null;
   appointmentType: "ONLINE" | "OFFLINE"; // Assuming possible values based on context
-  status: "PENDING" | "APPROVED" | "DECLINED" | "CANCELED";
+  status: "PENDING" | "APPROVED" |"ENDED"| "DECLINED" | "CANCELED";
   totalFee: number;
   platformFee: number;
   createdAt: string; // ISO 8601 date string;

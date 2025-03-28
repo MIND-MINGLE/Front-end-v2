@@ -1,8 +1,9 @@
 import { baseUrl,headers } from "../Url"
-import { axiosRead, } from "../AxiosCRUD"
+import { axiosCreate, axiosRead, } from "../AxiosCRUD"
+import { TherapistCreateProps } from "../../interface/IAccount"
 
 
-const theraUrl = baseUrl + "/Therapist/"
+const theraUrl = baseUrl + "/Therapist"
 
 
 export const getTherapist = async(accountId:string)=> {
@@ -21,3 +22,22 @@ export const getTherapist = async(accountId:string)=> {
         return null
     }
 }
+
+
+export const AddTherapist = async(data:TherapistCreateProps)=> {
+    const props = {
+        data: data,
+        url: theraUrl+"/addtherapist",
+        headers: headers
+    }
+    const result = await axiosCreate(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data.result
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+}
+

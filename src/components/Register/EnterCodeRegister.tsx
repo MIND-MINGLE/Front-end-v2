@@ -38,15 +38,14 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
                 nav("register-seeker")
               break;}
             case "doc":{
-                alert("Doctor Register")
                 nav("register-doctor")
               break;}
             case "agent":{
-                alert("Agent Register")
                 nav("register-agent")
               break;}
             default:{
               alert("No role found")
+              nav("/")
             }
           }
      

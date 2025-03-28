@@ -13,15 +13,19 @@ import {
   Snackbar,
   Alert,
   styled,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker"; // Import DatePicker
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"; // Date adapter
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"; // Required for DatePicker
-import { RegisterPatientAccount } from '../../../api/Account/Seeker';
-import { format, parse, isValid, isFuture } from "date-fns"; // date-fns utilities
-import { RegisterDocAccount } from "../../../api/Account/Account";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { format, parse, isValid, isFuture } from "date-fns";
+import { AddTherapist } from "../../../api/Account/Therapist";
 
-// Styled components for custom styling
+// Styled components
 const FormContainer = styled(Box)(({ theme }) => ({
   backgroundColor: "#FFFFFF",
   boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
@@ -57,13 +61,13 @@ const RegisterDoctorPage: React.FC = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    dob: "", // Store as string in yyyy-MM-dd format
+    dob: "",
     gender: "",
     phoneNumber: "",
-    pricePerHour:0
+    pricePerHour: 0,
   });
 
-  // State for loading, errors, and snackbar
+  // State for loading, errors, snackbar, and dialog
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [snackbar, setSnackbar] = useState({
@@ -71,8 +75,9 @@ const RegisterDoctorPage: React.FC = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Validate DOB (yyyy-MM-dd format, not in the future)
+  // Validate DOB
   const validateDob = (dob: string) => {
     if (!dob) return false;
     const parsedDate = parse(dob, "yyyy-MM-dd", new Date());
@@ -81,13 +86,13 @@ const RegisterDoctorPage: React.FC = () => {
     return isValidDate && !isFutureDate;
   };
 
-  // Validate phone number (basic validation)
+  // Validate phone number
   const validatePhoneNumber = (phone: string) => {
     const regex = /^\+?\d{10,15}$/;
     return regex.test(phone);
   };
 
-  // Memoized validation function
+  // Memoized validation
   const validateForm = useMemo(() => {
     return () => {
       const newErrors: { [key: string]: string } = {};
@@ -111,7 +116,7 @@ const RegisterDoctorPage: React.FC = () => {
     setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
-  // Handle date change for DatePicker
+  // Handle date change
   const handleDateChange = (date: Date | null) => {
     if (date && isValid(date)) {
       const formattedDate = format(date, "yyyy-MM-dd");
@@ -135,21 +140,28 @@ const RegisterDoctorPage: React.FC = () => {
       dob: formData.dob,
       gender: formData.gender,
       phoneNumber: formData.phoneNumber,
-      pricePerHour:formData.pricePerHour
+      pricePerHour: formData.pricePerHour,
+      description:"Hi, I am here to help!"
     };
 
-    const result = await RegisterDocAccount(accountData);
+    const result = await AddTherapist(accountData);
     setLoading(false);
-    if (result!=null) {
+    if (result != null) {
       setSnackbar({ open: true, message: "Therapist registered successfully!", severity: "success" });
-      setTimeout(() => navigate("/login"), 1500);
+      setDialogOpen(true);
     } else {
       setSnackbar({
         open: true,
-        message: result.error || "Registration failed. Please try again.",
+        message: result?.error || "Registration failed. Please try again.",
         severity: "error",
       });
     }
+  };
+
+  // Handle dialog close and navigation
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    navigate("/login");
   };
 
   // Handle snackbar close
@@ -157,31 +169,21 @@ const RegisterDoctorPage: React.FC = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  // Gmail compose link
+  const emailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=mindmingleskill@gmail.com&su=${encodeURIComponent("Therapist Registration Inquiry")}&body=${encodeURIComponent(`Hi MindMingle team,\n\nI just registered as a therapist (${formData.firstName} ${formData.lastName}). Can you provide more details about the verification process?\n\nThanks!`)}`;
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box
-        sx={{
-          backgroundColor: "#F5F7FA",
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Box sx={{ backgroundColor: "#F5F7FA", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
         {/* Header */}
-        <Box
-          sx={{
-            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "white",
-            zIndex: 1,
-          }}
-        >
+        <Box sx={{ boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)", backgroundColor: "white", zIndex: 1 }}>
           <HeaderLogin />
         </Box>
 
         {/* Form Container */}
         <FormContainer>
           <Typography variant="h5" align="center" fontWeight={600} gutterBottom>
-            Patient Register
+            Therapist Register
           </Typography>
 
           <TextField
@@ -208,7 +210,7 @@ const RegisterDoctorPage: React.FC = () => {
             label="Date of Birth"
             value={formData.dob ? parse(formData.dob, "yyyy-MM-dd", new Date()) : null}
             onChange={handleDateChange}
-            maxDate={new Date()} // Disable future dates
+            maxDate={new Date()}
             slotProps={{
               textField: {
                 fullWidth: true,
@@ -218,7 +220,7 @@ const RegisterDoctorPage: React.FC = () => {
                 required: true,
               },
             }}
-            format="yyyy-MM-dd" // Ensure display format is yyyy-MM-dd
+            format="yyyy-MM-dd"
           />
           <TextField
             select
@@ -247,7 +249,7 @@ const RegisterDoctorPage: React.FC = () => {
             helperText={errors.phoneNumber || "Example: +1234567890"}
             required
           />
-           <TextField
+          <TextField
             label="Hourly Rate"
             value={formData.pricePerHour}
             onChange={handleChange("pricePerHour")}
@@ -275,7 +277,25 @@ const RegisterDoctorPage: React.FC = () => {
           <CopyrightFooter />
         </Box>
 
-        {/* Snackbar for success/error messages */}
+        {/* Success Dialog */}
+        <Dialog open={dialogOpen} onClose={handleDialogClose}>
+          <DialogTitle>Registration Complete</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Your business inquiry has been received and will be verified by the administration after 1-2 business days. For more information, please contact us at:{" "}
+              <a href={emailLink} target="_blank" rel="noopener noreferrer" style={{ color: "#1976d2" }}>
+                mindmingleskill@gmail.com
+              </a>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+            <Button variant="contained" onClick={handleDialogClose}>
+              I Understand
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Snackbar */}
         <Snackbar
           open={snackbar.open}
           autoHideDuration={3000}

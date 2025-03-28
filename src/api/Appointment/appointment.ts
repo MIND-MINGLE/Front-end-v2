@@ -74,12 +74,13 @@ export const getCurrentAppointment = async(therapistId:string,patientId:string)=
     }
 
 }
-export const patchAppointmentStatus = async(status:"Canceled"|"Approved"|"Declined",appointmentId:string)=> {
+export const patchAppointmentStatus = async(status:"Canceled"|"Approved"|"Ended"|"Declined",appointmentId:string)=> {
     var statusURL = ""
     switch(status){
         case "Canceled": statusURL="canceled";break;
         case "Approved":statusURL="approved";break;
         case "Declined": statusURL="declined";break;
+        case "Ended": statusURL="ended";break;
         default: return null;
     }
     const props = {

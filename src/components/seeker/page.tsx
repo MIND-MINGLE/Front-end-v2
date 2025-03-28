@@ -48,10 +48,10 @@ const SeekerPage = (): JSX.Element => {
     
               // Check if appointments is an array and has any active appointments
               if (Array.isArray(appointments) && appointments.length > 0) {
-                // Look for any appointment that is NOT DECLINED or CANCELED
+                // Look for any appointment that is only APPROVED
                 const hasActiveAppointment = appointments.some(
                   (appointment) =>
-                    appointment.status !== 'DECLINED' && appointment.status !== 'CANCELED'
+                    appointment.status === 'APPROVED'
                 );
     
                 if (hasActiveAppointment) {
