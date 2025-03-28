@@ -1,7 +1,7 @@
 // import React from 'react'
 
 import { baseUrl, headers } from "../Url"
-import { AccountRequestProps, LoginProps, SeekerCreateProps, TherapistCreateProps, VerifyProps } from "../../interface/IAccount"
+import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 import { storage } from "../../services/firebase" // Đảm bảo đã cấu hình Firebase trong services/firebase.js
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD";

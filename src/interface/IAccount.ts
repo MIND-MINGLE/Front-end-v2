@@ -51,7 +51,11 @@ interface Therapist {
   account: Account
 }
 interface Account {
-  avatar: string;
+  accountId: string,
+  accountName: string,
+  email: string,
+  avatar: string,
+  isDisabled: boolean
 }
 interface Patient {
   patientId: string;

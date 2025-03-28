@@ -4,7 +4,6 @@ import EventPage from './EventPage/page'
 import HistoryPage from './HistoryPage/page'
 import ProfileSeekerPage from './ProfileSeeker/page'
 import TherapyChatPage from './TherapyChat/page'
-
 import ProtectedRoutes, { RoleProtectedRoute } from '../../routes/protectedroutes'
 import { useEffect } from 'react'
 import SummaryPage from './TherapyMatchingForm/SummaryPage'
@@ -13,7 +12,6 @@ import { TherapistProfile } from './TherapyProfile/viewtherapist'
 import BookAppointment from './TherapyProfile/bookAppointment'
 import NavigationRail from './NavBar'
 import SubscriptionPage from './subscription/subscriptionPage'
-
 export default function SeekerRoute() {
   const nav = useNavigate()
   useEffect(()=>{

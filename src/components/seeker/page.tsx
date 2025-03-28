@@ -51,7 +51,7 @@ const SeekerPage = (): JSX.Element => {
                 // Look for any appointment that is only APPROVED
                 const hasActiveAppointment = appointments.some(
                   (appointment) =>
-                    appointment.status === 'APPROVED'
+                    appointment.status === 'APPROVED' || appointment.status === 'PENDING'
                 );
     
                 if (hasActiveAppointment) {

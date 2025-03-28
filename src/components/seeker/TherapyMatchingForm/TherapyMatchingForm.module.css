@@ -142,6 +142,11 @@
   font-size: 15px;
   line-height: 1.5;
 }
+.buttonContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
 
 .submitButton {
   background: linear-gradient(to right, #3498db, #2980b9);
@@ -155,9 +160,9 @@
   margin-top: 25px;
   transition: all 0.3s ease;
   display: block;
-  width: 200px;
+  width: 300px;
   text-align: center;
-margin: auto;
+  margin: 5px;
 }
 
 .submitButton:hover {

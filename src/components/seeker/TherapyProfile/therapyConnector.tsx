@@ -20,15 +20,13 @@ const TherapistSelection: React.FC = () => {
     setIsLoading(true);
     try {
       const response = await getAllTherapist();
-      const data = response.result;
+      const data:Therapist[] = response.result;
       const therapistList = data || [];
 
       // Store all therapists
-      setAllTherapists(therapistList);
-
+      setAllTherapists(therapistList.filter(t=>t.account.isDisabled===false));
       // Calculate total pages
       setTotalPages(Math.ceil(therapistList.length / therapistsPerPage));
-
       // Set initial displayed therapists (first page)
       setDisplayedTherapists(therapistList.slice(0, therapistsPerPage));
     } catch (err) {
