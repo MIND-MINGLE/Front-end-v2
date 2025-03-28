@@ -2,15 +2,11 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Header.module.css";
-import TransactionList from "../coworking/Components/TransactionList/TransactionList";
 import NotificationComponent from "../coworking/Components/NotificationModule/NotificationComponent";
 import ChatList from "../coworking/Components/ChatNoti/ChatList";
-import SavedOffices from "../coworking/Components/SavedOffices/SavedOffices";
 import {Link} from "react-router";
 
 const Header: React.FC = () => {
-  const [showTransactionList, setShowTransactionList] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
   const [showChatList, setShowChatList] = useState(false);
   const [showSavedOffices, setShowSavedOffices] = useState(false);
   const transactionRef = useRef<HTMLDivElement>(null);
@@ -23,13 +19,11 @@ const Header: React.FC = () => {
       transactionRef.current &&
       !transactionRef.current.contains(event.target as Node)
     ) {
-      setShowTransactionList(false);
     }
     if (
       notificationRef.current &&
       !notificationRef.current.contains(event.target as Node)
     ) {
-      setShowNotification(false);
     }
     if (
       chatListRef.current &&
@@ -66,40 +60,7 @@ const Header: React.FC = () => {
             Create
           </button>
         </Link>
-        <button className={styles.navButton} aria-label="Home">
-          <img src="/SquaresFour.svg" alt="Home icon" />
-        </button>
-        <button
-          className={styles.navButton}
-          aria-label="Search"
-          onClick={() => {
-            setShowTransactionList((prev) => {
-              console.log("Transaction List:", !prev);
-              return !prev;
-            });
-          }}
-        >
-          <img src="/Recycle.svg" alt="Search icon" />
-        </button>
-        {showTransactionList && (
-          <div ref={transactionRef} className={`${styles.dropdown}`}>
-            <TransactionList />
-          </div>
-        )}
-
-        <button
-          className={styles.navButton}
-          aria-label="Notifications"
-          onClick={() => setShowNotification((prev) => !prev)}
-        >
-          <img src="/Heart.svg" alt="Notifications icon" />
-        </button>
-        {showNotification && (
-          <div ref={notificationRef} className={`${styles.dropdown}`}>
-            <SavedOffices />
-          </div>
-        )}
-        <Link to="chat">
+        <Link to="/doctor/chat">
         <button
           className={styles.navButton}
           aria-label="Chat"
@@ -128,7 +89,7 @@ const Header: React.FC = () => {
           </div>
         )}
         {/* Profile icon */}
-        <Link to="profile">
+        <Link to="/doctor/profile">
           <button className={styles.navMenu} aria-label="Profile">
             <img src="/Ellipse 11.svg" alt="Profile icon" />
           </button>

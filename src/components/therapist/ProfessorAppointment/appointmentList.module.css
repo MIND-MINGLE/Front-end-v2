@@ -1,0 +1,410 @@
+/* Animation cho background */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.container {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(-90deg, #b6e3ff, #c4e5ff, #d4eeff, #e6f4ff);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+/* Đảm bảo content wrapper nằm trên clouds */
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 96px 24px 48px;
+}
+
+.titleContainer {
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.pageTitle {
+  font-size: 36px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  position: relative;
+  display: inline-block;
+}
+
+.titleDecoration {
+  position: relative;
+  display: inline-block;
+}
+
+.titleDecoration::before,
+.titleDecoration::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  width: 60px;
+  background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+  bottom: -8px;
+}
+
+.titleDecoration::before {
+  left: -80px;
+}
+
+.titleDecoration::after {
+  right: -80px;
+}
+
+.titleSubtext {
+  font-size: 16px;
+  color: #64748b;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 64px 0;
+  background-color: rgba(255,255,255,0.8);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 119, 182, 0.08);
+}
+
+.appointmentCard {
+  padding: 24px;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 20px rgba(0, 119, 182, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.appointmentCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 119, 182, 0.15);
+}
+
+.cardHeader {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patientName {
+  color: #1E293B;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.statusPending {
+  background-color: #FEF3C7;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.statusApproved {
+  background-color: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.statusDeclined {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.appointmentDetails {
+  margin-bottom: 24px;
+}
+
+.dateTimeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 16px;
+}
+
+.dateContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.dateIcon {
+  color: #64748B;
+  font-size: 20px;
+}
+
+.dateValue {
+  color: #0F172A;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.timeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  padding: 8px 12px;
+  flex: 1;
+}
+
+.timeIcon {
+  color: #64748B;
+  font-size: 20px;
+}
+
+.timeDetails {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1E293B;
+  font-size: 14px;
+}
+
+.timeSeparator {
+  color: #94A3B8;
+  margin: 0 4px;
+}
+
+.timeValue {
+  color: #0F172A;
+  font-weight: 600;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.button {
+  border-radius: 16px !important;
+  padding: 8px 24px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  transition: all 0.2s ease !important;
+  min-width: 120px !important;
+  box-shadow: none !important;
+}
+
+.approveButton {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.approveButton:hover:not(:disabled) {
+  background-color: #43A047 !important;
+}
+
+.approvedButton {
+  background-color: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+  cursor: default;
+}
+
+.declineButton {
+  background-color: #F44336 !important;
+  color: white !important;
+}
+
+.declineButton:hover:not(:disabled) {
+  background-color: #E53935 !important;
+}
+
+.declinedButton {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+  cursor: default;
+}
+
+.button:disabled {
+  background-color: #e0e0e0 !important;
+  color: #9e9e9e !important;
+  border: none !important;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+
+.paginationItem {
+  color: #1E40AF;
+}
+
+.paginationItem:global(.Mui-selected) {
+  background-color: #1E40AF;
+  color: white;
+}
+
+.paginationItem:global(.Mui-selected):hover {
+  background-color: #1E3A8A;
+}
+
+.paginationItem:hover {
+  background-color: rgba(26, 35, 126, 0.04);
+}
+
+/* Thêm styles cho tabs */
+.tabContainer {
+  display: flex;
+  margin-bottom: 32px;
+  width: 100%;
+  align-self: center;
+  align-content: center;
+ justify-content: center;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px;
+  border-bottom: 1px solid #E2E8F0;
+  
+}
+
+.tab {
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #888888;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabActive {
+  color: #1976d2;
+  border-bottom: 2px solid #1976d2;
+}
+
+.tabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 20px;
+  padding: 0 8px;
+  margin-left: 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #dbdbdb;
+  color: #475569;
+}
+.tabCountActive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 20px;
+  padding: 0 8px;
+  margin-left: 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #1976d2;
+  color: #ffffff;
+}
+
+/* Style cho type chip */
+.typeChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.typeOnline {
+  background-color: #E0F2FE;
+  color: #0284C7;
+  border: 1px solid #BAE6FD;
+}
+
+.typeOffline {
+  background-color: #FEF9C3;
+  color: #CA8A04;
+  border: 1px solid #FDE047;
+}
+
+.feeValue {
+  color: #0F172A;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.currencyLabel {
+  color: #64748B;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.detailsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 16px;
+}
+
+.detailContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: #F8FAFC;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.detailIcon {
+  color: #64748B;
+  font-size: 20px;
+}
+
+.detailLabel {
+  color: #64748B;
+  font-size: 14px;
+  font-weight: 500;
+}
