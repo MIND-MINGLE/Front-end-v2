@@ -1,99 +1,101 @@
-
 import {
     Box,
     Button as MuiButton,
     Grid,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import {Link} from "react-router";
+import { Link } from "react-router";
+import { useState } from "react";
+import styles from './styles.module.css';
 
-const GradientButton = styled(MuiButton)({
-    width: "100%",
-    maxWidth: "340px", 
-    minWidth: "340px",
-    height: "70px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "2.5px",
-    padding: "11px 2px",
-    background: "linear-gradient(180deg, rgb(0,119,182) 0%, rgb(27,157,240) 100%)",
-    borderRadius: "20px",
-    border: "1px solid transparent",
-    color: "white",
-    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-    fontWeight: 500,
-    fontSize: "20px",
-    textAlign: "center",
-    textTransform: "none",
-    margin: "20px 0",
-});
+const GradientButton = styled(MuiButton)({});
 
 export const Frame = () => {
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+
+    const handleFeatureClick = (e: React.MouseEvent, feature: string) => {
+        e.preventDefault();
+        setSnackbarMessage(`${feature} feature is currently under development`);
+        setOpenSnackbar(true);
+    };
+
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+    };
+
     return (
-<Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    minHeight="70vh"
-    width="100%"
->
-    <Box display="flex" justifyContent="center"  width="100%">
-        <Box width="100%" maxWidth="1200px">
-            <Grid container spacing={4}>
-                {/* Button Column */}
-                <Grid
-                    item
-                    xs={12}
-                    md={4}
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    justifyContent="center"
+        <Box className={styles.container}>
+            <Box className={styles.contentWrapper}>
+                <Box width="100%" maxWidth="1200px">
+                    <Grid container spacing={4}>
+                        <Grid item xs={12} md={4} className={styles.buttonColumn}>
+                            <Link
+                                to="create-workspace"
+                                onClick={(e) => handleFeatureClick(e, 'Book a workspace')}
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <GradientButton className={styles.gradientButton}>
+                                    Book a workspace
+                                </GradientButton>
+                            </Link>
+
+                            <Link
+                                to="create-session"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <GradientButton className={styles.gradientButton}>
+                                    Create a session
+                                </GradientButton>
+                            </Link>
+
+                            <Link
+                                to="create-workshop"
+                                onClick={(e) => handleFeatureClick(e, 'Create a workshop')}
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <GradientButton className={styles.gradientButton}>
+                                    Create a workshop
+                                </GradientButton>
+                            </Link>
+                        </Grid>
+
+                        <Grid item xs={12} md={8} display="flex" justifyContent="center">
+                            <Box className={styles.imageContainer}>
+                                <Link to="/ProfessorPage/ThankYouPage"
+                                    onClick={(e) => handleFeatureClick(e, 'Calendar')}>
+
+                                    <Box
+                                        component="img"
+                                        className={styles.calendarImage}
+                                        alt="Calendar"
+                                        src="/calendar.png"
+                                    />
+                                </Link>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Box>
+
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                className={styles.snackbar}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity="info"
+                    className={styles.alert}
                 >
-                    <Link to="create-workspace">
-                        <GradientButton>Book a workspace</GradientButton>
-                    </Link>
-
-                    <Link to="create-session" >
-                        <GradientButton>Create a session</GradientButton>
-                    </Link>
-
-                    <Link to="create-workshop" >
-                        <GradientButton>Create a workshop</GradientButton>
-                    </Link>
-                </Grid>
-
-                {/* Image Column */}
-                <Grid item xs={12} md={8} display="flex" justifyContent="center">
-                    <Box
-                        sx={{
-                            width: "100%",
-                            maxWidth: 600,
-                            height: "auto",
-                            position: "relative",
-                        }}
-                    >
-                        <Link to="/ProfessorPage/ThankYouPage">
-                            <Box
-                                component="img"
-                                sx={{
-                                    width: "100%",
-                                    height: "auto",
-                                    borderRadius: "20px", 
-                                    objectFit: "cover",
-                                }}
-                                alt="Calendar"
-                                src="/calendar.png"
-                            />
-                        </Link>
-                    </Box>
-                </Grid>
-            </Grid>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Box>
-    </Box>
-</Box>
-
     );
 };
 
