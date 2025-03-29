@@ -118,6 +118,7 @@ interface ChatProfile {
   adminId: string;
   adminName: string;
   userInGroupId: string;
+  isDisabled: boolean
 }
 interface ChatProps {
   chatGroupId: string;

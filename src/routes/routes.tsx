@@ -8,9 +8,12 @@ import TherapistRoute from '../components/therapist/therapistRoute';
 import LoginRoutes from '../components/Login/loginRoutes';
 import RegisterRoutes from '../components/Register/registerRoutes';
 import AdminRoute from '../components/admin/adminRoute';
+import GlobalCounter from '../services/globalCounter';
 
 export default function AppRoutes() {
   return (
+    <>
+    <GlobalCounter/>
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login/*" element={<LoginRoutes />} />
@@ -21,5 +24,6 @@ export default function AppRoutes() {
       <Route path="/admin/*" element={<AdminRoute />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   )
 }

@@ -9,7 +9,7 @@ interface AppointmentTimerProps {
 }
 
 export default function AppointmentTimer({ getApp,popUp }: AppointmentTimerProps) {
-  const [currentApp, setCurrentApp] = useState<Appointment | null>(null);
+  const [currentApp, setCurrentApp] = useState<Appointment | undefined>();
   const [timeLeft, setTimeLeft] = useState<{
     days: number;
     hours: number;
@@ -25,10 +25,10 @@ export default function AppointmentTimer({ getApp,popUp }: AppointmentTimerProps
       const currentList = sessionStorage.getItem("appointment");
       if (currentList) {
         const appointments: Appointment[] = JSON.parse(currentList);
-        setCurrentApp(appointments[0]); // Set the first appointment
-        console.log("currentApp: ", appointments[0]);
+        setCurrentApp(appointments.find(a=>a.status==="APPROVED")); // Set the first appointment
+        //console.log("currentApp: ", appointments[0]);
       }else{
-        setCurrentApp(null)
+        setCurrentApp(undefined)
       }
     };
     getCurrentAppointment();
