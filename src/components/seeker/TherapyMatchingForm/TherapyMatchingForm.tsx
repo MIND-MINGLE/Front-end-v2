@@ -220,6 +220,9 @@ function HasAppointmentForm(){
   const gotoChatPage=()=>{
     navigate('therapy-chat')
   }
+  const gotoHistory=()=>{
+    navigate('history')
+  }
   return(
     <div className={styles.container}>
     <div className={styles.content}>
@@ -228,12 +231,20 @@ function HasAppointmentForm(){
       <Typography marginBottom={2} className={styles.subtitle}>
         You already have an appointment with your doctor. No need to fill the form again.
       </Typography>
+      <div  className={styles.buttonContainer}>
       <button
         onClick={gotoChatPage}
         className={styles.submitButton}
       >
         Go To Chat Page
       </button>
+      <button
+        onClick={gotoHistory}
+        className={styles.submitButton}
+      >
+        See Your Appointment
+      </button>
+      </div>
     </div>
   </div>
   )

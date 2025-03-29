@@ -34,6 +34,7 @@ interface TherapistCreateProps {
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
+  description:string
 }
 
 // Define the Therapist type based on your schema
@@ -50,7 +51,11 @@ interface Therapist {
   account: Account
 }
 interface Account {
-  avatar: string;
+  accountId: string,
+  accountName: string,
+  email: string,
+  avatar: string,
+  isDisabled: boolean
 }
 interface Patient {
   patientId: string;
@@ -90,7 +95,7 @@ interface Appointment {
   sessionId: string;
   emergencyEndId: string | null;
   appointmentType: "ONLINE" | "OFFLINE"; // Assuming possible values based on context
-  status: "PENDING" | "APPROVED" | "DECLINED" | "CANCELED";
+  status: "PENDING" | "APPROVED" |"ENDED"| "DECLINED" | "CANCELED";
   totalFee: number;
   platformFee: number;
   createdAt: string; // ISO 8601 date string;
@@ -102,7 +107,12 @@ interface Appointment {
 interface requestGroupChat {
   adminId: string
 }
-
+interface PaymentRequest {
+  patientId: string;
+  amount: number;
+  therapistReceive: number;
+  paymentUrl: string;
+}
 
 interface userInGroup {
   clientId: string
@@ -113,6 +123,7 @@ interface ChatProfile {
   adminId: string;
   adminName: string;
   userInGroupId: string;
+  isDisabled: boolean
 }
 interface ChatProps {
   chatGroupId: string;
@@ -167,5 +178,9 @@ interface Credential {
   imageUrl: string;
   isDisabled: number;
 }
+interface CreatePurchaseRequest {
+  patientId: string;
+  subscriptionId: string;
+}
 
-export type {TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

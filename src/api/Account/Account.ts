@@ -1,7 +1,7 @@
 // import React from 'react'
 
 import { baseUrl, headers } from "../Url"
-import { AccountRequestProps, LoginProps, SeekerCreateProps, TherapistCreateProps, VerifyProps } from "../../interface/IAccount"
+import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 import { storage } from "../../services/firebase" // Đảm bảo đã cấu hình Firebase trong services/firebase.js
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD";
@@ -10,11 +10,8 @@ const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
 const verifyUrl = baseUrl + "/Auth/verification"
 
-export const RegisterPatient = async () => {
-    return await null
-}
 
-export const RegisterPatientAccount = async (data: SeekerCreateProps) => {
+export const RegisterPatientAccount = async (data: AccountRequestProps) => {
     const props = {
         data: data,
         url: resUrl + "?roleId=seeker",
@@ -31,7 +28,7 @@ export const RegisterPatientAccount = async (data: SeekerCreateProps) => {
     }
 
 }
-export const RegisterDocAccount = async (data: TherapistCreateProps) => {
+export const RegisterDocAccount = async (data: AccountRequestProps) => {
     const props = {
         data: data,
         url: resUrl + "?roleId=doc",

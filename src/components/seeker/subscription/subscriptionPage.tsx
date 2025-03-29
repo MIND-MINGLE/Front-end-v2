@@ -1,40 +1,34 @@
 import { useEffect, useState } from 'react';
 import styles from './subscription.module.css';
-import { Subscription } from '../../../interface/IAccount';
+import { PaymentRequest, PurchasedPackagedRequest, Subscription } from '../../../interface/IAccount';
 import { getAllSubscription } from '../../../api/Subscription/Subscription';
 import LoadingScreen from '../../common/LoadingScreen';
 import { formatPriceToVnd } from '../../../services/common';
-import { Modal, Button, Snackbar, Alert } from '@mui/material';
+import { Modal, Button, Snackbar, Alert, Box, Typography, Link } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../../services/firebase';
-import axios from 'axios';
+import { createSubPayment } from '../../../api/Payment/PaymentApi';
+import { createSubscription } from '../../../api/PackageApi/Package';
 
-// PaymentRequest interface (unchanged)
-interface PaymentRequest {
-  patientId: string;
-  amount: number;
-  therapistReceive: number;
-  paymentUrl: string;
-}
+
 
 // API call for creating payment (unchanged)
 const createPayment = async (paymentData: PaymentRequest) => {
-  const response = await axios.post(
-    'https://mindmingle202.azurewebsites.net/api/Payment/create',
-    paymentData,
-    {
-      headers: { 'Content-Type': 'application/json' }
-    }
-  );
-  return response.data;
+  const response = await createSubPayment(paymentData)
+  if(response.statusCode === 200) {
+    return response;
+  }else{
+    alert("Please Try Again")
+  }
+  
 };
 
 export default function SubscriptionPage() {
   const [subscriptionData, setSubscriptionData] = useState<Subscription[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPackage, setCurrentPackage] = useState<Subscription | null>(null); // Store packageName 
-
+  const [paymentUrl, setPaymentUrl] =useState<string|null>(null);
   const subscriptionsDetail = [
     {
       features: ["10% discounts on each session", "Basic Audio Call", "Email support"],
@@ -117,39 +111,61 @@ export default function SubscriptionPage() {
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       setIsUploading(false);
+      handleImage()
     }
   };
-
-  const handleSubmitPayment = async () => {
+  // FIX THIS SH@T WTF
+  const handleImage = async() => {
     if (!paymentImage) {
       setSnackbar({ open: true, message: 'Please upload payment proof', severity: 'error' });
       return;
     }
+    const storageRef = ref(storage, `payment-proofs/${Date.now()}_${paymentImage.name}`);
+    const uploadResult = await uploadBytes(storageRef, paymentImage);
+    const imageUrl = await getDownloadURL(uploadResult.ref);
+    setPreviewUrl(imageUrl)
+  }
+  const handlePurchases = async(patientId:string) => {
+    const newSubscription:PurchasedPackagedRequest={
+      subscriptionId: selectedSubscription?.subscriptionId||"123",
+      patientId: patientId
+    }
+    const response = await createSubscription(newSubscription);
+    if (response.statusCode === 200) {
+      return true
+    }else{
+      return false
+    }
+  }
+
+  const handleSubmitPayment = async () => {
     setIsSubmitting(true);
     try {
-      const storageRef = ref(storage, `payment-proofs/${Date.now()}_${paymentImage.name}`);
-      const uploadResult = await uploadBytes(storageRef, paymentImage);
-      const imageUrl = await getDownloadURL(uploadResult.ref);
-
       const patient = sessionStorage.getItem('patient');
       const patientId = JSON.parse(patient || '{}').patientId;
       if (!patientId) throw new Error('Patient information not found');
-
+      if(!await handlePurchases(patientId)){
+        setSnackbar({ open: true, message: 'Subscription Incompleted, Please Try Again!', severity: 'error' });
+      }
       const paymentRequest: PaymentRequest = {
         patientId,
         amount: selectedSubscription?.price || 0,
         therapistReceive: 0,
-        paymentUrl: imageUrl,
+        paymentUrl: previewUrl,
       };
-
-      const result = await createPayment(paymentRequest);
-      if (result.statusCode === 200) {
+      const paymentWindow = window.open("", "_blank");
+      const response = await createPayment(paymentRequest);
+      if (response.statusCode === 200) {
+        const payOSURL = response.result
+        setPaymentUrl(payOSURL)
+        if (paymentWindow) {
+          paymentWindow.location.href = payOSURL;
+        }
         setSnackbar({ open: true, message: 'Payment request sent successfully!', severity: 'success' });
         setOpenQRModal(false);
         setPaymentImage(null);
-        setPreviewUrl('');
       } else {
-        throw new Error(result.message || 'Error when creating payment');
+        throw new Error(response.message || 'Error when creating payment');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -238,19 +254,28 @@ export default function SubscriptionPage() {
 
       <Modal open={openQRModal} onClose={() => setOpenQRModal(false)}>
         <div className={styles.qrModal}>
-          <div className={styles.qrHeader}>QR Nhận Tiền</div>
+          <div className={styles.qrHeader}>We will redirect you to PayOS Payment</div>
+          <div className={styles.qrHeader}>Help us by screenshot your transactions afterward for our records</div>
           <div className={styles.qrContent}>
-            <img src={selectedQR} alt="QR Payment" className={styles.qrImage} />
             <div className={styles.paymentForm}>
+            <Button
+                variant="contained"
+                fullWidth
+                onClick={handleSubmitPayment}
+                disabled={isSubmitting}
+                className={styles.submitButton}
+              >
+                {isSubmitting ? 'Processing...' : 'Payment'}
+              </Button>
               <div className={styles.uploadSection}>
-                <input
+                {/* <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
                   style={{ display: 'none' }}
                   id="payment-proof"
-                />
-                <label htmlFor="payment-proof">
+                /> */}
+                {/* <label htmlFor="payment-proof">
                   <Button
                     variant="outlined"
                     component="span"
@@ -260,8 +285,19 @@ export default function SubscriptionPage() {
                   >
                     {isUploading ? 'Uploading...' : 'Upload payment proof'}
                   </Button>
-                </label>
-                {previewUrl && (
+                  </label> */}
+                  {paymentUrl!==null && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                    <Typography color="warning.main">
+                      Popup blocked. Please use this link:
+                    </Typography>
+                    <Link href={previewUrl} target="_blank">
+                      Proceed to Payment
+                    </Link>
+                  </Box>
+                )}
+               
+                {/* {previewUrl && (
                   <div className={styles.imagePreview}>
                     <div className={styles.previewContainer}>
                       <div className={styles.previewWrapper}>
@@ -280,21 +316,21 @@ export default function SubscriptionPage() {
                           }}
                           sx={{ minWidth: '40px', marginLeft: '8px', height: 'fit-content' }}
                         >
-                          Xóa
+                          Delete
                         </Button>
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
               <Button
                 variant="contained"
                 fullWidth
-                onClick={handleSubmitPayment}
-                disabled={isSubmitting || !paymentImage}
+                onClick={()=>setOpenQRModal(false)}
+                disabled={isSubmitting || !paymentUrl}
                 className={styles.submitButton}
               >
-                {isSubmitting ? 'Processing...' : 'Confirm payment'}
+                {'Confirm payment'}
               </Button>
             </div>
           </div>
