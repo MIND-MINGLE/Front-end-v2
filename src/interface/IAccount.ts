@@ -107,7 +107,12 @@ interface Appointment {
 interface requestGroupChat {
   adminId: string
 }
-
+interface PaymentRequest {
+  patientId: string;
+  amount: number;
+  therapistReceive: number;
+  paymentUrl: string;
+}
 
 interface userInGroup {
   clientId: string
@@ -173,5 +178,9 @@ interface Credential {
   imageUrl: string;
   isDisabled: number;
 }
+interface CreatePurchaseRequest {
+  patientId: string;
+  subscriptionId: string;
+}
 
-export type {TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

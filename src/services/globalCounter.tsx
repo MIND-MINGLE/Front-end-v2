@@ -104,24 +104,6 @@ export default function GlobalCounter() {
 
   return (
     <>
-      {/* Global Countdown Display (optional, can be styled or moved) */}
-      {currentApp && timeLeft > 0 && (
-        <Typography
-          sx={{
-            position: "fixed",
-            top: 10,
-            right: 10,
-            bgcolor: "#1E73BE",
-            color: "white",
-            p: 1,
-            borderRadius: "4px",
-            zIndex: 1000,
-          }}
-        >
-          Time Left: {formatTime(timeLeft)}
-        </Typography>
-      )}
-
       {/* Dialog for End of Appointment */}
       <Dialog open={dialogOpen} onClose={() => {}} disableEscapeKeyDown>
         <DialogTitle>Appointment Ended</DialogTitle>
