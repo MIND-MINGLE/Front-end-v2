@@ -9,18 +9,20 @@
 
 .contentWrapper {
   display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 1200px;
-  padding: 40px 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px 80px;
+  gap: 80px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .buttonColumn {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
+  gap: 20px;
+  width: 280px;
+  margin-left: 40px;
 }
 
 .gradientButton {
@@ -70,28 +72,18 @@
 }
 
 .imageContainer {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  position: relative;
-  transition: transform 0.3s ease;
-}
-
-.imageContainer:hover {
-  transform: scale(1.02);
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 40px;
 }
 
 .calendarImage {
   width: 100%;
+  max-width: 650px;
   height: auto;
-  border-radius: 20px;
-  object-fit: cover;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.calendarImage:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  object-fit: contain;
 }
 
 .snackbar {
