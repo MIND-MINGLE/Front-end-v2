@@ -195,20 +195,7 @@ const BookingAppointment: React.FC = () => {
     setIsLoading(true);
     if (selectedSession && patient && therapist) {
       const { totalFee, platformFee } = calculateFees(selectedSession, therapist.pricePerHour || 0);
-      const appointment: AppointmentRequest = {
-        patientId: patient.patientId,
-        therapistId: therapist.therapistId,
-        coWorkingSpaceId: null,
-        sessionId: selectedSession.sessionId,
-        emergencyEndId: null,
-        appointmentType: appointmentType,
-        totalFee: totalFee,
-        platformFee: platformFee,
-      };
-
       try {
-        const response = await RegisterAppointment(appointment);
-        if (response.statusCode === 200) {
           const groupchat = { adminId: therapist.accountId };
           const responseGroupchat = await createGroupChat(groupchat);
           if (responseGroupchat.statusCode === 200) {
@@ -218,6 +205,20 @@ const BookingAppointment: React.FC = () => {
             };
             const responseUser = await addUserInGroup(userInGroupData);
             if (responseUser.statusCode === 200) {
+              //After we got a group, set an appoitnment for that chatgroup
+              const appointment: AppointmentRequest = {
+                patientId: patient.patientId,
+                therapistId: therapist.therapistId,
+                coWorkingSpaceId: null,
+                sessionId: selectedSession.sessionId,
+                emergencyEndId: null,
+                appointmentType: appointmentType,
+                chatgroupId:responseGroupchat.result.chatGroupId,
+                totalFee: totalFee,
+                platformFee: platformFee,
+              };
+              const response = await RegisterAppointment(appointment);
+              if (response.statusCode === 200) {
               alert('Appointment booked successfully!');
               nav("/seeker/therapy-chat", { replace: true });
             } else {

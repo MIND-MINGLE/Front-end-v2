@@ -9,7 +9,7 @@ import { AccountProps, Appointment, Patient, PurchasedPackaged } from '../../int
 import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
 import AppointmentTimer from '../common/appointmentTimer';
-import { getPurchasedPackageByPatientId, PatchDisablePurchasedPackage } from '../../api/Subscription/Subscription';
+import { getPurchasedPackageByPatientId } from '../../api/Subscription/Subscription';
 import SubscriptionTimer from '../common/subscriptionHeader';
 
 
@@ -113,71 +113,17 @@ const SeekerPage = (): JSX.Element => {
                 //console.log(subscription)
                 const currentSubscription = subscription.find(p=>p.isDisabled===false)
                 // Checking if this is expired
-                if (currentSubscription && currentSubscription.endDate) {
-                  // Parse endDate as UTC by appending 'Z' (assumes server sends UTC timestamps)
-                  const endDate = new Date(currentSubscription.endDate + "Z");
-                  const now = new Date(); // Current local time
-                  const nowUtc = new Date(now.toUTCString()); // Convert to UTC for comparison
-                  // Validate date
-                  if (isNaN(endDate.getTime())) {
-                    console.log("Invalid subscription end date format");
-                    return;
-                  }
-                  if (endDate < nowUtc) {
-                    try {
-                      const cancel = await PatchDisablePurchasedPackage(currentSubscription.purchasedPackageId);
-                      if (cancel.statusCode === 200) {
-                        sessionStorage.removeItem("package");
-                        setIsSubscription(false);
-                      } 
-                    } catch (error) {
-                      console.error("Error in PatchDisablePurchasedPackage:", error);
-                    }
-                }else{
+                if (currentSubscription) {
                   localStorage.setItem('purchasedPackage', JSON.stringify(currentSubscription))
                   sessionStorage.setItem('package', JSON.stringify(currentSubscription?.subscription))
                   setIsSubscription(true)
-                }
-                
               }
               else{
-                sessionStorage.removeItem('package')
+                sessionStorage.removeItem('package') // just making sure
               }
             }}
-        }else{
-          const storedPackage = localStorage.getItem('purchasedPackage')
-          if(storedPackage){
-            const parsedPackage: PurchasedPackaged = JSON.parse(storedPackage)
-            if (parsedPackage && parsedPackage.endDate) {
-              // Parse endDate as UTC by appending 'Z' (assumes server sends UTC timestamps)
-              const endDate = new Date(parsedPackage.endDate + "Z");
-              const now = new Date(); // Current local time
-              const nowUtc = new Date(now.toUTCString()); // Convert to UTC for comparison
-              // Validate date
-              if (isNaN(endDate.getTime())) {
-                console.log("Invalid subscription end date format");
-                return;
-              }
-              if (endDate < nowUtc) {
-                try {
-                  const cancel = await PatchDisablePurchasedPackage(parsedPackage.purchasedPackageId);
-                  if (cancel.statusCode === 200) {
-                    sessionStorage.removeItem("package");
-                    setIsSubscription(false);
-                  } 
-                } catch (error) {
-                  console.error("Error in PatchDisablePurchasedPackage:", error);
-                }
-            }else{
-              setIsSubscription(true)
-            }
-            
-          }else{
-            setIsSubscription(false)
-          }
-          }
         }
-}
+    }
     return (
         <>
             <SubscriptionTimer checkSub={isSubscription}/>
