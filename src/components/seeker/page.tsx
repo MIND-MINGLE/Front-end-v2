@@ -9,7 +9,7 @@ import { AccountProps, Appointment, Patient, PurchasedPackaged } from '../../int
 import { getPatientByAccountId } from '../../api/Account/Seeker';
 import { getAppointmentByPatientId } from '../../api/Appointment/appointment';
 import AppointmentTimer from '../common/appointmentTimer';
-import { getPurchasedPackageByPatientId, PatchDisablePurchasedPackage } from '../../api/Subscription/Subscription';
+import { getPurchasedPackageByPatientId } from '../../api/Subscription/Subscription';
 import SubscriptionTimer from '../common/subscriptionHeader';
 
 

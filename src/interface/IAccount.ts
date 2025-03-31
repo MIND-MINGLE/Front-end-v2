@@ -83,6 +83,7 @@ interface AppointmentRequest {
   coWorkingSpaceId: string | null;
   sessionId: string;
   emergencyEndId: string | null;
+  chatgroupId:string;
   appointmentType: 'OFFLINE' | 'ONLINE';
   totalFee: number;
   platformFee: number;
