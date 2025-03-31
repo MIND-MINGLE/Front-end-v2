@@ -14,7 +14,6 @@ import { patchAppointmentStatus } from "../api/Appointment/appointment";
 
 export default function GlobalCounter() {
   const [currentApp, setCurrentApp] = useState<Appointment | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number>(0); // Time left in seconds
   const [dialogOpen, setDialogOpen] = useState(false); // Dialog visibility
   const [isDisabling, setIsDisabling] = useState(false); // API loading state
   const navigate = useNavigate();
@@ -52,7 +51,6 @@ export default function GlobalCounter() {
       const endTime = new Date(currentApp.session.endTime).getTime();
       const now = new Date().getTime();
       const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000)); // Seconds remaining
-      setTimeLeft(timeRemaining);
 
       if (timeRemaining <= 0 && currentApp) {
         setDialogOpen(true); // Show dialog when time is up
@@ -67,13 +65,6 @@ export default function GlobalCounter() {
     return () => clearInterval(timerInterval);
   }, [currentApp]);
 
-  // Format timeLeft into MM:SS
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" + secs : secs}`;
-  };
-
   // Handle disabling the appointment
   const handleDisableAppointment = async () => {
     if (!currentApp) return;
@@ -81,12 +72,13 @@ export default function GlobalCounter() {
     try {
       //console.log("Disabling appointment:", currentApp.appointmentId);
       const response = await patchAppointmentStatus("Ended", currentApp.appointmentId)
-      if(response.status ===200){
+      if(response.statusCode ===200){
+        alert("Appoitment ENDED! Returning to homepage...")
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
         navigate(-1);
       }else{
-        alert("Appoitment ENDED! Returing to homepage...")
+        alert("Appointment ended unsuccessfully! We will try again after redirection")
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
         navigate(-1);
