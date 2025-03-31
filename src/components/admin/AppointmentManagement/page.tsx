@@ -93,7 +93,6 @@ const AppointmentManagementPage: React.FC = () => {
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [pendingPayments, setPendingPayments] = useState<Payment[]>([]);
-  const [paymentTotalCount, setPaymentTotalCount] = useState(0);
   const [paymentPage, setPaymentPage] = useState(0);
   const [paymentPageSize] = useState(10);
   const [openPayments, setOpenPayments] = useState(false);
@@ -129,7 +128,6 @@ const AppointmentManagementPage: React.FC = () => {
           payment.paymentStatus === "PENDING" && payment.appointment !== null
         );
         setPendingPayments(filteredPayments);
-        setPaymentTotalCount(filteredPayments.length);
       }
     } catch (err: any) {
       console.error('Error fetching pending payments:', err);

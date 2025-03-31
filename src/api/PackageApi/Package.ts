@@ -1,6 +1,6 @@
 import { CreatePurchaseRequest } from "../../interface/IAccount";
 import { baseUrl, headers } from "../Url";
-import { axiosCreate, axiosRead } from "../AxiosCRUD";
+import { axiosCreate } from "../AxiosCRUD";
 
 const url = baseUrl + "/PurchasedPackage";
 
