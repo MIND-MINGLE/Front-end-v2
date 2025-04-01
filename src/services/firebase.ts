@@ -14,8 +14,8 @@ import { getStorage } from 'firebase/storage';
 // };
 // tempo 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_MINDMINGLE_FIREBASE_APIKEY,
-  authDomain: import.meta.env.VITE_MINDMINGLE_FIREBASE_AUTHDOMAIN,
+  apiKey: import.meta.env.VITE_MINDMINGLE_FIREBASE_APIK,
+  authDomain: import.meta.env.VITE_MINDMINGLE_FIREBASE_DOMAINEXPANSION,
   projectId: import.meta.env.VITE_MINDMINGLE_FIREBASE_PROJECTID,
   storageBucket: import.meta.env.VITE_MINDMINGLE_FIREBASE_STORAGEBUCKET,
   messagingSenderId: import.meta.env.VITE_MINDMINGLE_FIREBASE_MESSAGINGSENDERID,
