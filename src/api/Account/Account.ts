@@ -138,8 +138,27 @@ export const updateUserAvatar = async (file: File, accountId: string) => {
         return null
     }
 }
+
+export const getAllAccount = async () => {
+    const props = {
+        data: null,
+        url: baseUrl + "/Account/getall",
+        headers: headers
+    }
+    const result = await axiosRead(props)
+    if (result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else {
+        console.log(result.error)
+        return null
+    }
+}
+
 export const getAccountById = async (accountId: string) => {
     const props = {
+        data: null,
         url: baseUrl + "/Account/" + accountId,
         headers: headers
     }
