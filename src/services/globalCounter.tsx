@@ -11,14 +11,10 @@ import {
 } from "@mui/material";
 import { patchAppointmentStatus } from "../api/Appointment/appointment";
 import { getPatientByAccountId } from "../api/Account/Seeker";
-import { getPurchasedPackageByPatientId, PatchDisablePurchasedPackage } from "../api/Subscription/Subscription";
+import {  PatchDisablePurchasedPackage } from "../api/Subscription/Subscription";
 
-interface GlobalCounterProps {
-  onAppointmentChange: (hasAppointment: boolean) => void;
-  onSubscriptionChange: (hasSubscription: boolean) => void;
-}
 
-export default function GlobalCounter({ onAppointmentChange, onSubscriptionChange }: GlobalCounterProps) {
+export default function GlobalCounter() {
   const [currentApp, setCurrentApp] = useState<Appointment | null>(null);
   const [currentSub, setCurrentSub] = useState<PurchasedPackaged | null>(null);
   const [appDialogOpen, setAppDialogOpen] = useState(false);
@@ -53,21 +49,22 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
         const appointments: Appointment[] = JSON.parse(currentList);
         const currentApp = appointments.find((appointment) => appointment.status === "APPROVED");
         setCurrentApp(currentApp || null);
-        onAppointmentChange(!!currentApp); // Notify SeekerPage
+      
       } else {
         setCurrentApp(null);
-        onAppointmentChange(false);
+       
       }
     };
 
     getCurrentAppointment();
     const pollingInterval = setInterval(getCurrentAppointment, 10000); // Poll every 10s
     return () => clearInterval(pollingInterval);
-  }, [onAppointmentChange]);
+  }, []);
 
   // Poll for subscriptions
   useEffect(() => {
     const getCurrentSubscription = async () => {
+   
       const localData = sessionStorage.getItem("package");
      if (localData) {
         const storedPackage = localStorage.getItem("purchasedPackage");
@@ -81,23 +78,22 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
               sessionStorage.removeItem("package");
               localStorage.removeItem("purchasedPackage");
               setCurrentSub(null);
-              onSubscriptionChange(false);
             }
           } else {
             setCurrentSub(parsedPackage);
-            onSubscriptionChange(true);
+           
           }
         }
       } else {
         setCurrentSub(null);
-        onSubscriptionChange(false);
+     
       }
     };
 
     getCurrentSubscription();
     const pollingInterval = setInterval(getCurrentSubscription, 10000); // Poll every 10s
     return () => clearInterval(pollingInterval);
-  }, [onSubscriptionChange]);
+  }, []);
 
   // Appointment countdown
   useEffect(() => {
@@ -120,7 +116,6 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
   // Subscription countdown
   useEffect(() => {
     if (!currentSub?.endDate) return;
-
     const updateCountdown = () => {
       const endTime = new Date(currentSub.endDate + "Z").getTime();
       const now = new Date().getTime();
@@ -137,6 +132,7 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
 
   // Handle disabling the appointment
   const handleDisableAppointment = async () => {
+    console.log("get app", currentApp)
     if (!currentApp) return;
     setIsDisablingApp(true);
     try {
@@ -145,13 +141,13 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
         alert("Appointment ENDED! Returning to homepage...");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
-        onAppointmentChange(false);
+      
         navigate(-1);
       } else {
         alert("Appointment ended unsuccessfully! We will try again after redirection");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
-        onAppointmentChange(false);
+    
         navigate(-1);
       }
     } catch (error) {
@@ -173,7 +169,7 @@ export default function GlobalCounter({ onAppointmentChange, onSubscriptionChang
         sessionStorage.removeItem("package");
         localStorage.removeItem("purchasedPackage");
         setCurrentSub(null);
-        onSubscriptionChange(false);
+       
       } else {
         alert("Failed to disable subscription! Please try again later.");
       }
