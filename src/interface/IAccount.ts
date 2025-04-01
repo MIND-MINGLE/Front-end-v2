@@ -103,6 +103,7 @@ interface Appointment {
   session: Sessison
   patient: Patient | null,
   therapist: Therapist | null
+  chatgroupId:string;
 }
 
 interface requestGroupChat {
