@@ -19,9 +19,10 @@ import {
   Assignment,
   TrendingUp,
 } from '@mui/icons-material';
-import axios from 'axios';
+
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import styles from './Dashboard.module.css';
+import { getDashboardStats } from '../../api/Admin/Dashboard';
 
 interface DashboardStats {
   totalRevenue: number;
@@ -50,11 +51,11 @@ const AdminDashboardPage: React.FC = () => {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Dashboard/stats', {
-        params: { timeRange }
-      });
-      setStats(response.data);
-      console.log('Dashboard stats:', response.data);
+      const response = await getDashboardStats(timeRange);
+      if(response.statusCode===200){
+        setStats(response.result);
+      }
+      console.log('Dashboard stats:', response.result);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
     } finally {

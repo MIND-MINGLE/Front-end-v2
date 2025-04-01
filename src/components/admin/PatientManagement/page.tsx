@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -20,6 +19,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './PatientManagement.module.css';
+import { getAllPatient } from '../../../api/Account/Seeker';
 
 interface Patient {
   patientId: string;
@@ -51,9 +51,9 @@ const PatientManagementPage: React.FC = () => {
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Patient/patient');
-      if (response.data.statusCode === 200) {
-        setPatients(response.data.result);
+      const response = await getAllPatient()
+      if (response.statusCode === 200) {
+        setPatients(response.result);
       } else {
         setError('Failed to fetch patients');
       }
