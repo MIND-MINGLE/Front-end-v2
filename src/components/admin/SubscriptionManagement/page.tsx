@@ -27,6 +27,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import styles from './SubscriptionManagement.module.css';
+import { getAllSubscription } from '../../../api/Subscription/Subscription';
+import { getAllPurchasedPackage } from '../../../api/PackageApi/Package';
 
 interface Purchase {
   purchasedPackageId: string;
@@ -111,9 +113,9 @@ const SubscriptionManagementPage: React.FC = () => {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Subscription');
-      if (response.data.statusCode === 200) {
-        setSubscriptions(response.data.result);
+      const response = await getAllSubscription();
+      if (response.statusCode === 200) {
+        setSubscriptions(response.result);
       }
     } catch (err) {
       console.error('Error fetching subscriptions:', err);
@@ -123,9 +125,9 @@ const SubscriptionManagementPage: React.FC = () => {
   const fetchPurchases = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/PurchasedPackage');
-      if (response.data.statusCode === 200) {
-        setPurchases(response.data.result);
+      const response = await getAllPurchasedPackage();
+      if (response.statusCode === 200) {
+        setPurchases(response.result);
       } else {
         setError('Failed to fetch purchases');
       }

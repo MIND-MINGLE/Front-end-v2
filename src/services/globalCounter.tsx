@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Appointment } from "../interface/IAccount";
+import { Appointment, Patient, PurchasedPackaged } from "../interface/IAccount";
 import {
   Dialog,
   DialogTitle,
@@ -8,122 +8,182 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  Typography,
 } from "@mui/material";
 import { patchAppointmentStatus } from "../api/Appointment/appointment";
+import { getPatientByAccountId } from "../api/Account/Seeker";
+import {  PatchDisablePurchasedPackage } from "../api/Subscription/Subscription";
+
 
 export default function GlobalCounter() {
   const [currentApp, setCurrentApp] = useState<Appointment | null>(null);
-  const [timeLeft, setTimeLeft] = useState<number>(0); // Time left in seconds
-  const [dialogOpen, setDialogOpen] = useState(false); // Dialog visibility
-  const [isDisabling, setIsDisabling] = useState(false); // API loading state
+  const [currentSub, setCurrentSub] = useState<PurchasedPackaged | null>(null);
+  const [appDialogOpen, setAppDialogOpen] = useState(false);
+  const [subDialogOpen, setSubDialogOpen] = useState(false);
+  const [isDisablingApp, setIsDisablingApp] = useState(false);
+  const [isDisablingSub, setIsDisablingSub] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch appointment initially and poll every 10 seconds
+  // Fetch patient data (runs once to set patient)
+  useEffect(() => {
+    const getPatient = async () => {
+      const localPatient = sessionStorage.getItem("patient");
+      if (!localPatient) {
+        const sessionAccount = sessionStorage.getItem("account");
+        if (sessionAccount) {
+          const data = JSON.parse(sessionAccount);
+          const patientData = await getPatientByAccountId(data.UserId);
+          if (patientData.statusCode === 200) {
+            sessionStorage.setItem("patient", JSON.stringify(patientData.result));
+          }
+        }
+      }
+    };
+    getPatient();
+  }, []);
+
+  // Poll for appointments
   useEffect(() => {
     const getCurrentAppointment = () => {
       const currentList = sessionStorage.getItem("appointment");
       if (currentList) {
         const appointments: Appointment[] = JSON.parse(currentList);
-        setCurrentApp(appointments[0]); // Set the first appointment
-        console.log("currentApp: ", appointments[0]);
+        const currentApp = appointments.find((appointment) => appointment.status === "APPROVED");
+        setCurrentApp(currentApp || null);
+      
       } else {
         setCurrentApp(null);
+       
       }
     };
 
-    // Initial fetch
     getCurrentAppointment();
-
-    // Polling every 10 seconds
-    const pollingInterval = setInterval(() => {
-      getCurrentAppointment();
-    }, 10000); // 10 seconds
-
-    // Cleanup interval on unmount
+    const pollingInterval = setInterval(getCurrentAppointment, 10000); // Poll every 10s
     return () => clearInterval(pollingInterval);
   }, []);
 
-  // Calculate and update countdown based on endTime
+  // Poll for subscriptions
+  useEffect(() => {
+    const getCurrentSubscription = async () => {
+   
+      const localData = sessionStorage.getItem("package");
+     if (localData) {
+        const storedPackage = localStorage.getItem("purchasedPackage");
+        if (storedPackage) {
+          const parsedPackage: PurchasedPackaged = JSON.parse(storedPackage);
+          const endDate = new Date(parsedPackage.endDate + "Z");
+          const nowUtc = new Date(new Date().toUTCString());
+          if (endDate < nowUtc) {
+            const cancel = await PatchDisablePurchasedPackage(parsedPackage.purchasedPackageId);
+            if (cancel.statusCode === 200) {
+              sessionStorage.removeItem("package");
+              localStorage.removeItem("purchasedPackage");
+              setCurrentSub(null);
+            }
+          } else {
+            setCurrentSub(parsedPackage);
+           
+          }
+        }
+      } else {
+        setCurrentSub(null);
+     
+      }
+    };
+
+    getCurrentSubscription();
+    const pollingInterval = setInterval(getCurrentSubscription, 10000); // Poll every 10s
+    return () => clearInterval(pollingInterval);
+  }, []);
+
+  // Appointment countdown
   useEffect(() => {
     if (!currentApp?.session?.endTime) return;
 
     const updateCountdown = () => {
       const endTime = new Date(currentApp.session.endTime).getTime();
       const now = new Date().getTime();
-      const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000)); // Seconds remaining
-      setTimeLeft(timeRemaining);
-
+      const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000));
       if (timeRemaining <= 0 && currentApp) {
-        setDialogOpen(true); // Show dialog when time is up
+        setAppDialogOpen(true);
       }
     };
 
-    // Update immediately and every second
     updateCountdown();
-    const timerInterval = setInterval(updateCountdown, 1000);
-
-    // Cleanup interval on unmount or when currentApp changes
+    const timerInterval = setInterval(updateCountdown, 30000); // Recheck every 30s
     return () => clearInterval(timerInterval);
   }, [currentApp]);
 
-  // Format timeLeft into MM:SS
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" + secs : secs}`;
-  };
+  // Subscription countdown
+  useEffect(() => {
+    if (!currentSub?.endDate) return;
+    const updateCountdown = () => {
+      const endTime = new Date(currentSub.endDate + "Z").getTime();
+      const now = new Date().getTime();
+      const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000));
+      if (timeRemaining <= 0 && currentSub) {
+        setSubDialogOpen(true);
+      }
+    };
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 30000); // Recheck every 30s
+    return () => clearInterval(timerInterval);
+  }, [currentSub]);
 
   // Handle disabling the appointment
   const handleDisableAppointment = async () => {
+    console.log("get app", currentApp)
     if (!currentApp) return;
-    setIsDisabling(true);
+    setIsDisablingApp(true);
     try {
-      //console.log("Disabling appointment:", currentApp.appointmentId);
-      const response = await patchAppointmentStatus("Ended", currentApp.appointmentId)
-      if(response.status ===200){
+      const response = await patchAppointmentStatus("Ended", currentApp.appointmentId);
+      if (response.statusCode === 200) {
+        alert("Appointment ENDED! Returning to homepage...");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
+      
         navigate(-1);
-      }else{
-        alert("Appoitment ENDED! Returing to homepage...")
+      } else {
+        alert("Appointment ended unsuccessfully! We will try again after redirection");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
+    
         navigate(-1);
       }
-
-    
     } catch (error) {
       console.error("Failed to disable appointment:", error);
-      // Optionally show an error dialog here
     } finally {
-      setIsDisabling(false);
-      setDialogOpen(false);
+      setIsDisablingApp(false);
+      setAppDialogOpen(false);
+    }
+  };
+
+  // Handle disabling the subscription
+  const handleDisableSubscription = async () => {
+    if (!currentSub) return;
+    setIsDisablingSub(true);
+    try {
+      const response = await PatchDisablePurchasedPackage(currentSub.purchasedPackageId);
+      if (response.statusCode === 200) {
+        alert("Subscription expired and disabled successfully!");
+        sessionStorage.removeItem("package");
+        localStorage.removeItem("purchasedPackage");
+        setCurrentSub(null);
+       
+      } else {
+        alert("Failed to disable subscription! Please try again later.");
+      }
+    } catch (error) {
+      console.error("Failed to disable subscription:", error);
+    } finally {
+      setIsDisablingSub(false);
+      setSubDialogOpen(false);
     }
   };
 
   return (
     <>
-      {/* Global Countdown Display (optional, can be styled or moved) */}
-      {currentApp && timeLeft > 0 && (
-        <Typography
-          sx={{
-            position: "fixed",
-            top: 10,
-            right: 10,
-            bgcolor: "#1E73BE",
-            color: "white",
-            p: 1,
-            borderRadius: "4px",
-            zIndex: 1000,
-          }}
-        >
-          Time Left: {formatTime(timeLeft)}
-        </Typography>
-      )}
-
-      {/* Dialog for End of Appointment */}
-      <Dialog open={dialogOpen} onClose={() => {}} disableEscapeKeyDown>
+      <Dialog open={appDialogOpen} onClose={() => {}} disableEscapeKeyDown>
         <DialogTitle>Appointment Ended</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -134,9 +194,26 @@ export default function GlobalCounter() {
           <Button
             variant="contained"
             onClick={handleDisableAppointment}
-            disabled={isDisabling}
+            disabled={isDisablingApp}
           >
-            {isDisabling ? "Disabling..." : "OK"}
+            {isDisablingApp ? "Disabling..." : "OK"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={subDialogOpen} onClose={() => {}} disableEscapeKeyDown>
+        <DialogTitle>Subscription Expired</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Your subscription has expired. It will now be disabled.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: "center" }}>
+          <Button
+            variant="contained"
+            onClick={handleDisableSubscription}
+            disabled={isDisablingSub}
+          >
+            {isDisablingSub ? "Disabling..." : "OK"}
           </Button>
         </DialogActions>
       </Dialog>

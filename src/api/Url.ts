@@ -1,6 +1,6 @@
-const baseUrl = "https://mindmingle202.azurewebsites.net/api";
-const signalRBaseURL = "https://mindmingle202.azurewebsites.net";
-const localhostUrl = "https://localhost:7250/api";
+const baseUrl = import.meta.env.VITE_MINDMINGLE_BASE_URL_API
+const signalRBaseURL = import.meta.env.VITE_MINDMINGLE_SIGNALR_URL_API
+const localhostUrl = "https://localhost:7250";
 
 const getJwtToken = () => {
   const token = sessionStorage.getItem("token")

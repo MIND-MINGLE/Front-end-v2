@@ -164,7 +164,7 @@ export const NavigationRail = (): JSX.Element => {
             backgroundSize: "100%",
         }}
     >
-        <NavItem to="/seeker/subscription" icon={currentPackage?.packageName === "" ? <AddIcon /> : null} label="" />
+        <NavItem to="/seeker/subscription" icon={currentPackage===null? <AddIcon /> : null} label="" />
     </Avatar>
     {/* Custom Tooltip */}
     <Box
@@ -197,9 +197,9 @@ export const NavigationRail = (): JSX.Element => {
             marginBottom: "8px", // Space between header and body
         }}
     >
-       {currentPackage?.packageName===""?"Buy Subscription":`Thank You!`}
+       {currentPackage===null?"Buy Subscription":`Thank You!`}
     </Typography>
-       {currentPackage?.packageName===""?
+       {currentPackage===null?
         <Typography
         variant="h6" // Body style
         sx={{

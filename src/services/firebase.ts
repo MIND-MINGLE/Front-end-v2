@@ -14,12 +14,12 @@ import { getStorage } from 'firebase/storage';
 // };
 // tempo 
 const firebaseConfig = {
-  apiKey: "AIzaSyBz8rXTsYAGp9i7itJyRT7Pxo9cxSelCCo",
-  authDomain: "mind-mingle-202.firebaseapp.com",
-  projectId: "mind-mingle-202",
-  storageBucket: "mind-mingle-202.firebasestorage.app",
-  messagingSenderId: "249907094779",
-  appId: "1:249907094779:web:c3aa5782f4fbd674cd7c5e"
+  apiKey: import.meta.env.VITE_MINDMINGLE_FIREBASE_APIK,
+  authDomain: import.meta.env.VITE_MINDMINGLE_FIREBASE_DOMAINEXPANSION,
+  projectId: import.meta.env.VITE_MINDMINGLE_FIREBASE_PROJECTID,
+  storageBucket: import.meta.env.VITE_MINDMINGLE_FIREBASE_STORAGEBUCKET,
+  messagingSenderId: import.meta.env.VITE_MINDMINGLE_FIREBASE_MESSAGINGSENDERID,
+  appId: import.meta.env.VITE_MINDMINGLE_FIREBASE_APPID
 };
 
 // Initialize Firebase

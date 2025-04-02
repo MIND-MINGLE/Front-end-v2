@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -33,6 +32,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { getAllAppointment } from '../../../api/Appointment/appointment';
+import { getAllPaymentPending, handlePaymentStatus } from '../../../api/Payment/PaymentApi';
 
 interface Appointment {
   appointmentId: string;
@@ -93,7 +94,6 @@ const AppointmentManagementPage: React.FC = () => {
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [pendingPayments, setPendingPayments] = useState<Payment[]>([]);
-  const [paymentTotalCount, setPaymentTotalCount] = useState(0);
   const [paymentPage, setPaymentPage] = useState(0);
   const [paymentPageSize] = useState(10);
   const [openPayments, setOpenPayments] = useState(false);
@@ -117,19 +117,12 @@ const AppointmentManagementPage: React.FC = () => {
   const fetchPendingPayments = async () => {
     try {
       setPaymentLoading(true);
-      const response = await axios.get<PaymentResponse>('https://mindmingle202.azurewebsites.net/api/Payment/get-all-by-pending-status', {
-        params: {
-          pageIndex: paymentPage,
-          pageSize: paymentPageSize,
-        },
-      });
-
-      if (response.data) {
-        const filteredPayments = response.data.items.filter(payment =>
+      const response:PaymentResponse = await getAllPaymentPending(paymentPage,paymentPageSize);
+      if (response.items) {
+        const filteredPayments = response.items.filter(payment =>
           payment.paymentStatus === "PENDING" && payment.appointment !== null
         );
         setPendingPayments(filteredPayments);
-        setPaymentTotalCount(filteredPayments.length);
       }
     } catch (err: any) {
       console.error('Error fetching pending payments:', err);
@@ -139,9 +132,9 @@ const AppointmentManagementPage: React.FC = () => {
   };
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Appointment/getAll');
-      if (response.data.statusCode === 200) {
-        setAppointments(response.data.result);
+      const response = await getAllAppointment();
+      if (response.statusCode === 200) {
+        setAppointments(response.result);
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -163,13 +156,9 @@ const AppointmentManagementPage: React.FC = () => {
   const handlePaymentAction = async (payment: Payment, action: 'PAID' | 'CANCELED') => {
     try {
       setProcessingPayment(true);
-      const endpoint = action === 'PAID'
-        ? `https://mindmingle202.azurewebsites.net/api/Payment/${payment.paymentId}/status/paid`
-        : `https://mindmingle202.azurewebsites.net/api/Payment/${payment.paymentId}/status/canceled`;
+      const response = await handlePaymentStatus(payment.paymentId,action);
 
-      const response = await axios.patch(endpoint);
-
-      if (response.status === 200) {
+      if (response.statusCode === 200) {
         setPendingPayments(prevPayments =>
           prevPayments.filter(p => p.paymentId !== payment.paymentId)
         );

@@ -6,6 +6,24 @@ import { baseUrl,headers } from "../Url"
 
 const appointmenttUrl = baseUrl + "/Appointment"
 
+export const getAllAppointment = async()=> {
+    const props = {
+        data: null,
+        url: appointmenttUrl+"/getAll",
+        headers: headers
+    }
+    const result = await axiosRead(props)
+    if(result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+
+}
+
 export const RegisterAppointment = async(data:AppointmentRequest)=> {
     const props = {
         data: data,

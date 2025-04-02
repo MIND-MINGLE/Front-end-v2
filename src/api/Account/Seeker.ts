@@ -40,6 +40,22 @@ export const getPatientByAccountId = async (accountId: string) => {
         return null
     }
 }
+export const getAllPatient = async () => {
+    const props = {
+        data: null,
+        url: patientUrl + "/patient",
+        headers: headers
+    }
+    const result = await axiosRead(props)
+    if (result.success) {
+        console.log(result.data)
+        return result.data
+    }
+    else {
+        console.log(result.error)
+        return null
+    }
+}
 
 export const updatePatientProfile = async (data: any) => {
     const props = {

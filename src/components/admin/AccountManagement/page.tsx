@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Table,
   TableBody,
@@ -20,6 +19,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import styles from './AccountManagement.module.css';
+import { getAllAccount } from '../../../api/Account/Account';
 
 interface Account {
   accountId: string;
@@ -71,9 +71,9 @@ const AccountManagementPage: React.FC = () => {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('https://mindmingle202.azurewebsites.net/api/Account/getall');
-      if (response.data.statusCode === 200) {
-        setAccounts(response.data.result);
+      const response = await getAllAccount();
+      if (response.statusCode === 200) {
+        setAccounts(response.result);
       } else {
         setError('Failed to fetch accounts');
       }
