@@ -114,8 +114,8 @@ export const NavigationRail = (): JSX.Element => {
         <Avatar
           sx={{
             bgcolor: isActive(to) && to ? "#1E73BE" : "transparent",
-            width: { xs: 50, md: 56 },
-            height: { xs: 50, md: 56 },
+            width: { xs: 50, md: 50 },
+            height: { xs: 50, md: 50 },
             transition: "all 0.3s ease",
           }}
         >
@@ -150,7 +150,6 @@ export const NavigationRail = (): JSX.Element => {
   return (
     <Box
       sx={{
-        gap: 2,
         position: "fixed",
         display: "flex",
         flexDirection: "column",
@@ -165,6 +164,7 @@ export const NavigationRail = (): JSX.Element => {
         width: { xs: "80px", md: "80px" },
         background: "linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%)",
         transition: "all 0.3s ease",
+        overflow:"auto",
         zIndex: 1000,
         "&:hover": {
           width: { xs: "85px", md: "100px" },
@@ -241,7 +241,7 @@ export const NavigationRail = (): JSX.Element => {
       <Stack
         direction="column"
         alignItems="center"
-        gap={4}
+        gap={"2vh"}
         width="100%"
         sx={{
           "& .MuiAvatar-root": { width: { xs: 50, md: 50 }, height: { xs: 50, md: 50 } },
