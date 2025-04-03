@@ -63,58 +63,59 @@ const BookingAppointment: React.FC = () => {
     return false;
   };
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch patient
+      const account = sessionStorage.getItem('account');
+      if (account) {
+        const accountData = JSON.parse(account);
+        const patientData = await getPatientByAccountId(accountData.UserId);
+        if (patientData?.statusCode === 200) {
+          setPatient(patientData.result);
+        } else {
+          setError('No patient found for this account.');
+        }
+      }
+
+      // Fetch therapist and related data
+      if (therapistId) {
+        const therapistData = await getTherapistByTherapistId(therapistId);
+        if (therapistData?.statusCode === 200) {
+          setTherapist(therapistData.result);
+          // Fetch appointments
+          const appointmentRes = await getAppointmentByTherapistId(therapistId);
+          if (appointmentRes.statusCode === 200) {
+            setAppointmentList(appointmentRes.result);
+          }
+          // Fetch sessions
+          const sessionData = await GetAllSessionByTherapistId(therapistId);
+          if (sessionData) {
+            setSessions(sessionData.map((s: Session) => ({
+              ...s,
+              startTime: ensureUtc(s.startTime),
+              endTime: ensureUtc(s.endTime),
+            })));
+          } else {
+            setError('No sessions available for this therapist.');
+          }
+        } else {
+          setError('Therapist not found.');
+        }
+      } else {
+        setError('No therapist ID provided.');
+      }
+    } catch (err) {
+      setError('An error occurred while fetching data.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     checkAppointment();
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch patient
-        const account = sessionStorage.getItem('account');
-        if (account) {
-          const accountData = JSON.parse(account);
-          const patientData = await getPatientByAccountId(accountData.UserId);
-          if (patientData?.statusCode === 200) {
-            setPatient(patientData.result);
-          } else {
-            setError('No patient found for this account.');
-          }
-        }
-
-        // Fetch therapist and related data
-        if (therapistId) {
-          const therapistData = await getTherapistByTherapistId(therapistId);
-          if (therapistData?.statusCode === 200) {
-            setTherapist(therapistData.result);
-            // Fetch appointments
-            const appointmentRes = await getAppointmentByTherapistId(therapistId);
-            if (appointmentRes.statusCode === 200) {
-              setAppointmentList(appointmentRes.result);
-            }
-            // Fetch sessions
-            const sessionData = await GetAllSessionByTherapistId(therapistId);
-            if (sessionData) {
-              setSessions(sessionData.map((s: Session) => ({
-                ...s,
-                startTime: ensureUtc(s.startTime),
-                endTime: ensureUtc(s.endTime),
-              })));
-            } else {
-              setError('No sessions available for this therapist.');
-            }
-          } else {
-            setError('Therapist not found.');
-          }
-        } else {
-          setError('No therapist ID provided.');
-        }
-      } catch (err) {
-        setError('An error occurred while fetching data.');
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     fetchData();
   }, [therapistId]);
