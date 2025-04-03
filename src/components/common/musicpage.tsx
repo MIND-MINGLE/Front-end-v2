@@ -40,16 +40,9 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
     },
   };
 
-  // Auto-play first song when player is ready
+  //No Auto-play first song when player is ready
   const onReady = (event: { target: any }) => {
     setPlayer(event.target);
-    if (!currentVideoId) {
-      const firstSong = songs[0].videoId;
-      event.target.loadVideoById(firstSong);
-      event.target.playVideo();
-      setCurrentVideoId(firstSong);
-      setIsPlaying(true);
-    }
   };
 
   const playSong = (videoId: string) => {

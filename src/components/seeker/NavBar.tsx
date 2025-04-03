@@ -164,7 +164,6 @@ export const NavigationRail = (): JSX.Element => {
         width: { xs: "80px", md: "80px" },
         background: "linear-gradient(180deg, #ffffff 0%, #f0f8ff 100%)",
         transition: "all 0.3s ease",
-        overflow:"auto",
         zIndex: 1000,
         "&:hover": {
           width: { xs: "85px", md: "100px" },
