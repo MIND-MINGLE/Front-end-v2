@@ -3,25 +3,10 @@ import { useNavigate } from 'react-router'; // Import useNavigate for navigation
 import styles from './TherapyMatchingForm.module.css'; // Import your CSS module
 import { GetAllQuestionCategory } from '../../../api/Category/Category';
 import { Button, Typography } from '@mui/material';
+import { Category } from '../../../interface/IAccount';
 
 // Define TypeScript interfaces for the schema
-interface Answer {
-  answerId: string;
-  answerContent: string;
-}
-interface Category {
-  categoryId: string;
-  categoryName: string;
-  description: string;
-  questions: Question[];
-}
-interface Question {
-  questionId: string;
-  questionContent: string;
-  categoryId: string;
-  createdAt: string;
-  answers: Answer[];
-}
+
 
 // The Form Component
 const DynamicForm: React.FC = () => {
@@ -38,6 +23,7 @@ const DynamicForm: React.FC = () => {
       const fetchedQuestions = await GetAllQuestionCategory();
       // Ensure fetchedQuestions is an array; set to empty array if not
       if (Array.isArray(fetchedQuestions.result)) {
+        console.log(fetchedQuestions.result)
         setCategories(fetchedQuestions.result);
       } else {
         console.error('GetAllQuestions did not return an array:', fetchedQuestions.result);
