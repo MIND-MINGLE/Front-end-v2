@@ -184,5 +184,23 @@ interface CreatePurchaseRequest {
   patientId: string;
   subscriptionId: string;
 }
+interface Answer {
+  answerId: string;
+  answerContent: string;
+  score:number
+}
+interface Category {
+  categoryId: string;
+  categoryName: string;
+  description: string;
+  questions: Question[];
+}
+interface Question {
+  questionId: string;
+  questionContent: string;
+  categoryId: string;
+  createdAt: string;
+  answers: Answer[];
+}
 
-export type {CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

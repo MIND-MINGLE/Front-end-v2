@@ -3,49 +3,15 @@ import { useNavigate } from 'react-router'; // Import useNavigate for navigation
 import styles from './TherapyMatchingForm.module.css'; // Import your CSS module
 import { GetAllQuestionCategory } from '../../../api/Category/Category';
 import { Button, Typography } from '@mui/material';
+import { Category } from '../../../interface/IAccount';
 
 // Define TypeScript interfaces for the schema
-interface Answer {
-  answerId: string;
-  answerContent: string;
-}
-interface Category {
-  categoryId: string;
-  categoryName: string;
-  description: string;
-  questions: Question[];
-}
-interface Question {
-  questionId: string;
-  questionContent: string;
-  categoryId: string;
-  createdAt: string;
-  answers: Answer[];
-}
 
-// Helper function to group questions by categoryId
-const groupQuestionsByCategory = (questions: Question[]): { [key: string]: Question[] } => {
-  // Ensure questions is an array; return empty object if not
-  if (!Array.isArray(questions)) {
-    console.warn('groupQuestionsByCategory: Expected an array, received:', questions);
-    return {};
-  }
-
-  return questions.reduce((acc, question) => {
-    const category = question.categoryId;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(question);
-    return acc;
-  }, {} as { [key: string]: Question[] });
-};
 
 // The Form Component
 const DynamicForm: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [responses, setResponses] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +23,7 @@ const DynamicForm: React.FC = () => {
       const fetchedQuestions = await GetAllQuestionCategory();
       // Ensure fetchedQuestions is an array; set to empty array if not
       if (Array.isArray(fetchedQuestions.result)) {
+        console.log(fetchedQuestions.result)
         setCategories(fetchedQuestions.result);
       } else {
         console.error('GetAllQuestions did not return an array:', fetchedQuestions.result);
@@ -101,9 +68,6 @@ const DynamicForm: React.FC = () => {
     // Navigate to summary page after submission
     navigate('patient-summary', { state: { responses } });
   };
-
-  // Group questions by category for sectioned layout
-  const groupedQuestions = groupQuestionsByCategory(questions);
 
   // Thêm hàm tính phần trăm hoàn thành
   const calculateProgress = (): number => {

@@ -4,7 +4,6 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import Icon2 from "@mui/icons-material/Mic";
 import MoodIcon from "@mui/icons-material/Mood";
 import Icon5 from "@mui/icons-material/MoreVert";
-import Icon4 from "@mui/icons-material/MusicNote";
 import Icon3 from "@mui/icons-material/ScreenShare";
 import SendIcon from "@mui/icons-material/Send";
 import Icon1 from "@mui/icons-material/Warning";
@@ -28,7 +27,6 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import MusicPlaylist from "./MusicSelect";
 import CallPage from "./CallPage";
 import { getGroupChatMessage } from "../../../api/ChatMessage/ChatMessageAPI";
 import { connectToChatHub, sendMessage, ChatMessageRequest } from '../../../api/SignalR/SignalRAPI';
@@ -350,7 +348,6 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
         content="Subscribe now for exclusive services and epic vibes!"
       />
       <Box display="flex" width="100%" height="100%" position="relative" bgcolor="white" overflow="hidden">
-      {showExtraComponent === "music" && <MusicPlaylist onClose={shrinkPage} />}
         {shrink && (
           <Box width="50%" bgcolor="#f0f0f0" height="100%">
             
@@ -395,9 +392,6 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
               </IconButton>
               </>
                :null}
-              <IconButton onClick={() => handlePremiumFeature("music", null)}>
-                <Icon4 />
-              </IconButton>
               <IconButton>
                 <Icon5 />
               </IconButton>

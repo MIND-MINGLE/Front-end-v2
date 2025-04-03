@@ -155,7 +155,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
   position: relative;
   overflow: hidden;
-  z-index: 1000;
+  z-index: 10;
 }
 
 .buttonPlus:hover {
@@ -378,7 +378,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
     overflow: hidden;
-    z-index: 1000;
+    z-index: 10;
   }
   
   .buttonPremium:hover {

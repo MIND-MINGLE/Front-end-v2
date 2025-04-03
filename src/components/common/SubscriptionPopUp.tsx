@@ -10,7 +10,9 @@ const SubscriptionPopUp = ({
   title = 'Premium Service Only Zone!',
   content = 'Purchase your package today',
 }) => {
+  
   if (!isOpen) return null;
+
   const nav = useNavigate();
   const gotoSub = () => {
     nav('/seeker/subscription');
