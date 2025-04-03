@@ -267,7 +267,8 @@ export const NavigationRail = (): JSX.Element => {
         sx={{
             position: "fixed",
             opacity: isMusicVisible && currentPackage ? 1 : 0,
-            zIndex: isMusicVisible && currentPackage ? 100: -1000,
+            zIndex: isMusicVisible && currentPackage ? 10: -1000,
+            pointerEvents: isMusicVisible && currentPackage ? "auto" : "none",
             transition: "opacity 0.3s ease",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
             width:"200vw",

@@ -274,40 +274,47 @@ const BookingAppointment: React.FC = () => {
         </div>
 
         <div className={styles.calendarGrid}>
-          {calendarDays.map((day, index) => (
-            <div
-              key={index}
-              className={`${styles.dayCell} ${!day ? styles.emptyCell : ''}`}
-            >
-              {day && <span>{day.getUTCDate()}</span>}
-              {day &&
-                sessions
-                  .filter((s) => new Date(s.startTime).getUTCDate() === day.getUTCDate())
-                  .map((s, idx) => {
-                    const booked = isSessionBooked(s.sessionId);
-                    const past = isSessionInPast(s);
-                    return (
-                      <Tooltip
-                        key={idx}
-                        title={booked ? "This session is booked" : past ? "This session is in the past" : "Click to book"}
-                        arrow
-                      >
-                        <div
-                          className={`${styles.sessionBlock} ${booked ? styles.bookedSession : ''} ${past ? styles.pastSession : ''}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSessionClick(s);
-                          }}
-                          style={{ cursor: booked || past ? 'not-allowed' : 'pointer' }}
-                        >
-                          {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} -{' '}
-                          {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
-                        </div>
-                      </Tooltip>
-                    );
-                  })}
-            </div>
-          ))}
+  {calendarDays.map((day, index) => (
+    <div
+      key={index}
+      className={`${styles.dayCell} ${!day ? styles.emptyCell : ''}`}
+    >
+      {day && <span>{day.getUTCDate()}</span>}
+      {day &&
+        sessions
+          .filter((s) => {
+            const sessionDate = new Date(s.startTime);
+            return (
+              sessionDate.getUTCDate() === day.getUTCDate() &&
+              sessionDate.getUTCMonth() === day.getUTCMonth() &&
+              sessionDate.getUTCFullYear() === day.getUTCFullYear()
+            );
+          })
+          .map((s, idx) => {
+            const booked = isSessionBooked(s.sessionId);
+            const past = isSessionInPast(s);
+            return (
+              <Tooltip
+                key={idx}
+                title={booked ? "This session is booked" : past ? "This session is in the past" : "Click to book"}
+                arrow
+              >
+                <div
+                  className={`${styles.sessionBlock} ${booked ? styles.bookedSession : ''} ${past ? styles.pastSession : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSessionClick(s);
+                  }}
+                  style={{ cursor: booked || past ? 'not-allowed' : 'pointer' }}
+                >
+                  {new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} -{' '}
+                  {new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}
+                </div>
+                </Tooltip>
+                  );
+                })}
+              </div>
+            ))}
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
