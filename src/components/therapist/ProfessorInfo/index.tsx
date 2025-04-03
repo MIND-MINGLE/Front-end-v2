@@ -37,9 +37,12 @@ import { Accountlogout } from "../../../services/logout";
 import { getAccountById, updateUserAvatar } from "../../../api/Account/Account";
 import { useState, useRef, useEffect } from "react";
 import LoadingScreen from "../../common/LoadingScreen";
-import { getTherapistById } from "../../../api/Therapist/Therapist";
+import { getTherapistById, updateTherapistProfile } from "../../../api/Therapist/Therapist";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../../services/firebase";
+import { AddSpecializationToTherapistId, DeleteSpecializationToTherapistId, getAllSpecialization, getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
+import { addCredential, getCredentialByTherapistId, updateCredential } from "../../../api/Credential/Credential";
+import { TherapistUpdate } from "../../../interface/IAccount";
 
 interface TherapistProfile {
     accountName: string;
@@ -150,10 +153,9 @@ export const Frame = () => {
     };
     const fetchCredentials = async (therapistId: string) => {
         try {
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${therapistId}`);
-            const data = await response.json();
-            if (data.isSuccess) {
-                setCredentials(data.result);
+            const response = await getCredentialByTherapistId(therapistId)
+            if (response.statusCode === 200) {
+                setCredentials(response.result);
             }
         } catch (error) {
             console.error("Error fetching credentials:", error);
@@ -161,10 +163,9 @@ export const Frame = () => {
     };
     const fetchSpecializations = async () => {
         try {
-            const response = await fetch('https://mindmingle202.azurewebsites.net/api/Specialization');
-            const data = await response.json();
-            if (data.isSuccess) {
-                setSpecializations(data.result.filter((spec: Specialization) => !spec.isDisabled));
+            const response = await getAllSpecialization()
+            if (response.statusCode === 200) {
+                setSpecializations(response.result.filter((spec: Specialization) => !spec.isDisabled));
             }
         } catch (error) {
             console.error("Error fetching specializations:", error);
@@ -172,10 +173,9 @@ export const Frame = () => {
     };
     const fetchTherapistSpecializations = async (therapistId: string) => {
         try {
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/TherapistSpecialization/${therapistId}`);
-            const data = await response.json();
-            if (data.isSuccess && data.result.specializations) {
-                setTherapistSpecializations(data.result.specializations);
+            const response = await getSpecializationByTherapistId(therapistId)
+            if (response.statusCode === 200 && Array.isArray(response.result.specializations)) {
+                setTherapistSpecializations(response.result.specializations);
             }
         } catch (error) {
             console.error("Error fetching therapist specializations:", error);
@@ -336,20 +336,8 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để thêm credential
-            const response = await fetch('https://mindmingle202.azurewebsites.net/api/Credential', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    therapistId: therapistInfo.therapistId,
-                    imageUrl: imageUrl
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await addCredential(therapistInfo.therapistId,imageUrl)
+            if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
                 setSnackbar({
@@ -358,7 +346,7 @@ export const Frame = () => {
                     severity: 'success'
                 });
             } else {
-                throw new Error(data.errorMessage || 'Failed to upload certificate');
+                throw new Error(response.errorMessage || 'Failed to upload certificate');
             }
         } catch (err) {
             console.error('Error uploading credential:', err);
@@ -385,19 +373,8 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để cập nhật credential
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${credentialId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    imageUrl: imageUrl
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await updateCredential(credentialId,imageUrl)
+            if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
                 setSnackbar({
@@ -406,7 +383,7 @@ export const Frame = () => {
                     severity: 'success'
                 });
             } else {
-                throw new Error(data.errorMessage || 'Failed to update certificate');
+                throw new Error(response.errorMessage || 'Failed to update certificate');
             }
         } catch (err) {
             console.error('Error updating credential:', err);
@@ -441,29 +418,20 @@ export const Frame = () => {
             [field]: event.target.value
         }));
     };
-
+    const therapistUpdate:TherapistUpdate = {
+        id: therapistInfo.therapistId,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        dob: editForm.dob,
+        gender: editForm.gender,
+        phoneNumber: therapistInfo.phoneNumber,
+        description: editForm.description
+    }
     const handleUpdateProfile = async () => {
         try {
             setUpdating(true);
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Therapist/update`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: therapistInfo.therapistId,
-                    firstName: editForm.firstName,
-                    lastName: editForm.lastName,
-                    dob: editForm.dob,
-                    gender: editForm.gender,
-                    phoneNumber: therapistInfo.phoneNumber,
-                    description: editForm.description
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await updateTherapistProfile(therapistUpdate);
+            if (response.statusCode === 200) {
                 setTherapistInfo(prev => ({
                     ...prev,
                     firstName: editForm.firstName,
@@ -480,7 +448,7 @@ export const Frame = () => {
                 });
                 handleCloseEditDialog();
             } else {
-                throw new Error(data.errorMessage || 'Failed to update profile');
+                throw new Error(response.errorMessage || 'Failed to update profile');
             }
         } catch (error) {
             setSnackbar({
@@ -509,20 +477,8 @@ export const Frame = () => {
     // Thêm hàm xử lý khi chọn/bỏ chọn specialization
     const handleSpecializationToggle = async (specializationId: string) => {
         try {
-            const response = await fetch('https://mindmingle202.azurewebsites.net/api/TherapistSpecialization', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    therapistId: therapistInfo.therapistId,
-                    specializationId: specializationId
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await AddSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
+            if (response.statusCode === 200) {
                 // Refresh lại danh sách specializations của therapist
                 await fetchTherapistSpecializations(therapistInfo.therapistId);
 
@@ -532,7 +488,7 @@ export const Frame = () => {
                     severity: 'success'
                 });
             } else {
-                throw new Error(data.errorMessage || 'Failed to add specialization');
+                throw new Error(response.errorMessage || 'Failed to add specialization');
             }
         } catch (error) {
             setSnackbar({
@@ -548,15 +504,7 @@ export const Frame = () => {
 
     const handleDeleteSpecialization = async (specializationId: string, specializationName: string) => {
         try {
-            const response = await fetch(
-                `https://mindmingle202.azurewebsites.net/api/TherapistSpecialization?therapistId=${therapistInfo.therapistId}&specId=${specializationId}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'accept': '*/*'
-                    }
-                }
-            );
+            const response = await DeleteSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
 
             const data = await response.json();
 
@@ -1275,7 +1223,7 @@ export const Frame = () => {
                                 <InputLabel>Gender</InputLabel>
                                 <Select
                                     value={editForm.gender}
-                                    onChange={handleFormChange('gender')}
+                                    onChange={()=>handleFormChange('gender')}
                                     label="Gender"
                                 >
                                     <MenuItem value="Male">Male</MenuItem>
