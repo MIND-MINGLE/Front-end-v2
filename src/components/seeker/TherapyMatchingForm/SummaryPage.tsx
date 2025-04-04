@@ -1,5 +1,4 @@
-// src/pages/SummaryPage.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -9,26 +8,129 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+import { Patient } from '../../../interface/IAccount';
+import { getLatestPatientSurvey } from '../../../api/MatchingForm/PatientResponse';
 
-interface SummaryPageProps {
-  formData: {
-    depression: string;
-    anxiety: string;
-    trauma: string;
-    concern: string;
-    interference: string;
-    urgency: string;
-  };
-}
-
-const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
+const SummaryPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const nav = useNavigate()
-  const gotoConnector = ()=>{
-    nav("../connector")
+  const navigate = useNavigate();
+
+  const [surveyData, setSurveyData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch latest survey on mount
+  useEffect(() => {
+    const fetchLatestSurvey = async () => {
+      try {
+        const patientData = sessionStorage.getItem('patient');
+        if (!patientData) {
+          throw new Error('No patient data found in session storage');
+        }
+        const patient: Patient = JSON.parse(patientData);
+        const response = await getLatestPatientSurvey(patient.patientId);
+        if (response.statusCode === 200) {
+          setSurveyData(response.result);
+        } else {
+          throw new Error(response.message || 'Failed to fetch survey');
+        }
+      } catch (err:any) {
+        setError(err.message || 'Error fetching your latest assessment');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLatestSurvey();
+  }, []);
+
+  // Parse summary into diagnoses
+  const diagnoses = surveyData?.summary
+    ? surveyData.summary.split('; ').reduce((acc: { [key: string]: string }, item: string) => {
+        const [category, diag] = item.split(': ');
+        acc[category.toLowerCase()] = diag;
+        return acc;
+      }, {})
+    : {};
+
+  // Calculate scores by category based on questionId prefixes
+  const scoreMap = surveyData?.patientResponses
+    ? surveyData.patientResponses.reduce((acc: { [key: string]: number }, resp: any) => {
+        let categoryName: string;
+        if (resp.questionId.startsWith('b6319') || resp.questionId.startsWith('b6570') || resp.questionId.startsWith('e5e67')) {
+          categoryName = 'phq9'; // PHQ-9
+        } else if (resp.questionId.startsWith('7b5d4') || resp.questionId.startsWith('d94e2')) {
+          categoryName = 'gad7'; // GAD-7
+        } else {
+          categoryName = 'pcptsd5'; // PC-PTSD-5
+        }
+        acc[categoryName] = (acc[categoryName] || 0) + resp.score;
+        return acc;
+      }, {})
+    : {};
+
+  const gotoConnector = () => {
+    navigate('../connector');
+  };
+
+  const handleSaveSummary = () => {
+    if (!surveyData) {
+      alert('No summary data available to save.');
+      return;
+    }
+
+    const content = `
+Mental Health Assessment Summary
+Patient Survey ID: ${surveyData.patientSurveyId || 'N/A'}
+
+Assessment Results:
+- Depression (PHQ-9): ${diagnoses['phq9'] || 'N/A'} (Score: ${scoreMap['phq9'] || 'N/A'}/10)
+- Anxiety (GAD-7): ${diagnoses['gad7'] || 'N/A'} (Score: ${scoreMap['gad7'] || 'N/A'}/10)
+- Trauma (PC-PTSD-5): ${diagnoses['pcptsd5'] || 'N/A'} (Score: ${scoreMap['pcptsd5'] || 'N/A'}/10)
+
+Recommendation:
+Consider a therapist specializing in your assessed needs based on the above results.
+
+Note: This is a preliminary assessment. A full evaluation will be conducted by your therapist.
+    `.trim();
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Mental_Health_Summary_${surveyData.patientSurveyId || 'Unknown'}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ textAlign: 'center', margin: '30px auto', maxWidth: '750px' }}>
+        <Typography variant="h5">Loading your summary...</Typography>
+      </Box>
+    );
   }
+
+  if (error || !surveyData) {
+    return (
+      <Box sx={{ textAlign: 'center', margin: '30px auto', maxWidth: '750px' }}>
+        <Typography variant="h5" color="error">
+          {error || 'No summary data available. Please complete the assessment first.'}
+        </Typography>
+        <Button
+          onClick={() => navigate(-1)}
+          sx={{ mt: 2, backgroundColor: '#3498db', color: 'white' }}
+        >
+          Go Back
+        </Button>
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -121,8 +223,10 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
                 borderRadius: '6px',
               }}
             >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Depression:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.depression}</Typography>
+              <Typography sx={{ fontWeight: 500, color: '#555' }}>Depression (PHQ-9):</Typography>
+              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                {diagnoses['phq9'] || 'N/A'} ({scoreMap['phq9'] || 'N/A'}/10)
+              </Typography>
             </Box>
 
             <Box
@@ -135,8 +239,10 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
                 borderRadius: '6px',
               }}
             >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Anxiety:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.anxiety}</Typography>
+              <Typography sx={{ fontWeight: 500, color: '#555' }}>Anxiety (GAD-7):</Typography>
+              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                {diagnoses['gad7'] || 'N/A'} ({scoreMap['gad7'] || 'N/A'}/10)
+              </Typography>
             </Box>
 
             <Box
@@ -149,66 +255,10 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
                 borderRadius: '6px',
               }}
             >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Trauma:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.trauma}</Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ marginBottom: '25px', borderBottom: '1px solid #eee', paddingBottom: '20px' }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: '22px',
-                fontWeight: 600,
-                marginBottom: '15px',
-                color: '#2c3e50',
-                borderLeft: '4px solid #3498db',
-                paddingLeft: '10px',
-              }}
-            >
-              Your Concerns
-            </Typography>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '12px',
-                padding: '8px 10px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '6px',
-              }}
-            >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Main Concern:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.concern}</Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '12px',
-                padding: '8px 10px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '6px',
-              }}
-            >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Interference Level:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.interference}</Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: '12px',
-                padding: '8px 10px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '6px',
-              }}
-            >
-              <Typography sx={{ fontWeight: 500, color: '#555' }}>Urgency:</Typography>
-              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>{formData?.urgency}</Typography>
+              <Typography sx={{ fontWeight: 500, color: '#555' }}>Trauma (PC-PTSD-5):</Typography>
+              <Typography sx={{ fontWeight: 600, color: '#2c3e50' }}>
+                {diagnoses['pcptsd5'] || 'N/A'} ({scoreMap['pcptsd5'] || 'N/A'}/10)
+              </Typography>
             </Box>
           </Box>
 
@@ -240,7 +290,10 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
                 color: '#2980b9',
               }}
             >
-              Consider a therapist specializing in depression and stress management.
+              Based on your results, consider a therapist specializing in{' '}
+              {Object.values(diagnoses)
+                .filter((d) => d !== 'No Depression' && d !== 'No Anxiety' && d !== 'PTSD Unlikely')
+                .join(' and ') || 'your assessed needs'}.
             </Typography>
           </Box>
         </Box>
@@ -256,7 +309,7 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
           }}
         >
           <Button
-          onClick={()=>{gotoConnector()}}
+            onClick={gotoConnector}
             sx={{
               background: 'linear-gradient(to right, #3498db, #2980b9)',
               color: 'white',
@@ -278,6 +331,7 @@ const SummaryPage: React.FC<SummaryPageProps> = ({ formData }) => {
           </Button>
 
           <Button
+            onClick={handleSaveSummary}
             sx={{
               backgroundColor: 'white',
               color: '#3498db',

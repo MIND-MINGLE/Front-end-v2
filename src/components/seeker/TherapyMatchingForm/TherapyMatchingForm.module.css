@@ -263,6 +263,7 @@
 .questionCount {
   color: #6c757d;
   font-size: 14px;
+  margin-left: 10px;
 }
 
 /* Animation cho progress bar */

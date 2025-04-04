@@ -29,54 +29,47 @@ export const Frame = () => {
     return (
         <Box className={styles.container}>
             <Box className={styles.contentWrapper}>
-                <Box width="100%" maxWidth="1200px">
-                    <Grid container spacing={4}>
-                        <Grid item xs={12} md={4} className={styles.buttonColumn}>
-                            <Link
-                                to="create-workspace"
-                                onClick={(e) => handleFeatureClick(e, 'Book a workspace')}
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <GradientButton className={styles.gradientButton}>
-                                    Book a workspace
-                                </GradientButton>
-                            </Link>
+                <Box className={styles.buttonColumn}>
+                    <Link
+                        to="create-workspace"
+                        onClick={(e) => handleFeatureClick(e, 'Book a workspace')}
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <GradientButton className={styles.gradientButton}>
+                            Book a workspace
+                        </GradientButton>
+                    </Link>
 
-                            <Link
-                                to="create-session"
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <GradientButton className={styles.gradientButton}>
-                                    Create a session
-                                </GradientButton>
-                            </Link>
+                    <Link
+                        to="create-session"
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <GradientButton className={styles.gradientButton}>
+                            Create a session
+                        </GradientButton>
+                    </Link>
 
-                            <Link
-                                to="create-workshop"
-                                onClick={(e) => handleFeatureClick(e, 'Create a workshop')}
-                                style={{ textDecoration: 'none' }}
-                            >
-                                <GradientButton className={styles.gradientButton}>
-                                    Create a workshop
-                                </GradientButton>
-                            </Link>
-                        </Grid>
+                    <Link
+                        to="create-workshop"
+                        onClick={(e) => handleFeatureClick(e, 'Create a workshop')}
+                        style={{ textDecoration: 'none' }}
+                    >
+                        <GradientButton className={styles.gradientButton}>
+                            Create a workshop
+                        </GradientButton>
+                    </Link>
+                </Box>
 
-                        <Grid item xs={12} md={8} display="flex" justifyContent="center">
-                            <Box className={styles.imageContainer}>
-                                <Link to="/ProfessorPage/ThankYouPage"
-                                    onClick={(e) => handleFeatureClick(e, 'Calendar')}>
-
-                                    <Box
-                                        component="img"
-                                        className={styles.calendarImage}
-                                        alt="Calendar"
-                                        src="/calendar.png"
-                                    />
-                                </Link>
-                            </Box>
-                        </Grid>
-                    </Grid>
+                <Box className={styles.imageContainer}>
+                    <Link to="/ProfessorPage/ThankYouPage"
+                        onClick={(e) => handleFeatureClick(e, 'Calendar')}>
+                        <Box
+                            component="img"
+                            className={styles.calendarImage}
+                            alt="Calendar"
+                            src="/calendar.png"
+                        />
+                    </Link>
                 </Box>
             </Box>
 

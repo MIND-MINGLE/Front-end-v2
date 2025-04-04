@@ -30,15 +30,19 @@ import {
     DialogActions,
     FormControl,
     InputLabel,
+    Chip,
 } from "@mui/material";
 import { useNavigate } from "react-router";
 import { Accountlogout } from "../../../services/logout";
 import { getAccountById, updateUserAvatar } from "../../../api/Account/Account";
 import { useState, useRef, useEffect } from "react";
 import LoadingScreen from "../../common/LoadingScreen";
-import { getTherapistById } from "../../../api/Therapist/Therapist";
+import { getTherapistById, updateTherapistProfile } from "../../../api/Therapist/Therapist";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../../services/firebase";
+import { AddSpecializationToTherapistId, DeleteSpecializationToTherapistId, getAllSpecialization, getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
+import { addCredential, getCredentialByTherapistId, updateCredential } from "../../../api/Credential/Credential";
+import { TherapistUpdate } from "../../../interface/IAccount";
 
 interface TherapistProfile {
     accountName: string;
@@ -66,6 +70,21 @@ interface Credential {
     isDisabled: number;
     createdAt: string;
     updatedAt: string;
+}
+
+// Thêm interface cho Specialization
+interface Specialization {
+    specializationId: string;
+    name: string;
+    description: string;
+    isDisabled: boolean;
+}
+
+// Thêm interface cho TherapistSpecialization
+interface TherapistSpecialization {
+    specializationId: string;
+    name: string;
+    description: string;
 }
 
 export const Frame = () => {
@@ -110,6 +129,14 @@ export const Frame = () => {
         description: ''
     });
     const [updating, setUpdating] = useState(false);
+    const [specializations, setSpecializations] = useState<Specialization[]>([]);
+    const [therapistSpecializations, setTherapistSpecializations] = useState<TherapistSpecialization[]>([]);
+    const [openSpecDialog, setOpenSpecDialog] = useState(false);
+    const [deleteConfirmDialog, setDeleteConfirmDialog] = useState({
+        open: false,
+        specializationId: '',
+        specializationName: ''
+    });
 
     const nav = useNavigate();
     const logout = () => {
@@ -126,13 +153,32 @@ export const Frame = () => {
     };
     const fetchCredentials = async (therapistId: string) => {
         try {
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${therapistId}`);
-            const data = await response.json();
-            if (data.isSuccess) {
-                setCredentials(data.result);
+            const response = await getCredentialByTherapistId(therapistId)
+            if (response.statusCode === 200) {
+                setCredentials(response.result);
             }
         } catch (error) {
             console.error("Error fetching credentials:", error);
+        }
+    };
+    const fetchSpecializations = async () => {
+        try {
+            const response = await getAllSpecialization()
+            if (response.statusCode === 200) {
+                setSpecializations(response.result.filter((spec: Specialization) => !spec.isDisabled));
+            }
+        } catch (error) {
+            console.error("Error fetching specializations:", error);
+        }
+    };
+    const fetchTherapistSpecializations = async (therapistId: string) => {
+        try {
+            const response = await getSpecializationByTherapistId(therapistId)
+            if (response.statusCode === 200 && Array.isArray(response.result.specializations)) {
+                setTherapistSpecializations(response.result.specializations);
+            }
+        } catch (error) {
+            console.error("Error fetching therapist specializations:", error);
         }
     };
     useEffect(() => {
@@ -187,6 +233,14 @@ export const Frame = () => {
                 // Fetch credentials sau khi có therapistId
                 if (therapistResponse?.result?.therapistId) {
                     await fetchCredentials(therapistResponse.result.therapistId);
+                }
+
+                // Fetch specializations
+                await fetchSpecializations();
+
+                // Fetch therapist specializations
+                if (therapistResponse?.result?.therapistId) {
+                    await fetchTherapistSpecializations(therapistResponse.result.therapistId);
                 }
 
             } catch (err) {
@@ -282,20 +336,8 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để thêm credential
-            const response = await fetch('https://mindmingle202.azurewebsites.net/api/Credential', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    therapistId: therapistInfo.therapistId,
-                    imageUrl: imageUrl
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await addCredential(therapistInfo.therapistId,imageUrl)
+            if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
                 setSnackbar({
@@ -304,7 +346,7 @@ export const Frame = () => {
                     severity: 'success'
                 });
             } else {
-                throw new Error(data.errorMessage || 'Failed to upload certificate');
+                throw new Error(response.errorMessage || 'Failed to upload certificate');
             }
         } catch (err) {
             console.error('Error uploading credential:', err);
@@ -331,19 +373,8 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để cập nhật credential
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Credential/${credentialId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    imageUrl: imageUrl
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await updateCredential(credentialId,imageUrl)
+            if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
                 setSnackbar({
@@ -352,7 +383,7 @@ export const Frame = () => {
                     severity: 'success'
                 });
             } else {
-                throw new Error(data.errorMessage || 'Failed to update certificate');
+                throw new Error(response.errorMessage || 'Failed to update certificate');
             }
         } catch (err) {
             console.error('Error updating credential:', err);
@@ -387,29 +418,20 @@ export const Frame = () => {
             [field]: event.target.value
         }));
     };
-
+    const therapistUpdate:TherapistUpdate = {
+        id: therapistInfo.therapistId,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        dob: editForm.dob,
+        gender: editForm.gender,
+        phoneNumber: therapistInfo.phoneNumber,
+        description: editForm.description
+    }
     const handleUpdateProfile = async () => {
         try {
             setUpdating(true);
-            const response = await fetch(`https://mindmingle202.azurewebsites.net/api/Therapist/update`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    id: therapistInfo.therapistId,
-                    firstName: editForm.firstName,
-                    lastName: editForm.lastName,
-                    dob: editForm.dob,
-                    gender: editForm.gender,
-                    phoneNumber: therapistInfo.phoneNumber,
-                    description: editForm.description
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.isSuccess) {
+            const response = await updateTherapistProfile(therapistUpdate);
+            if (response.statusCode === 200) {
                 setTherapistInfo(prev => ({
                     ...prev,
                     firstName: editForm.firstName,
@@ -426,7 +448,7 @@ export const Frame = () => {
                 });
                 handleCloseEditDialog();
             } else {
-                throw new Error(data.errorMessage || 'Failed to update profile');
+                throw new Error(response.errorMessage || 'Failed to update profile');
             }
         } catch (error) {
             setSnackbar({
@@ -436,6 +458,84 @@ export const Frame = () => {
             });
         } finally {
             setUpdating(false);
+        }
+    };
+
+    // Thêm hàm chuyển đổi định dạng ngày
+    const formatDateForInput = (dateStr: string) => {
+        if (!dateStr) return '';
+        try {
+            const [day, month, year] = dateStr.split('/');
+            if (!day || !month || !year) return '';
+            return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return '';
+        }
+    };
+
+    // Thêm hàm xử lý khi chọn/bỏ chọn specialization
+    const handleSpecializationToggle = async (specializationId: string) => {
+        try {
+            const response = await AddSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
+            if (response.statusCode === 200) {
+                // Refresh lại danh sách specializations của therapist
+                await fetchTherapistSpecializations(therapistInfo.therapistId);
+
+                setSnackbar({
+                    open: true,
+                    message: 'Specialization added successfully!',
+                    severity: 'success'
+                });
+            } else {
+                throw new Error(response.errorMessage || 'Failed to add specialization');
+            }
+        } catch (error) {
+            setSnackbar({
+                open: true,
+                message: error instanceof Error ? error.message : 'Failed to add specialization',
+                severity: 'error'
+            });
+        }
+    };
+
+    const handleOpenSpecDialog = () => setOpenSpecDialog(true);
+    const handleCloseSpecDialog = () => setOpenSpecDialog(false);
+
+    const handleDeleteSpecialization = async (specializationId: string, specializationName: string) => {
+        try {
+            const response = await DeleteSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
+
+            const data = await response.json();
+
+            if (data.isSuccess) {
+                // Cập nhật state trực tiếp trước khi gọi API fetch
+                setTherapistSpecializations(prev =>
+                    prev.filter(spec => spec.specializationId !== specializationId)
+                );
+
+                // Vẫn giữ fetch để đồng bộ với server
+                await fetchTherapistSpecializations(therapistInfo.therapistId);
+
+                setSnackbar({
+                    open: true,
+                    message: `Removed ${specializationName} successfully!`,
+                    severity: 'success'
+                });
+            } else {
+                throw new Error(data.errorMessage || 'Failed to remove specialization');
+            }
+        } catch (error) {
+            setSnackbar({
+                open: true,
+                message: error instanceof Error ? error.message : 'Failed to remove specialization',
+                severity: 'error'
+            });
+
+            // Trong trường hợp lỗi, fetch lại data để đảm bảo đồng bộ
+            await fetchTherapistSpecializations(therapistInfo.therapistId);
+        } finally {
+            setDeleteConfirmDialog(prev => ({ ...prev, open: false }));
         }
     };
 
@@ -451,12 +551,6 @@ export const Frame = () => {
             </Box>
         );
     }
-    // Thêm hàm chuyển đổi định dạng ngày
-    const formatDateForInput = (dateStr: string) => {
-        if (!dateStr) return '';
-        const [day, month, year] = dateStr.split('/');
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    };
     return (
         <Box
             display="flex"
@@ -778,6 +872,109 @@ export const Frame = () => {
                                 </Grid>
 
                                 <Grid item xs={12}>
+                                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                                        <Typography variant="body1" color="textSecondary" fontWeight="medium">
+                                            Your Specializations
+                                        </Typography>
+                                        {therapistSpecializations.length > 0 && (
+                                            <Button
+                                                startIcon={<AddCircle />}
+                                                onClick={handleOpenSpecDialog}
+                                                variant="outlined"
+                                                color="primary"
+                                                size="small"
+                                                sx={{
+                                                    borderRadius: 2,
+                                                    textTransform: 'none',
+                                                    '&:hover': {
+                                                        backgroundColor: 'rgba(2, 127, 193, 0.04)'
+                                                    }
+                                                }}
+                                            >
+                                                Add More Specialization
+                                            </Button>
+                                        )}
+                                    </Box>
+                                    <Box display="flex" gap={1} flexWrap="wrap">
+                                        {therapistSpecializations.map((spec) => (
+                                            <Chip
+                                                key={spec.specializationId}
+                                                label={spec.name}
+                                                onDelete={() => setDeleteConfirmDialog({
+                                                    open: true,
+                                                    specializationId: spec.specializationId,
+                                                    specializationName: spec.name
+                                                })}
+                                                sx={{
+                                                    bgcolor: 'rgba(2, 127, 193, 0.12)',
+                                                    color: '#027FC1',
+                                                    borderRadius: 2,
+                                                    '& .MuiChip-deleteIcon': {
+                                                        color: '#027FC1',
+                                                        '&:hover': {
+                                                            color: '#d32f2f'
+                                                        }
+                                                    }
+                                                }}
+                                                title={spec.description}
+                                            />
+                                        ))}
+                                        {therapistSpecializations.length === 0 && (
+                                            <Box
+                                                display="flex"
+                                                flexDirection="column"
+                                                alignItems="center"
+                                                justifyContent="center"
+                                                width="100%"
+                                                py={3}
+                                                sx={{
+                                                    border: '1px dashed rgba(2, 127, 193, 0.3)',
+                                                    borderRadius: 2,
+                                                    bgcolor: 'rgba(2, 127, 193, 0.02)'
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant="body1"
+                                                    color="text.secondary"
+                                                    textAlign="center"
+                                                    sx={{
+                                                        fontStyle: 'italic',
+                                                        mb: 1
+                                                    }}
+                                                >
+                                                    You have no specialization yet
+                                                </Typography>
+                                                <Typography
+                                                    variant="caption"
+                                                    color="text.secondary"
+                                                    textAlign="center"
+                                                >
+                                                    Please add specialization to help customers understand your expertise
+                                                </Typography>
+                                                <Button
+                                                    startIcon={<AddCircle />}
+                                                    onClick={handleOpenSpecDialog}
+                                                    variant="contained"
+                                                    color="primary"
+                                                    size="medium"
+                                                    sx={{
+                                                        mt: 2,
+                                                        borderRadius: 2,
+                                                        textTransform: 'none',
+                                                        bgcolor: '#027FC1',
+                                                        '&:hover': {
+                                                            bgcolor: '#0266A2'
+                                                        }
+                                                    }}
+                                                >
+                                                    Add Your First Specialization
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                </Grid>
+
+                                <Grid item xs={12}>
                                     <Typography variant="body1" color="textSecondary" fontWeight="medium" mb={2}>
                                         Certificates
                                     </Typography>
@@ -1026,7 +1223,7 @@ export const Frame = () => {
                                 <InputLabel>Gender</InputLabel>
                                 <Select
                                     value={editForm.gender}
-                                    onChange={handleFormChange('gender')}
+                                    onChange={()=>handleFormChange('gender')}
                                     label="Gender"
                                 >
                                     <MenuItem value="Male">Male</MenuItem>
@@ -1078,6 +1275,137 @@ export const Frame = () => {
                         }}
                     >
                         {updating ? 'Updating...' : 'Save Changes'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={openSpecDialog}
+                onClose={handleCloseSpecDialog}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                        padding: 2
+                    }
+                }}
+            >
+                <DialogTitle sx={{ pb: 1 }}>
+                    Add Specialization
+                </DialogTitle>
+                <DialogContent>
+                    <Box display="flex" gap={1} flexWrap="wrap" mt={2}>
+                        {specializations
+                            .filter(spec => !therapistSpecializations.some(
+                                therapistSpec => therapistSpec.specializationId === spec.specializationId
+                            )).length === 0 ? (
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                justifyContent="center"
+                                width="100%"
+                                py={4}
+                                gap={2}
+                            >
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                    textAlign="center"
+                                    sx={{ fontStyle: 'italic' }}
+                                >
+                                    "Maybe you have selected all, you are really good, try to be more confident"
+                                </Typography>
+                            </Box>
+                        ) : (
+                            specializations
+                                .filter(spec => !therapistSpecializations.some(
+                                    therapistSpec => therapistSpec.specializationId === spec.specializationId
+                                ))
+                                .map((spec) => (
+                                    <Chip
+                                        key={spec.specializationId}
+                                        label={spec.name}
+                                        onClick={() => {
+                                            handleSpecializationToggle(spec.specializationId);
+                                            handleCloseSpecDialog();
+                                        }}
+                                        sx={{
+                                            bgcolor: 'rgba(0, 0, 0, 0.08)',
+                                            color: 'text.secondary',
+                                            '&:hover': {
+                                                bgcolor: 'rgba(2, 127, 193, 0.08)',
+                                                color: '#027FC1',
+                                            },
+                                            borderRadius: 2,
+                                            cursor: 'pointer'
+                                        }}
+                                        title={spec.description}
+                                    />
+                                ))
+                        )}
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 3 }}>
+                    <Button
+                        onClick={handleCloseSpecDialog}
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            minWidth: 100
+                        }}
+                    >
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={deleteConfirmDialog.open}
+                onClose={() => setDeleteConfirmDialog(prev => ({ ...prev, open: false }))}
+                maxWidth="xs"
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        borderRadius: 3,
+                        padding: 2
+                    }
+                }}
+            >
+                <DialogTitle sx={{ pb: 1 }}>
+                    Confirm Remove Specialization
+                </DialogTitle>
+                <DialogContent>
+                    <Typography variant="body1" color="text.secondary">
+                        Are you sure you want to remove "{deleteConfirmDialog.specializationName}" from your specializations?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 3 }}>
+                    <Button
+                        onClick={() => setDeleteConfirmDialog(prev => ({ ...prev, open: false }))}
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            minWidth: 100
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={() => handleDeleteSpecialization(
+                            deleteConfirmDialog.specializationId,
+                            deleteConfirmDialog.specializationName
+                        )}
+                        variant="contained"
+                        color="error"
+                        sx={{
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            minWidth: 100
+                        }}
+                    >
+                        Remove
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -202,5 +202,41 @@ interface Question {
   createdAt: string;
   answers: Answer[];
 }
+interface TherapistUpdate {
+  id: string
+  firstName:string
+  lastName: string
+  dob: string
+  gender:string
+  phoneNumber: string
+  description: string
+}
+interface PatientSurveyRequest {
+patientId: string,
+summary: string,
+createdAt: Date
+}
+interface PatientSurveyResponse {
+  patientSurveyId : string
+  patientId: string,
+  summary: string,
+  createdAt: Date,
+  patientResponses :PatientResResponse[]
+  }
+interface PatientResponseRequest{
+patientSurveyId:string
+questionId: string
+answerId: string
+customAnswer: string | null
+}
+interface PatientResResponse{
+  responseId:string
+  surveyId :string
+  questionId :string
+  answerId :string
+  customAnswer :string
+  score : number
+  }
 
-export type {Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+
+export type {PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
