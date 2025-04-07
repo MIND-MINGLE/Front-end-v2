@@ -112,6 +112,8 @@ interface Appointment {
   patient: Patient | null,
   therapist: Therapist | null
   chatgroupId:string;
+  ratings: Rating | null
+  emergencyEnd: EmergencyEndRequest | null
 }
 
 interface requestGroupChat {
@@ -245,6 +247,21 @@ interface PatientResResponse{
   customAnswer :string
   score : number
   }
+interface RatingRequest{
+  patientId: string,
+  appointmentId: string,
+  comment: string,
+  score: number|1|2|3|4|5,
+}
+interface Rating{
+  ratingId: string,
+  patientId: string,
+  appointmentId: string,
+  comment: string,
+  score: number,
+  createdAt: Date
+  updatedAt: Date
+}
 
 
-export type {AppointmentRequestOffline,PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {Rating,RatingRequest,AppointmentRequestOffline,PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

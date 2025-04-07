@@ -228,7 +228,6 @@ const BookingAppointment: React.FC = () => {
                   totalFee: totalFee,
                   platformFee: platformFee,
                   coWorkingSpaceId:"" //TODO: Replace when impliment,
-                  
                 }
               }
               //After we got a group, set an appoitnment for that chatgroup
