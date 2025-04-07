@@ -266,8 +266,15 @@ const SessionCreator: React.FC = () => {
             >
               {day && <span>{day.getUTCDate()}</span>}
               {day &&
-                sessions
-                  .filter((s) => new Date(s.startTime).getUTCDate() === day.getUTCDate())
+                 sessions
+                 .filter((s) => {
+                   const sessionDate = new Date(s.startTime);
+                   return (
+                     sessionDate.getUTCDate() === day.getUTCDate() &&
+                     sessionDate.getUTCMonth() === day.getUTCMonth() &&
+                     sessionDate.getUTCFullYear() === day.getUTCFullYear()
+                   );
+                 })
                   .map((s, idx) => (
                     <div
                       key={idx}
