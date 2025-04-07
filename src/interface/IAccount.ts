@@ -77,13 +77,21 @@ interface Sessison {
 }
 
 // Interface for the appointment schema
-interface AppointmentRequest {
+interface AppointmentRequestOnline {
   patientId: string;
   therapistId: string;
-  coWorkingSpaceId: string | null;
   sessionId: string;
-  emergencyEndId: string | null;
-  chatgroupId:string;
+  groupChatId:string;
+  appointmentType: 'OFFLINE' | 'ONLINE';
+  totalFee: number;
+  platformFee: number;
+}
+interface AppointmentRequestOffline {
+  patientId: string;
+  therapistId: string;
+  coWorkingSpaceId: string;
+  sessionId: string;
+  groupChatId:string;
   appointmentType: 'OFFLINE' | 'ONLINE';
   totalFee: number;
   platformFee: number;
@@ -239,4 +247,4 @@ interface PatientResResponse{
   }
 
 
-export type {PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequest, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type {AppointmentRequestOffline,PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

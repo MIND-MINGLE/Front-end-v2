@@ -19,7 +19,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPatientByAccountId } from '../../../api/Account/Seeker';
 import { getTherapistByTherapistId } from '../../../api/Therapist/Therapist';
-import { Appointment, AppointmentRequest, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
+import { Appointment, AppointmentRequestOffline, AppointmentRequestOnline, Patient, Therapist, userInGroup } from '../../../interface/IAccount';
 import { formatVnd } from '../../../services/common';
 import { getAppointmentByTherapistId, RegisterAppointment } from '../../../api/Appointment/appointment';
 import { addUserInGroup, createGroupChat } from '../../../api/ChatGroup/ChatGroupAPI';
@@ -44,7 +44,7 @@ const BookingAppointment: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [appointmentList, setAppointmentList] = useState<Appointment[]>([]); // Initialized as empty array
-  const [appointmentType, setAppointmentType] = useState<'OFFLINE' | 'ONLINE'>('OFFLINE');
+  const [appointmentType, setAppointmentType] = useState<'OFFLINE' | 'ONLINE'>('ONLINE');
   const nav = useNavigate();
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -206,18 +206,33 @@ const BookingAppointment: React.FC = () => {
             };
             const responseUser = await addUserInGroup(userInGroupData);
             if (responseUser.statusCode === 200) {
+              var appointment:AppointmentRequestOnline|AppointmentRequestOffline
+              if(appointmentType==="ONLINE"){
+                  appointment = {
+                  patientId: patient.patientId,
+                  therapistId: therapist.therapistId,
+                  sessionId: selectedSession.sessionId,
+                  appointmentType: appointmentType,
+                  groupChatId:userInGroupData.chatGroupId,
+                  totalFee: totalFee,
+                  platformFee: platformFee,
+                };
+              }
+              else{
+                appointment = {
+                  patientId: patient.patientId,
+                  therapistId: therapist.therapistId,
+                  sessionId: selectedSession.sessionId,
+                  appointmentType: appointmentType,
+                  groupChatId:userInGroupData.chatGroupId,
+                  totalFee: totalFee,
+                  platformFee: platformFee,
+                  coWorkingSpaceId:"" //TODO: Replace when impliment,
+                  
+                }
+              }
               //After we got a group, set an appoitnment for that chatgroup
-              const appointment: AppointmentRequest = {
-                patientId: patient.patientId,
-                therapistId: therapist.therapistId,
-                coWorkingSpaceId: null,
-                sessionId: selectedSession.sessionId,
-                emergencyEndId: null,
-                appointmentType: appointmentType,
-                chatgroupId:responseGroupchat.result.chatGroupId,
-                totalFee: totalFee,
-                platformFee: platformFee,
-              };
+              console.log("Appointment Request:",appointment);
               const response = await RegisterAppointment(appointment);
               if (response.statusCode === 200) {
               alert('Appointment booked successfully!');
@@ -369,8 +384,8 @@ const BookingAppointment: React.FC = () => {
                 label="Appointment Type"
                 onChange={(e) => setAppointmentType(e.target.value as 'OFFLINE' | 'ONLINE')}
               >
-                <MenuItem value="OFFLINE">Offline</MenuItem>
                 <MenuItem value="ONLINE">Online</MenuItem>
+                <MenuItem value="OFFLINE">Offline</MenuItem>
               </Select>
             </FormControl>
           </DialogContent>
