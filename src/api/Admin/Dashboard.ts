@@ -22,10 +22,10 @@ export const AdminSomthing = async (data: SeekerCreateProps) => {
 
 }
 
-export const getDashboardStats = async (timeRange:string) => {
+export const getDashboardStats = async (timeRange: string) => {
     const props = {
         data: null,
-        url: dashboardUrl + "/stats?timeRange="+timeRange,
+        url: dashboardUrl + "/stats?timeRange=" + timeRange,
         headers: headers
     }
     const result = await axiosRead(props)
