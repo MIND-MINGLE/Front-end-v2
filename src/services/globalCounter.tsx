@@ -21,6 +21,7 @@ export default function GlobalCounter() {
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [isDisablingApp, setIsDisablingApp] = useState(false);
   const [isDisablingSub, setIsDisablingSub] = useState(false);
+
   const navigate = useNavigate();
 
   // Fetch patient data (runs once to set patient)
@@ -102,7 +103,9 @@ export default function GlobalCounter() {
     const updateCountdown = () => {
       const endTime = new Date(currentApp.session.endTime).getTime();
       const now = new Date().getTime();
+
       const timeRemaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
       if (timeRemaining <= 0 && currentApp) {
         setAppDialogOpen(true);
       }
@@ -112,6 +115,7 @@ export default function GlobalCounter() {
     const timerInterval = setInterval(updateCountdown, 30000); // Recheck every 30s
     return () => clearInterval(timerInterval);
   }, [currentApp]);
+
 
   // Subscription countdown
   useEffect(() => {
@@ -129,7 +133,6 @@ export default function GlobalCounter() {
     const timerInterval = setInterval(updateCountdown, 30000); // Recheck every 30s
     return () => clearInterval(timerInterval);
   }, [currentSub]);
-
   // Handle disabling the appointment
   const handleDisableAppointment = async () => {
     console.log("get app", currentApp)
