@@ -6,6 +6,7 @@ import {
     Google,
     Logout,
     Phone,
+    Star,
 } from "@mui/icons-material";
 import {
     Avatar,
@@ -38,11 +39,12 @@ import { getAccountById, updateUserAvatar } from "../../../api/Account/Account";
 import { useState, useRef, useEffect } from "react";
 import LoadingScreen from "../../common/LoadingScreen";
 import { getTherapistById, updateTherapistProfile } from "../../../api/Therapist/Therapist";
+import { getAverageRatingByTherapistId } from "../../../api/Rating/RatingAPI";
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from "../../../services/firebase";
 import { AddSpecializationToTherapistId, DeleteSpecializationToTherapistId, getAllSpecialization, getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
 import { addCredential, getCredentialByTherapistId, updateCredential } from "../../../api/Credential/Credential";
-import { TherapistUpdate } from "../../../interface/IAccount";
+import { TherapistUpdate, AverageRating } from "../../../interface/IAccount";
 
 interface TherapistProfile {
     accountName: string;
@@ -137,6 +139,10 @@ export const Frame = () => {
         specializationId: '',
         specializationName: ''
     });
+    const [averageRating, setAverageRating] = useState<AverageRating>({
+        averageStar: 0,
+        totalRatings: 0
+    });
 
     const nav = useNavigate();
     const logout = () => {
@@ -161,6 +167,12 @@ export const Frame = () => {
             console.error("Error fetching credentials:", error);
         }
     };
+    const fetchAverageRating = async (therapistId: string) => {
+        const response = await getAverageRatingByTherapistId(therapistId)
+        if (response.statusCode === 200) {
+            setAverageRating(response.result);
+        }
+    }
     const fetchSpecializations = async () => {
         try {
             const response = await getAllSpecialization()
@@ -234,7 +246,9 @@ export const Frame = () => {
                 if (therapistResponse?.result?.therapistId) {
                     await fetchCredentials(therapistResponse.result.therapistId);
                 }
-
+                if (therapistResponse?.result?.therapistId) {
+                    await fetchAverageRating(therapistResponse.result.therapistId);
+                }
                 // Fetch specializations
                 await fetchSpecializations();
 
@@ -336,7 +350,7 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để thêm credential
-            const response = await addCredential(therapistInfo.therapistId,imageUrl)
+            const response = await addCredential(therapistInfo.therapistId, imageUrl)
             if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
@@ -373,7 +387,7 @@ export const Frame = () => {
             const imageUrl = await uploadCredentialImage(file);
 
             // Gọi API để cập nhật credential
-            const response = await updateCredential(credentialId,imageUrl)
+            const response = await updateCredential(credentialId, imageUrl)
             if (response.statusCode === 200) {
                 // Refresh danh sách credentials
                 await fetchCredentials(therapistInfo.therapistId);
@@ -396,7 +410,6 @@ export const Frame = () => {
             setEditingCredentialId(null);
         }
     };
-
     const handleOpenEditDialog = () => {
         setEditForm({
             firstName: therapistInfo.firstName,
@@ -418,7 +431,7 @@ export const Frame = () => {
             [field]: event.target.value
         }));
     };
-    const therapistUpdate:TherapistUpdate = {
+    const therapistUpdate: TherapistUpdate = {
         id: therapistInfo.therapistId,
         firstName: editForm.firstName,
         lastName: editForm.lastName,
@@ -477,7 +490,7 @@ export const Frame = () => {
     // Thêm hàm xử lý khi chọn/bỏ chọn specialization
     const handleSpecializationToggle = async (specializationId: string) => {
         try {
-            const response = await AddSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
+            const response = await AddSpecializationToTherapistId(therapistInfo.therapistId, specializationId)
             if (response.statusCode === 200) {
                 // Refresh lại danh sách specializations của therapist
                 await fetchTherapistSpecializations(therapistInfo.therapistId);
@@ -504,7 +517,7 @@ export const Frame = () => {
 
     const handleDeleteSpecialization = async (specializationId: string, specializationName: string) => {
         try {
-            const response = await DeleteSpecializationToTherapistId(therapistInfo.therapistId,specializationId)
+            const response = await DeleteSpecializationToTherapistId(therapistInfo.therapistId, specializationId)
 
             const data = await response.json();
 
@@ -654,13 +667,13 @@ export const Frame = () => {
                                     }}
                                 >
                                     <Box textAlign="center">
-                                        <Typography variant="h6" color="primary">3</Typography>
-                                        <Typography variant="body2" color="text.secondary">Years</Typography>
+                                        <Typography variant="h6" color="primary">{averageRating.averageStar}</Typography>
+                                        <Star sx={{ color: "#FFD700" }} />
                                     </Box>
                                     <Divider orientation="vertical" flexItem />
                                     <Box textAlign="center">
-                                        <Typography variant="h6" color="primary">20</Typography>
-                                        <Typography variant="body2" color="text.secondary">Reviews</Typography>
+                                        <Typography variant="h6" color="primary">{averageRating.totalRatings}</Typography>
+                                        <Typography variant="body1" color="text.secondary">Reviews</Typography>
                                     </Box>
                                 </Box>
                             </Box>
@@ -682,9 +695,9 @@ export const Frame = () => {
                                     <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
                                         {profile.email}
                                     </Typography>
-                                    <IconButton size="small" sx={{ color: 'error.main' }}>
+                                    {/* <IconButton size="small" sx={{ color: 'error.main' }}>
                                         <Delete fontSize="small" />
-                                    </IconButton>
+                                    </IconButton> */}
                                 </Box>
 
                                 <Box
@@ -701,9 +714,9 @@ export const Frame = () => {
                                     <Typography variant="body2" color="text.secondary" ml={2} flexGrow={1}>
                                         {therapistInfo.phoneNumber || 'Chưa cập nhật số điện thoại'}
                                     </Typography>
-                                    <IconButton size="small" sx={{ color: 'error.main' }}>
+                                    {/* <IconButton size="small" sx={{ color: 'error.main' }}>
                                         <Delete fontSize="small" />
-                                    </IconButton>
+                                    </IconButton> */}
                                 </Box>
 
                                 <Divider sx={{ borderColor: "#E3F2FD" }} />
@@ -1223,7 +1236,7 @@ export const Frame = () => {
                                 <InputLabel>Gender</InputLabel>
                                 <Select
                                     value={editForm.gender}
-                                    onChange={()=>handleFormChange('gender')}
+                                    onChange={() => handleFormChange('gender')}
                                     label="Gender"
                                 >
                                     <MenuItem value="Male">Male</MenuItem>
