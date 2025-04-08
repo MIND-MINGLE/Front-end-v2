@@ -41,14 +41,14 @@ export const getAllRating = async () => {
 export const getRatingByPatientId = async (patientId: string) => {
     const props = {
         data: null,
-        url: url+"/patient/"+patientId,
+        url: url + "/patient/" + patientId,
         headers: headers
     };
 
     const result = await axiosRead(props);
 
     if (result.success) {
-      
+
         return result.data;
     } else {
         console.error("Rating error messages:", result.error);
@@ -58,7 +58,7 @@ export const getRatingByPatientId = async (patientId: string) => {
 export const getRatingByTherapistId = async (therapistId: string) => {
     const props = {
         data: null,
-        url: url+"/therapist/"+therapistId,
+        url: url + "/therapist/" + therapistId,
         headers: headers
     };
 
@@ -72,10 +72,26 @@ export const getRatingByTherapistId = async (therapistId: string) => {
         return result.error;
     }
 };
+export const getAverageRatingByTherapistId = async (therapistId: string) => {
+    const props = {
+        data: null,
+        url: url + "/therapist/" + therapistId + "/average",
+        headers: headers
+    };
+
+    const result = await axiosRead(props);
+
+    if (result.success) {
+        return result.data;
+    } else {
+        console.error("Rating error messages:", result.error);
+        return result.error;
+    }
+}
 export const getRatingByAppointmentId = async (appId: string) => {
     const props = {
         data: null,
-        url: url+"/appointment/"+appId,
+        url: url + "/appointment/" + appId,
         headers: headers
     };
 
