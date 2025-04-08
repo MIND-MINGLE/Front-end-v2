@@ -34,7 +34,7 @@ interface TherapistCreateProps {
   dob: string; // Formatted as "dd/MM/yyyy" from backend
   gender: string;
   pricePerHour: number;
-  description:string
+  description: string
 }
 
 // Define the Therapist type based on your schema
@@ -81,7 +81,7 @@ interface AppointmentRequestOnline {
   patientId: string;
   therapistId: string;
   sessionId: string;
-  groupChatId:string;
+  groupChatId: string;
   appointmentType: 'OFFLINE' | 'ONLINE';
   totalFee: number;
   platformFee: number;
@@ -91,7 +91,7 @@ interface AppointmentRequestOffline {
   therapistId: string;
   coWorkingSpaceId: string;
   sessionId: string;
-  groupChatId:string;
+  groupChatId: string;
   appointmentType: 'OFFLINE' | 'ONLINE';
   totalFee: number;
   platformFee: number;
@@ -104,14 +104,14 @@ interface Appointment {
   sessionId: string;
   emergencyEndId: string | null;
   appointmentType: "ONLINE" | "OFFLINE"; // Assuming possible values based on context
-  status: "PENDING" | "APPROVED" |"ENDED"| "DECLINED" | "CANCELED";
+  status: "PENDING" | "APPROVED" | "ENDED" | "DECLINED" | "CANCELED";
   totalFee: number;
   platformFee: number;
   createdAt: string; // ISO 8601 date string;
   session: Sessison
   patient: Patient | null,
   therapist: Therapist | null
-  chatgroupId:string;
+  chatgroupId: string;
   ratings: Rating | null
   emergencyEnd: EmergencyEndRequest | null
 }
@@ -182,7 +182,7 @@ interface PurchasedPackaged {
   subscription: Subscription,
   startDate: string,
   endDate: string,
-  isDisabled:boolean
+  isDisabled: boolean
 }
 
 interface Credential {
@@ -197,7 +197,7 @@ interface CreatePurchaseRequest {
 interface Answer {
   answerId: string;
   answerContent: string;
-  score:number
+  score: number
 }
 interface Category {
   categoryId: string;
@@ -214,55 +214,59 @@ interface Question {
 }
 interface TherapistUpdate {
   id: string
-  firstName:string
+  firstName: string
   lastName: string
   dob: string
-  gender:string
+  gender: string
   phoneNumber: string
   description: string
 }
 interface PatientSurveyRequest {
-patientId: string,
-summary: string,
-createdAt: Date
+  patientId: string,
+  summary: string,
+  createdAt: Date
 }
 interface PatientSurveyResponse {
-  patientSurveyId : string
+  patientSurveyId: string
   patientId: string,
   summary: string,
   createdAt: Date,
-  patientResponses :PatientResResponse[]
-  }
-interface PatientResponseRequest{
-patientSurveyId:string
-questionId: string
-answerId: string
-customAnswer: string | null
+  patientResponses: PatientResResponse[]
 }
-interface PatientResResponse{
-  responseId:string
-  surveyId :string
-  questionId :string
-  answerId :string
-  customAnswer :string
-  score : number
-  }
-interface RatingRequest{
+interface PatientResponseRequest {
+  patientSurveyId: string
+  questionId: string
+  answerId: string
+  customAnswer: string | null
+}
+interface PatientResResponse {
+  responseId: string
+  surveyId: string
+  questionId: string
+  answerId: string
+  customAnswer: string
+  score: number
+}
+interface RatingRequest {
   patientId: string,
   appointmentId: string,
   comment: string,
-  score: number|1|2|3|4|5,
+  score: number | 1 | 2 | 3 | 4 | 5,
 }
-interface Rating{
+interface Rating {
   ratingId: string,
   patientId: string,
-  therapistId:string,
+  therapistId: string,
   appointmentId: string,
   comment: string,
   score: number,
   createdAt: Date
   updatedAt: Date
 }
+interface AverageRating {
+  averageStar: number,
+  totalRatings: number
+}
 
 
-export type {Rating,RatingRequest,AppointmentRequestOffline,PatientResResponse,PatientSurveyResponse,PatientResponseRequest,PatientSurveyRequest,TherapistUpdate,Question,Answer,Category,CreatePurchaseRequest,PaymentRequest,TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type { AverageRating, Rating, RatingRequest, AppointmentRequestOffline, PatientResResponse, PatientSurveyResponse, PatientResponseRequest, PatientSurveyRequest, TherapistUpdate, Question, Answer, Category, CreatePurchaseRequest, PaymentRequest, TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
