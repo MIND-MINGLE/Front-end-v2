@@ -60,7 +60,7 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
   };
 
   return (
-    <Box padding={0} width="100%" height="100vh" bgcolor="#D0E8FF" color="white">
+    <Box padding={0} width="100%" height="95vh" color="white">
       {/* Header */}
       <Box
         sx={{
@@ -71,7 +71,6 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
           alignItems: "center",
           justifyContent: "space-between",
           padding: "5px",
-          paddingTop: "16px",
           paddingBottom: "16px",
         }}
       >
@@ -86,13 +85,12 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
       <Box
         sx={{
           padding: "5px",
-          width: "100%",
-          backgroundColor: "none",
+          height: "90vh", // Adjust height to fit under the header
+          width: "auto",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
-          justifyContent: "center",
-          alignContent: "center",
+          overflowY: "auto",
         }}
       >
         {Array.isArray(profiles) && profiles.length > 0 ? (

@@ -32,19 +32,18 @@ const TherapyChatPage: React.FC = () => {
       <Box
         display="flex"
         flexDirection={{ md: "row" }}
-        height="100vh" // Đặt chiều cao toàn màn hình
-        overflow="hidden" // Xóa khoảng trắng và cuộn không cần thiết
+        height="98vh" // Đặt chiều cao toàn màn hình
+        
       >
         {/* Sidebar */}
         <Box
           minWidth={{ xs: 150, md: 250 }}
           width={{ xs: "5vw", md: "vw" }}
-          marginLeft={{ sx: 0, md: isSeeker?"70px":0 }}
+          marginLeft={{ sx: 0, md: isSeeker?"50px":0 }}
           paddingLeft={{ sx: 0, md: isSeeker?5:0 }}
-          bgcolor="#f5f5f5" // Màu nền sidebar
           display="flex"
           flexDirection="column"
-          justifyContent="center"
+          bgcolor="#D0E8FF"
         >
           <ChatProfileList setIsLoading={setIsLoading} isSeeker={isSeeker} setCurrentChat={setCurrentChat} />
         </Box>

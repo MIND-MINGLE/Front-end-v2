@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } fro
 import { signalRBaseURL } from "../Url";
 // Local Server, change to REAL server later
 //const hub_local_URL = 'http://localhost:5000/chathub'
-const hub_URL = signalRBaseURL+"/chathub"
+const hub_URL = signalRBaseURL
 
 
 let connection: HubConnection | null = null;

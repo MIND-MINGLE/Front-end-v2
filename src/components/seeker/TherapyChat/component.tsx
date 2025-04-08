@@ -292,27 +292,35 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
 
   const handlePremiumFeature = (extraComponent: "video" | "call" | "music" | string, format: "video" | "call" | null) => {
     const currentPackage = sessionStorage.getItem('package'); 
-    if (currentPackage) {
-      const subscription: Subscription = JSON.parse(currentPackage);
-      if (subscription.packageName === "MindMingle Premium") {
-        setFormat(format);
-        setShowExtraComponent(extraComponent);
-        shrinkPage();
-      } else if (subscription.packageName === "MindMingle Plus") {
-        if (format === "video" || extraComponent === "video") {
-          handleOpenPopup();
-          setFormat(format);
-        } else {
+    const currentRoleData = localStorage.getItem('role');
+    const currentRole = currentRoleData ? currentRoleData : null;
+    if(currentRole === "doc"){
+      setFormat(format);
+      setShowExtraComponent(extraComponent);
+      shrinkPage();
+    }
+    else{
+      if (currentPackage) {
+        const subscription: Subscription = JSON.parse(currentPackage);
+        if (subscription.packageName === "MindMingle Premium") {
           setFormat(format);
           setShowExtraComponent(extraComponent);
           shrinkPage();
+        } else if (subscription.packageName === "MindMingle Plus") {
+          if (format === "video" || extraComponent === "video") {
+            handleOpenPopup();
+            setFormat(format);
+          } else {
+            setFormat(format);
+            setShowExtraComponent(extraComponent);
+            shrinkPage();
+          }
         }
+      } else {
+        handleOpenPopup();
       }
-    } else {
-      handleOpenPopup();
     }
   };
-
   const handleSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
       return;
@@ -352,7 +360,11 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
           <Box width="50%" bgcolor="#f0f0f0" height="100%">
             
             {showExtraComponent === "call" && (
-              <CallPage format={format} onFormatChange={handleFormatChange} />
+              <CallPage
+              format={format}
+              onFormatChange={handleFormatChange}
+              groupId={currentChat?.chatGroupId || ""} // Pass groupId
+            />
             )}
           </Box>
         )}
