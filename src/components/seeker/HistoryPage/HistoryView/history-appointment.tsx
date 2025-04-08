@@ -283,7 +283,7 @@ const HistoryAppointment: React.FC = () => {
             <Rating
               name="review-score"
               value={reviewScore}
-              onChange={(event, newValue) => setReviewScore(newValue)}
+              onChange={(_, newValue) => setReviewScore(newValue)}
               precision={1}
               size="large"
               sx={{ color: "#ff9800" }}
