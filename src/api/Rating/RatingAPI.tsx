@@ -1,6 +1,6 @@
 import { baseUrl, headers } from "../Url";
 import { axiosCreate, axiosRead } from "../AxiosCRUD";
-import {  RatingRequest } from "../../interface/IAccount";
+import { RatingRequest } from "../../interface/IAccount";
 
 const url = baseUrl + "/Rating";
 
@@ -14,7 +14,7 @@ export const createRating = async (data: RatingRequest) => {
     const result = await axiosCreate(props);
 
     if (result.success) {
-       
+
         return result.data;
     } else {
         console.error("Rating error messages:", result.error);
@@ -31,7 +31,7 @@ export const getAllRating = async () => {
     const result = await axiosRead(props);
 
     if (result.success) {
-      
+
         return result.data;
     } else {
         console.error("Rating error messages:", result.error);
@@ -65,7 +65,7 @@ export const getRatingByTherapistId = async (therapistId: string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-      
+
         return result.data;
     } else {
         console.error("Rating error messages:", result.error);
@@ -82,7 +82,7 @@ export const getRatingByAppointmentId = async (appId: string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-        
+
         return result.data;
     } else {
         console.error("Rating error messages:", result.error);

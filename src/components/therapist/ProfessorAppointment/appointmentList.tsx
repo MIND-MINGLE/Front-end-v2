@@ -9,10 +9,17 @@ import {
   Tooltip,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+  Rating as MuiRating,
 } from "@mui/material";
 import Header from "../Header";
-import { Appointment, Therapist } from "../../../interface/IAccount";
+import { Appointment, Therapist, Rating } from "../../../interface/IAccount";
 import { getAppointmentByTherapistId, patchAppointmentStatus } from "../../../api/Appointment/appointment";
+import { getRatingByAppointmentId } from "../../../api/Rating/RatingAPI";
 import LoadingScreen from "../../common/LoadingScreen";
 import styles from './appointmentList.module.css';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -23,7 +30,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 
 export default function AppointmentList() {
   const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
-  const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "DECLINED">("PENDING");
+  const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "DECLINED" | "CANCELLED" | "ENDED">("PENDING");
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
@@ -31,6 +38,11 @@ export default function AppointmentList() {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
   const itemsPerPage = 6; // 6 items total, 3 per row
+  const [ratingDialog, setRatingDialog] = useState({
+    open: false,
+    rating: null as Rating | null,
+    loading: false
+  });
 
   useEffect(() => {
     getAppointment();
@@ -108,6 +120,23 @@ export default function AppointmentList() {
     setSnackbarOpen(false);
   };
 
+  const handleViewRating = async (appointmentId: string) => {
+    try {
+      setRatingDialog(prev => ({ ...prev, loading: true, open: true }));
+      const response = await getRatingByAppointmentId(appointmentId);
+      if (response.isSuccess) {
+        setRatingDialog(prev => ({ ...prev, rating: response.result }));
+      }
+    } catch (error) {
+      console.error("Error fetching rating:", error);
+      setSnackbarMessage("Error loading rating");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    } finally {
+      setRatingDialog(prev => ({ ...prev, loading: false }));
+    }
+  };
+
   // Filter appointments based on active tab
   const filteredAppointments = appointmentList.filter(
     (appointment) => appointment.status === activeTab
@@ -144,6 +173,16 @@ export default function AppointmentList() {
       id: "DECLINED",
       label: "Declined",
       count: formatCount(getStatusCount("DECLINED"))
+    },
+    {
+      id: "CANCELLED",
+      label: "Cancelled",
+      count: formatCount(getStatusCount("CANCELLED"))
+    },
+    {
+      id: "ENDED",
+      label: "Ended",
+      count: formatCount(getStatusCount("ENDED"))
     },
   ] as const;
 
@@ -182,7 +221,7 @@ export default function AppointmentList() {
                   onClick={() => setActiveTab(tab.id)}
                 >
                   {tab.label}
-                  <span className={activeTab === tab.id ? styles.tabCountActive:styles.tabCount}>{tab.count}</span>
+                  <span className={activeTab === tab.id ? styles.tabCountActive : styles.tabCount}>{tab.count}</span>
                 </Box>
               ))}
             </Box>
@@ -199,10 +238,10 @@ export default function AppointmentList() {
               <Grid container spacing={4}>
                 {paginatedAppointments.map((appointment) => (
                   <Grid item xs={12} sm={6}
-                  md={
-                    paginatedAppointments.length>2?4:paginatedAppointments.length<2?12:6
-                  } 
-                  key={appointment.appointmentId}>
+                    md={
+                      paginatedAppointments.length > 2 ? 4 : paginatedAppointments.length < 2 ? 12 : 6
+                    }
+                    key={appointment.appointmentId}>
                     <Paper className={styles.appointmentCard} elevation={0}>
                       <Box className={styles.cardHeader}>
                         <Typography className={styles.patientName}>
@@ -302,6 +341,27 @@ export default function AppointmentList() {
                             </Tooltip>
                           </>
                         )}
+                        {activeTab === "ENDED" && (
+                          <Tooltip title="View patient's rating" arrow>
+                            <span>
+                              <Button
+                                variant="outlined"
+                                color="primary"
+                                className={styles.button}
+                                onClick={() => handleViewRating(appointment.appointmentId)}
+                                sx={{
+                                  borderRadius: 2,
+                                  textTransform: 'none',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(2, 127, 193, 0.04)'
+                                  }
+                                }}
+                              >
+                                View Rating
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        )}
                       </Box>
                     </Paper>
                   </Grid>
@@ -341,6 +401,76 @@ export default function AppointmentList() {
             {snackbarMessage}
           </Alert>
         </Snackbar>
+
+        <Dialog
+          open={ratingDialog.open}
+          onClose={() => setRatingDialog(prev => ({ ...prev, open: false }))}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              padding: 2
+            }
+          }}
+        >
+          <DialogTitle sx={{ pb: 1 }}>
+            Patient's Rating
+          </DialogTitle>
+          <DialogContent>
+            {ratingDialog.loading ? (
+              <Box display="flex" justifyContent="center" py={3}>
+                <CircularProgress />
+              </Box>
+            ) : ratingDialog.rating ? (
+              <Box sx={{ py: 2 }}>
+                <Box display="flex" alignItems="center" gap={1} mb={2}>
+                  <MuiRating
+                    value={ratingDialog.rating.score}
+                    precision={0.5}
+                    readOnly
+                    sx={{
+                      '& .MuiRating-iconFilled': {
+                        color: '#FFD700'
+                      }
+                    }}
+                  />
+                  <Typography variant="body1" color="text.secondary">
+                    ({ratingDialog.rating.score}/5)
+                  </Typography>
+                </Box>
+
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  {ratingDialog.rating.comment || "No comment provided"}
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary">
+                  Submitted on {new Date(ratingDialog.rating.createdAt).toLocaleDateString()} at{' '}
+                  {new Date(ratingDialog.rating.createdAt).toLocaleTimeString()}
+                </Typography>
+              </Box>
+            ) : (
+              <Box display="flex" justifyContent="center" py={3}>
+                <Typography color="text.secondary">
+                  No rating available for this appointment
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button
+              onClick={() => setRatingDialog(prev => ({ ...prev, open: false }))}
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                minWidth: 100
+              }}
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </>
   );
