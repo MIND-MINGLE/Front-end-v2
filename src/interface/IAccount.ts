@@ -256,6 +256,7 @@ interface RatingRequest{
 interface Rating{
   ratingId: string,
   patientId: string,
+  therapistId:string,
   appointmentId: string,
   comment: string,
   score: number,
