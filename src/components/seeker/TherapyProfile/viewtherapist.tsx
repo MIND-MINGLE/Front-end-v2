@@ -12,7 +12,12 @@ import {
   Container,
   Chip,
   Dialog,
+  DialogTitle,
+  DialogContent,
   Tooltip,
+  Rating as MuiRating,
+  IconButton,
+  Pagination,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,6 +28,9 @@ import styles from "./viewthera.module.css"
 import { formatVnd } from "../../../services/common";
 import { getCredentialByTherapistId } from '../../../api/Credential/Credential';
 import { getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
+import { getAverageRatingByTherapistId, getRatingByTherapistId } from "../../../api/Rating/RatingAPI";
+import { AverageRating, Rating } from "../../../interface/IAccount";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Specialization {
   specializationId: string;
@@ -66,31 +74,65 @@ export const TherapistProfile = () => {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [openImageModal, setOpenImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [averageRating, setAverageRating] = useState<AverageRating>({
+    averageStar: 0,
+    totalRatings: 0
+  });
+  const [rating, setRating] = useState<Rating[]>([]);
+  const [ratingDialog, setRatingDialog] = useState({
+    open: false,
+    ratings: [] as Rating[]
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
+  const [starFilter, setStarFilter] = useState<number | null>(null);
 
   const bookAppointment = (therapistId: string) => {
     nav(`../therapist/${therapistId}/appointment`);
   };
+  const viewRating = async (therapistId: string) => {
+    try {
+      const response = await getRatingByTherapistId(therapistId);
+      if (response.statusCode === 200) {
+        setRatingDialog({
+          open: true,
+          ratings: response.result
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching ratings:", error);
+    }
+  };
+  const fetchAverageRating = async (therapistId: string) => {
+    const response = await getAverageRatingByTherapistId(therapistId)
+    if (response.statusCode === 200) {
+      setAverageRating(response.result);
+      return response.result;
+    }
 
+  }
   const fetchTherapist = async () => {
     try {
-      if(accountId){
+      if (accountId) {
         const therapistResponse = await getTherapistById(accountId);
         if (therapistResponse.statusCode === 200) {
           const therapist = therapistResponse.result
           setTherapist(therapistResponse.result);
           // Gọi API lấy credentials
+          const averageRatingResponse = await fetchAverageRating(therapist.therapistId);
+          console.log("Average Rating: ", averageRatingResponse)
           const credentialsResponse = await getCredentialByTherapistId(therapist.therapistId);
-          console.log("Your Credit: ",credentialsResponse)
-          if (credentialsResponse!=null&&credentialsResponse.statusCode === 200) {
+          console.log("Your Credentials: ", credentialsResponse)
+          if (credentialsResponse != null && credentialsResponse.statusCode === 200) {
             const activeCredentials = credentialsResponse.result.filter(
               (cred: Credential) => cred.isDisabled === 0
             );
             setCredentials(activeCredentials);
           }
-  
+
           // Gọi API lấy specializations
           const specializationsResponse = await getSpecializationByTherapistId(therapist.therapistId);
-          if (specializationsResponse!=null&&specializationsResponse.statusCode === 200) {
+          if (specializationsResponse != null && specializationsResponse.statusCode === 200) {
             // Cập nhật therapist state với specializations
             setTherapist(prev => ({
               ...prev!,
@@ -100,11 +142,11 @@ export const TherapistProfile = () => {
         } else {
           setError(therapistResponse.error || "Failed to fetch therapist data");
         }
-      }else{
+      } else {
         alert("Try Again")
         nav(-1);
       }
-      
+
     } catch (err) {
       setError("An unexpected error occurred");
       console.error(err);
@@ -119,6 +161,20 @@ export const TherapistProfile = () => {
 
   const handleCloseImage = () => {
     setOpenImageModal(false);
+  };
+
+  const handleCloseRatingDialog = () => {
+    setRatingDialog(prev => ({
+      ...prev,
+      open: false
+    }));
+    setCurrentPage(1);
+  };
+
+  const getFilteredAndSortedRatings = () => {
+    return ratingDialog.ratings
+      .filter(rating => starFilter === null || rating.score === starFilter)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   };
 
   if (loading) return <LoadingScreen />;
@@ -161,6 +217,33 @@ export const TherapistProfile = () => {
                         <Typography className={styles.name}>
                           {`${therapist.firstName} ${therapist.lastName}`}
                         </Typography>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          gap={1}
+                          mt={1}
+                          mb={2}
+                        >
+                          <MuiRating
+                            value={averageRating.averageStar}
+                            precision={0.5}
+                            readOnly
+                            size="small"
+                            sx={{
+                              '& .MuiRating-iconFilled': {
+                                color: '#FFD700'
+                              }
+                            }}
+                          />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                          >
+                            ({averageRating.averageStar.toFixed(1)}/5 • {averageRating.totalRatings} ratings)
+                          </Typography>
+                        </Box>
                         <Typography variant="body2" color="textSecondary" className={styles.subtitle}>
                           {therapist.gender}
                         </Typography>
@@ -227,6 +310,15 @@ export const TherapistProfile = () => {
                             onClick={() => bookAppointment(therapist.therapistId)}
                           >
                             Book Appointment Now
+                          </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Button
+                            fullWidth
+                            className={styles.bookButton}
+                            onClick={() => viewRating(therapist.therapistId)}
+                          >
+                            View Recently Rating
                           </Button>
                         </Grid>
                       </Grid>
@@ -354,6 +446,165 @@ export const TherapistProfile = () => {
           }}
           onClick={handleCloseImage}
         />
+      </Dialog>
+
+      <Dialog
+        open={ratingDialog.open}
+        onClose={handleCloseRatingDialog}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography variant="h6">Patient Ratings & Reviews</Typography>
+            <IconButton onClick={handleCloseRatingDialog}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {ratingDialog.ratings.length > 0 ? (
+            <Box sx={{ py: 2 }}>
+              {/* Filter Section */}
+              <Box
+                sx={{
+                  mb: 3,
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  borderRadius: 1,
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
+                }}
+              >
+                <Typography variant="subtitle1" gutterBottom>
+                  Filter by Rating
+                </Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    flexWrap: 'wrap'
+                  }}
+                >
+                  <Button
+                    variant={starFilter === null ? "contained" : "outlined"}
+                    size="small"
+                    onClick={() => {
+                      setStarFilter(null);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    All
+                  </Button>
+                  {[5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1].map((star) => (
+                    <Button
+                      key={star}
+                      variant={starFilter === star ? "contained" : "outlined"}
+                      size="small"
+                      onClick={() => {
+                        setStarFilter(star);
+                        setCurrentPage(1);
+                      }}
+                      startIcon={
+                        <MuiRating
+                          value={star}
+                          readOnly
+                          precision={0.5}
+                          size="small"
+                          sx={{
+                            pointerEvents: 'none',
+                            '& .MuiRating-iconFilled': {
+                              color: starFilter === star ? '#fff' : '#FFD700'
+                            }
+                          }}
+                        />
+                      }
+                    >
+                      {star}
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
+
+              {/* Ratings List */}
+              {getFilteredAndSortedRatings()
+                .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                .map((rating, index) => (
+                  <Card
+                    key={index}
+                    sx={{
+                      mb: 2,
+                      p: 2,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      '&:last-child': { mb: 0 }
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" mb={1}>
+                      <MuiRating
+                        value={rating.score}
+                        readOnly
+                        precision={0.5}
+                        size="small"
+                        sx={{
+                          '& .MuiRating-iconFilled': {
+                            color: '#FFD700'
+                          }
+                        }}
+                      />
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ ml: 1 }}
+                      >
+                        {new Date(rating.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body1">
+                      {rating.comment}
+                    </Typography>
+                  </Card>
+                ))}
+
+              {/* Pagination */}
+              <Box
+                sx={{
+                  mt: 3,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  '& .MuiPagination-ul': {
+                    justifyContent: 'center'
+                  }
+                }}
+              >
+                <Pagination
+                  count={Math.ceil(getFilteredAndSortedRatings().length / itemsPerPage)}
+                  page={currentPage}
+                  onChange={(event, page) => setCurrentPage(page)}
+                  color="primary"
+                  size="large"
+                  showFirstButton
+                  showLastButton
+                />
+              </Box>
+            </Box>
+          ) : (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              minHeight={200}
+            >
+              <Typography variant="body1" color="text.secondary">
+                No ratings available yet
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
       </Dialog>
     </Box>
   );
