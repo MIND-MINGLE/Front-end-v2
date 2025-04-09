@@ -7,7 +7,7 @@ const url = baseUrl + "/Payment";
 export const createSubPayment = async (data: PaymentRequest) => {
     const props = {
         data: data,
-        url: url+"/create",
+        url: url + "/create",
         headers: headers
     };
 
@@ -22,10 +22,10 @@ export const createSubPayment = async (data: PaymentRequest) => {
     }
 };
 
-export const handlePaymentStatus = async (paymentId:string,action:string) => {
+export const handlePaymentStatus = async (paymentId: string, action: string) => {
     const endpoint = action === 'PAID'
-    ? `${url}/${paymentId}/status/paid`
-    : `${url}/${paymentId}/status/canceled`;
+        ? `${url}/${paymentId}/status/paid`
+        : `${url}/${paymentId}/status/canceled`;
     const props = {
         data: null,
         url: endpoint,
@@ -42,11 +42,11 @@ export const handlePaymentStatus = async (paymentId:string,action:string) => {
     }
 };
 
-export const getAllPaymentPending = async (pageIndex:number,pageSize:number) => {
-   
+export const getAllPaymentPending = async (pageIndex: number, pageSize: number) => {
+
     const props = {
         data: null,
-        url: url+`/get-all-by-pending-status?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+        url: url + `/get-all-by-pending-status?pageIndex=${pageIndex}&pageSize=${pageSize}`,
         headers: headers
     };
     const result = await axiosRead(props);
@@ -59,3 +59,17 @@ export const getAllPaymentPending = async (pageIndex:number,pageSize:number) => 
         return result.error;
     }
 };
+export const getAllPayment = async (pageIndex: number, pageSize: number) => {
+    const props = {
+        data: null,
+        url: url + `/get-all?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+        headers: headers
+    };
+    const result = await axiosRead(props);
+    if (result.success) {
+        return result.data;
+    } else {
+        console.error("Payment error messages:", result.error);
+        return result.error;
+    }
+}
