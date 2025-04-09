@@ -13,10 +13,12 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { LoginAccount } from "../../api/Account/Account";
+import { GoogleAccountAuthen, GoogleLoginAccount, LoginAccount } from "../../api/Account/Account";
 import { useNavigate } from "react-router";
 import LoadingScreen from "../common/LoadingScreen";
 import styles from './LoginFrame.module.css';
+import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleAccountRequestProps } from "../../interface/IAccount";
 
 type LoginFrameProps = {
   onForgotPassword: () => void;
@@ -58,6 +60,42 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
     }
     setLoading(false);
   };
+
+ const GoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+        const { access_token } = tokenResponse;
+        var decodeData:GoogleAccountRequestProps = await GoogleAccountAuthen(access_token)
+        const currentRole = localStorage.getItem("role");
+        if (!currentRole) {
+          return;
+        }
+        decodeData={
+          ...decodeData,
+          roleId: currentRole
+        }
+        await loginWithGoogle(decodeData);
+    },
+    onError: (error) => {
+        console.error('Google login failed:', error);
+       
+    }
+})
+const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
+  try {
+    setLoading(true);
+    const res = await GoogleLoginAccount(data);
+    if (res.statusCode === 200) {
+      localStorage.setItem("token", JSON.stringify(res.result));
+      nav("/");
+    } else {
+      setErrorMessage(res.errorMessage || "Login failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    setErrorMessage("Something went wrong. Please try again.");
+  }
+  setLoading(false);
+}
 
   return (
     <>
@@ -139,7 +177,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
 
         <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
           <Button
-          onClick={()=>{alert("Feature Under Contruction!")}}
+          onClick={()=>{GoogleLogin()}}
             variant="outlined"
             startIcon={<GoogleIcon />}
             className={styles.googleButton}

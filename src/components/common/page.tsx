@@ -11,7 +11,7 @@ import {
 import Footer from "../coworking/Components/Footer/Footer";
 import CopyrightFooter from "../coworking/Components/CopyrightFooter/CopyrightFooter";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { AccountProps } from "../../interface/IAccount";
 
@@ -119,14 +119,15 @@ const LandingPage = () => {
 
   useEffect(() => {
     const autoLogin = () => {
-      const user = localStorage.getItem("token");
-      if (!user) {
+      const token = localStorage.getItem("token");
+      if (!token) {
         //console.error("No account found");
         return false;
       } else {
-        const token = jwtDecode<AccountProps>(user || "");
-        sessionStorage.setItem("account", JSON.stringify(token));
-        switch (token.Role) {
+        const user = jwtDecode<AccountProps>(token || "");
+        sessionStorage.setItem("account", JSON.stringify(user));
+        localStorage.setItem("role", user.Role);
+        switch (user.Role) {
           case "seeker":
             nav("/seeker/");
             break;

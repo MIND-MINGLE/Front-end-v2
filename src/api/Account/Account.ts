@@ -1,15 +1,37 @@
 // import React from 'react'
 
 import { baseUrl, headers } from "../Url"
-import { AccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
+import { AccountRequestProps, GoogleAccountRequestProps, LoginProps, VerifyProps } from "../../interface/IAccount"
 import { storage } from "../../services/firebase" // Đảm bảo đã cấu hình Firebase trong services/firebase.js
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { axiosCreate, axiosRead, axiosUpdate } from "../AxiosCRUD";
 
 const resUrl = baseUrl + "/Auth/register"
 const loginUrl = baseUrl + "/Auth/login"
+const googleLoginUrl = baseUrl + "/Auth/Googlelogin"
 const verifyUrl = baseUrl + "/Auth/verification"
+const googleLoginURL = "https://www.googleapis.com/oauth2/v3/userinfo"
 
+export const GoogleAccountAuthen = async (data: string) => {
+    const googleHeader = {
+        Authorization: `Bearer ${data}`,
+        "Content-Type": "application/json"
+    }
+    const props = {
+        data: null,
+        url: googleLoginURL,
+        headers: googleHeader
+    }
+    const result = await axiosRead(props)
+    if (result.success) {
+        //console.log(result)
+        return result.data
+    }
+    else {
+        console.log(result.error)
+        return null
+    }
+}
 
 export const RegisterPatientAccount = async (data: AccountRequestProps) => {
     const props = {
@@ -19,7 +41,7 @@ export const RegisterPatientAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+       // console.log(result.data)
         return result.data
     }
     else {
@@ -36,7 +58,7 @@ export const RegisterDocAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+       // console.log(result.data)
         return result.data
     }
     else {
@@ -53,7 +75,7 @@ export const RegisterAgentAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+       // console.log(result.data)
         return result.data
     }
     else {
@@ -61,6 +83,22 @@ export const RegisterAgentAccount = async (data: AccountRequestProps) => {
         return null
     }
 
+}
+export const GoogleLoginAccount = async (data: GoogleAccountRequestProps) => {
+    const props = {
+        data: data,
+        url: googleLoginUrl,
+        headers: headers
+    }
+    const result = await axiosCreate(props)
+    if (result.success) {
+       // console.log(result.data)
+        return result.data
+    }
+    else {
+        console.log(result.error)
+        return null
+    }
 }
 
 export const LoginAccount = async (data: LoginProps) => {
@@ -71,7 +109,7 @@ export const LoginAccount = async (data: LoginProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+       // console.log(result.data)
         return result.data
     }
     else {
@@ -88,7 +126,7 @@ export const verifyAccount = async (data: VerifyProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+       // console.log(result.data)
         return result.data
     }
     else {
@@ -127,7 +165,7 @@ export const updateUserAvatar = async (file: File, accountId: string) => {
 
         const result = await axiosUpdate(props)
         if (result.success) {
-            console.log(result.data)
+        //    console.log(result.data)
             return result.data
         } else {
             console.log(result.error)
@@ -147,7 +185,7 @@ export const getAllAccount = async () => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+     //   console.log(result.data)
         return result.data
     }
     else {
@@ -164,7 +202,7 @@ export const getAccountById = async (accountId: string) => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+      //  console.log(result.data)
         return result.data
     }
     else {

@@ -98,7 +98,7 @@ const HistoryAppointment: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openReviewDialog, setOpenReviewDialog] = useState(false);
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [reviewComment, setReviewComment] = useState("");
   const [reviewScore, setReviewScore] = useState<number | null>(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -144,8 +144,8 @@ const HistoryAppointment: React.FC = () => {
   };
 
   // Review dialog handlers
-  const handleOpenReviewDialog = (appointmentId: string) => {
-    setSelectedAppointmentId(appointmentId);
+  const handleOpenReviewDialog = (appointment:Appointment) => {
+    setSelectedAppointment(appointment);
     setReviewComment("");
     setReviewScore(0);
     setOpenReviewDialog(true);
@@ -153,11 +153,11 @@ const HistoryAppointment: React.FC = () => {
 
   const handleCloseReviewDialog = () => {
     setOpenReviewDialog(false);
-    setSelectedAppointmentId(null);
+    setSelectedAppointment(null);
   };
 
   const handleSubmitReview = async () => {
-    if (!selectedAppointmentId || reviewScore === null) return;
+    if (!selectedAppointment || reviewScore === null) return;
   
     const patientAccount = sessionStorage.getItem("patient");
     if (!patientAccount) {
@@ -168,24 +168,19 @@ const HistoryAppointment: React.FC = () => {
   
     const reviewData: RatingRequest = {
       patientId: patient.patientId,
-      appointmentId: selectedAppointmentId,
+      appointmentId: selectedAppointment.appointmentId,
       comment: reviewComment,
       score: reviewScore,
+      therapistId: selectedAppointment.therapistId
     };
-  
+    console.error("Rating Request: ", reviewData);
     try {
       const response = await createRating(reviewData);
       if (response.statusCode === 200 && response.result) {
         setSnackbarMessage("Review submitted successfully!");
         setSnackbarOpen(true);
         // Optimistically update the appointment with the new rating
-        setAppointmentList((prev) =>
-          prev.map((appt) =>
-            appt.appointmentId === selectedAppointmentId
-              ? { ...appt, rating: response.result }
-              : appt
-          )
-        );
+        await fetchAppointmentList()
       } else {
         throw new Error("Invalid response from server");
       }
@@ -237,7 +232,7 @@ const HistoryAppointment: React.FC = () => {
                   {/* Write a Review Button */}
                   {appt.status === "ENDED" && !appt.ratings ? (
                     <Box sx={{ mt: 2, textAlign: "right" }}>
-                      <ReviewButton onClick={() => handleOpenReviewDialog(appt.appointmentId)}>
+                      <ReviewButton onClick={() => handleOpenReviewDialog(appt)}>
                         Write a Review
                       </ReviewButton>
                     </Box>

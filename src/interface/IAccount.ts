@@ -8,6 +8,15 @@ interface AccountRequestProps {
   password: string,
   confirmPassword: string
 }
+interface GoogleAccountRequestProps {
+  email: string
+  email_verified: boolean
+  family_name: string
+  given_name: string
+  picture: string
+  sub: string,
+  roleId:string
+}
 interface LoginProps {
   emailOrAccountName: string,
   password: string
@@ -249,6 +258,7 @@ interface PatientResResponse {
 }
 interface RatingRequest {
   patientId: string,
+  therapistId: string,
   appointmentId: string,
   comment: string,
   score: number | 1 | 2 | 3 | 4 | 5,
@@ -269,4 +279,4 @@ interface AverageRating {
 }
 
 
-export type { AverageRating, Rating, RatingRequest, AppointmentRequestOffline, PatientResResponse, PatientSurveyResponse, PatientResponseRequest, PatientSurveyRequest, TherapistUpdate, Question, Answer, Category, CreatePurchaseRequest, PaymentRequest, TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type { GoogleAccountRequestProps,AverageRating, Rating, RatingRequest, AppointmentRequestOffline, PatientResResponse, PatientSurveyResponse, PatientResponseRequest, PatientSurveyRequest, TherapistUpdate, Question, Answer, Category, CreatePurchaseRequest, PaymentRequest, TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }

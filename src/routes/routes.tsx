@@ -10,10 +10,15 @@ import RegisterRoutes from '../components/Register/registerRoutes';
 import AdminRoute from '../components/admin/adminRoute';
 import GlobalCounter from '../services/globalCounter';
 import PaymentStatusCheck from '../components/common/paymentStatusCheck';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 export default function AppRoutes() {
+  const clientId = import.meta.env.VITE_MINDMINGLE_GOOGLE_CLIENT_ID;
   return (
     <>
+    <GoogleOAuthProvider 
+    clientId={clientId}
+    >
     <GlobalCounter/>
     <Routes>
       <Route path="/" element={<LandingPage />} />
@@ -27,6 +32,7 @@ export default function AppRoutes() {
       <Route path="/admin/*" element={<AdminRoute />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </GoogleOAuthProvider>
     </>
   )
 }
