@@ -76,6 +76,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
         await loginWithGoogle(decodeData);
     },
     onError: (error) => {
+        alert("Login Failed! Your Mail is restrcited or not registered");
         console.error('Google login failed:', error);
        
     }
