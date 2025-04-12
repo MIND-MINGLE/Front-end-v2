@@ -5,9 +5,6 @@ import { getAllSubscription } from '../../../api/Subscription/Subscription';
 import LoadingScreen from '../../common/LoadingScreen';
 import { formatPriceToVnd } from '../../../services/common';
 import { Modal, Button, Snackbar, Alert, Box, Typography, Link } from '@mui/material';
-import { ChangeEvent } from 'react';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../../services/firebase';
 import { createSubPayment } from '../../../api/Payment/PaymentApi';
 import { createSubscription } from '../../../api/PackageApi/Package';
 
@@ -78,11 +75,7 @@ export default function SubscriptionPage() {
 
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | undefined>();
   const [openQRModal, setOpenQRModal] = useState(false);
-  const [selectedQR, setSelectedQR] = useState<string>('');
-  const [paymentImage, setPaymentImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>('');
-  const [isUploading, setIsUploading] = useState(false);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -95,36 +88,9 @@ export default function SubscriptionPage() {
 
   // Handlers
   const handleSelectSubscription = (subscription: Subscription) => {
-    const qrImage = subscription.isPremium
-      ? 'https://firebasestorage.googleapis.com/v0/b/mind-mingle-202.firebasestorage.app/o/momo%2F300kmomo.jpg?alt=media&token=5be4351b-d12b-4c96-b737-10fc1cd2bf80'
-      : 'https://firebasestorage.googleapis.com/v0/b/mind-mingle-202.firebasestorage.app/o/momo%2F100kmomo.jpg?alt=media&token=218c20b8-7d7e-4771-8020-f97569bdbf5b';
     setSelectedSubscription(subscription);
-    setSelectedQR(qrImage);
     setOpenQRModal(true);
   };
-
-  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setIsUploading(true);
-      setPaymentImage(file);
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setIsUploading(false);
-      handleImage()
-    }
-  };
-  // FIX THIS SH@T WTF
-  const handleImage = async() => {
-    if (!paymentImage) {
-      setSnackbar({ open: true, message: 'Please upload payment proof', severity: 'error' });
-      return;
-    }
-    const storageRef = ref(storage, `payment-proofs/${Date.now()}_${paymentImage.name}`);
-    const uploadResult = await uploadBytes(storageRef, paymentImage);
-    const imageUrl = await getDownloadURL(uploadResult.ref);
-    setPreviewUrl(imageUrl)
-  }
   const handlePurchases = async(patientId:string) => {
     const newSubscription:PurchasedPackagedRequest={
       subscriptionId: selectedSubscription?.subscriptionId||"123",
@@ -151,7 +117,7 @@ export default function SubscriptionPage() {
         patientId,
         amount: selectedSubscription?.price || 0,
         therapistReceive: 0,
-        paymentUrl: previewUrl,
+        paymentUrl: "",
       };
       const paymentWindow = window.open("", "_blank");
       const response = await createPayment(paymentRequest);
@@ -163,7 +129,6 @@ export default function SubscriptionPage() {
         }
         setSnackbar({ open: true, message: 'Payment request sent successfully!', severity: 'success' });
         setOpenQRModal(false);
-        setPaymentImage(null);
       } else {
         throw new Error(response.message || 'Error when creating payment');
       }
@@ -268,60 +233,17 @@ export default function SubscriptionPage() {
                 {isSubmitting ? 'Processing...' : 'Payment'}
               </Button>
               <div className={styles.uploadSection}>
-                {/* <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  style={{ display: 'none' }}
-                  id="payment-proof"
-                /> */}
-                {/* <label htmlFor="payment-proof">
-                  <Button
-                    variant="outlined"
-                    component="span"
-                    fullWidth
-                    disabled={isUploading || !!paymentImage}
-                    className={styles.uploadButton}
-                  >
-                    {isUploading ? 'Uploading...' : 'Upload payment proof'}
-                  </Button>
-                  </label> */}
+               
                   {paymentUrl!==null && (
                 <Box sx={{ mt: 2, textAlign: "center" }}>
                     <Typography color="warning.main">
                       Popup blocked. Please use this link:
                     </Typography>
-                    <Link href={previewUrl} target="_blank">
+                    <Link href={paymentUrl} target="_blank">
                       Proceed to Payment
                     </Link>
                   </Box>
                 )}
-               
-                {/* {previewUrl && (
-                  <div className={styles.imagePreview}>
-                    <div className={styles.previewContainer}>
-                      <div className={styles.previewWrapper}>
-                        <img
-                          src={previewUrl}
-                          alt="Payment proof"
-                          style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain', borderRadius: '8px' }}
-                        />
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          size="small"
-                          onClick={() => {
-                            setPaymentImage(null);
-                            setPreviewUrl('');
-                          }}
-                          sx={{ minWidth: '40px', marginLeft: '8px', height: 'fit-content' }}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )} */}
               </div>
               <Button
                 variant="contained"

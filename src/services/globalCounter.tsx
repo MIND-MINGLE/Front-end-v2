@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { Appointment, Patient, PurchasedPackaged } from "../interface/IAccount";
+import { Appointment, PurchasedPackaged } from "../interface/IAccount";
 import {
   Dialog,
   DialogTitle,
@@ -8,6 +8,9 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Box,
+  Typography,
+  Link,
 } from "@mui/material";
 import { patchAppointmentStatus } from "../api/Appointment/appointment";
 import { getPatientByAccountId } from "../api/Account/Seeker";
@@ -21,6 +24,7 @@ export default function GlobalCounter() {
   const [subDialogOpen, setSubDialogOpen] = useState(false);
   const [isDisablingApp, setIsDisablingApp] = useState(false);
   const [isDisablingSub, setIsDisablingSub] = useState(false);
+  const [paymentUrl, setPaymentUrl] = useState("");
 
   const navigate = useNavigate();
 
@@ -65,7 +69,6 @@ export default function GlobalCounter() {
   // Poll for subscriptions
   useEffect(() => {
     const getCurrentSubscription = async () => {
-   
       const localData = sessionStorage.getItem("package");
      if (localData) {
         const storedPackage = localStorage.getItem("purchasedPackage");
@@ -139,18 +142,20 @@ export default function GlobalCounter() {
     if (!currentApp) return;
     setIsDisablingApp(true);
     try {
+      const paymentWindow = window.open("", "_blank");
       const response = await patchAppointmentStatus("Ended", currentApp.appointmentId);
       if (response.statusCode === 200) {
-        alert("Appointment ENDED! Returning to homepage...");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
-      
-        navigate(-1);
+        const payOSURL = response.result
+        setPaymentUrl(payOSURL)
+        if (paymentWindow) {
+          paymentWindow.location.href = payOSURL;
+        }
       } else {
         alert("Appointment ended unsuccessfully! We will try again after redirection");
         sessionStorage.removeItem("appointment");
         setCurrentApp(null);
-    
         navigate(-1);
       }
     } catch (error) {
@@ -172,7 +177,6 @@ export default function GlobalCounter() {
         sessionStorage.removeItem("package");
         localStorage.removeItem("purchasedPackage");
         setCurrentSub(null);
-       
       } else {
         alert("Failed to disable subscription! Please try again later.");
       }
@@ -187,11 +191,27 @@ export default function GlobalCounter() {
   return (
     <>
       <Dialog open={appDialogOpen} onClose={() => {}} disableEscapeKeyDown>
-        <DialogTitle>Appointment Ended</DialogTitle>
+        <DialogTitle>Your Appointment Has Ended</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Your appointment has ended. It will now be disabled, and you’ll be redirected.
+            You’ll now be redirect to the Payment Section.
           </DialogContentText>
+          <DialogContentText>
+            ---
+          </DialogContentText>
+          <Typography color="warning.main">
+            *You can cancel the payment if you wish. There will be a 7-day period for you to complete your payment before we soft-locking your account. Thank you!
+          </Typography>
+          {paymentUrl!=="" && (
+                <Box sx={{ mt: 2, textAlign: "center" }}>
+                    <Typography color="warning.main">
+                      Popup blocked. Please use this link:
+                    </Typography>
+                    <Link href={paymentUrl} target="_blank">
+                      Proceed to Payment
+                    </Link>
+                  </Box>
+                )}
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center" }}>
           <Button
@@ -199,7 +219,7 @@ export default function GlobalCounter() {
             onClick={handleDisableAppointment}
             disabled={isDisablingApp}
           >
-            {isDisablingApp ? "Disabling..." : "OK"}
+            {isDisablingApp ? "Disabling..." : "Proceed to Payment"}
           </Button>
         </DialogActions>
       </Dialog>

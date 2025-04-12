@@ -1,3 +1,4 @@
+
 interface AccountProps {
   Role: string
   UserId: string
@@ -133,6 +134,25 @@ interface PaymentRequest {
   amount: number;
   therapistReceive: number;
   paymentUrl: string;
+}
+interface AppointmentPaymentRequest {
+  patientId: string;
+  amount: number;
+  therapistReceive: number;
+  paymentUrl: string;
+  appointmentId: string;
+}
+interface PaymentProps{
+  paymentId:string,
+  patientId: string,
+  amount: number,
+  appointment: Appointment|null,
+  therapistReceive: number,
+  paymentUrl: string|null|"",
+  paymentMethod: string,
+  paymentStatus: "PENDING"|"PAID"|"CANCELED",
+  patient: Patient|null,
+  createdAt: string
 }
 
 interface userInGroup {
@@ -279,4 +299,4 @@ interface AverageRating {
 }
 
 
-export type { GoogleAccountRequestProps,AverageRating, Rating, RatingRequest, AppointmentRequestOffline, PatientResResponse, PatientSurveyResponse, PatientResponseRequest, PatientSurveyRequest, TherapistUpdate, Question, Answer, Category, CreatePurchaseRequest, PaymentRequest, TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
+export type { PaymentProps,AppointmentPaymentRequest,GoogleAccountRequestProps,AverageRating, Rating, RatingRequest, AppointmentRequestOffline, PatientResResponse, PatientSurveyResponse, PatientResponseRequest, PatientSurveyRequest, TherapistUpdate, Question, Answer, Category, CreatePurchaseRequest, PaymentRequest, TherapistCreateProps, PurchasedPackaged, PurchasedPackagedRequest, Subscription, Sessison, UserInGroup, EmergencyEndRequest, ChatMessage, ChatProfile, ChatProps, AppointmentRequestOnline, userInGroup, requestGroupChat, Appointment, AccountProps, AccountRequestProps, LoginProps, VerifyProps, SeekerCreateProps, Therapist, Patient, Credential }
