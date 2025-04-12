@@ -23,13 +23,13 @@ import { getAppointmentByPatientId } from "../api/Appointment/appointment";
 import { createAppPayment, getPaymentByPatientId } from "../api/Payment/PaymentApi";
 
 // Styled components
-const ReminderBanner = styled(Box)(({ isRestricted }: { isRestricted?: boolean }) => ({
+const ReminderBanner = styled(Box)(({ isRestricted, isHidden }: { isRestricted?: boolean; isHidden?: boolean }) => ({
   position: "fixed",
-  bottom: "20px",
+  bottom: isHidden ? "calc(-100vh)" : "20px",
   left: "50%",
   transform: "translateX(-50%)",
   backgroundColor: "#F5F7FA",
-  border: isRestricted ? "1px solid #f44336" : "1px solid #0077b6", // Red for restricted, blue otherwise
+  border: isRestricted ? "1px solid #f44336" : "1px solid #0077b6",
   borderRadius: "12px",
   padding: "12px 24px",
   boxShadow: "0 4px 12px rgba(0, 119, 182, 0.2)",
@@ -39,7 +39,7 @@ const ReminderBanner = styled(Box)(({ isRestricted }: { isRestricted?: boolean }
   zIndex: 1000,
   maxWidth: "90%",
   flexWrap: "wrap",
-  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+  transition: "bottom 0.3s ease, box-shadow 0.3s ease",
   "&:hover": {
     transform: "translateX(-50%) scale(1.03)",
     boxShadow: "0 6px 16px rgba(0, 119, 182, 0.3)",
@@ -54,6 +54,24 @@ const PaymentButton = styled(Button)(() => ({
   fontSize: "14px",
   fontWeight: 600,
   textTransform: "none",
+  "&:hover": {
+    background: "linear-gradient(to right, #43a047, #2e7d32)",
+    transform: "translateY(-2px)",
+    boxShadow: "0 4px 8px rgba(76, 175, 80, 0.3)",
+  },
+}));
+
+const ToggleButton = styled(Button)(() => ({
+  position: "fixed",
+  right: "20px",
+  background: "linear-gradient(to right, #4caf50, #388e3c)",
+  color: "#FFFFFF",
+  borderRadius: "20px",
+  minWidth: "40px",
+  width: "40px",
+  height: "40px",
+  padding: 0,
+  zIndex: 1001,
   "&:hover": {
     background: "linear-gradient(to right, #43a047, #2e7d32)",
     transform: "translateY(-2px)",
@@ -81,11 +99,21 @@ const StyledFormControl = styled(FormControl)(() => ({
   },
 }));
 
+interface Subscription {
+  subscriptionId: string;
+  packageName: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  isDisabled: boolean;
+}
+
 const GlobalPaymentReminder: React.FC = () => {
   const [unpaidAppointments, setUnpaidAppointments] = useState<Appointment[]>([]);
   const [overdueAppointments, setOverdueAppointments] = useState<Appointment[]>([]);
   const [isAccountRestricted, setIsAccountRestricted] = useState(false);
   const [appDialogOpen, setAppDialogOpen] = useState(false);
+  const [isBannerHidden, setIsBannerHidden] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [paymentUrl, setPaymentUrl] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -106,12 +134,29 @@ const GlobalPaymentReminder: React.FC = () => {
     return Math.max(0, Math.ceil(diff / (24 * 60 * 60 * 1000)));
   };
 
+  const getSubscriptionDiscount = () => {
+    const packageData = sessionStorage.getItem("package");
+    if (!packageData) return { packageName: null, discount: 1.0 };
+    try {
+      const subscription: Subscription = JSON.parse(packageData);
+      if (subscription.isDisabled) return { packageName: null, discount: 1.0 };
+      if (subscription.packageName === "MindMingle Premium") {
+        return { packageName: "MindMingle Premium", discount: 0.7 };
+      }
+      if (subscription.packageName === "MindMingle Plus") {
+        return { packageName: "MindMingle Plus", discount: 0.9 };
+      }
+      return { packageName: null, discount: 1.0 };
+    } catch {
+      return { packageName: null, discount: 1.0 };
+    }
+  };
+
   const fetchUnpaidAppointments = async () => {
     setLoading(true);
     try {
       const patientAccount = sessionStorage.getItem("patient");
       if (!patientAccount) {
-        //console.log("No patient account found");
         setUnpaidAppointments([]);
         setOverdueAppointments([]);
         setSelectedAppointment(null);
@@ -125,13 +170,14 @@ const GlobalPaymentReminder: React.FC = () => {
         getAppointmentByPatientId(patient.patientId),
         getPaymentByPatientId(patient.patientId),
       ]);
-
-      if (appointmentData.statusCode === 200 && paymentData.statusCode === 200) {
+      let unpaid: Appointment[] = [];
+      if (appointmentData.statusCode === 200 && paymentData.statusCode !== 200) {
+        const appointments: Appointment[] = appointmentData.result;
+        unpaid = appointments.filter((appt) => appt.status === "ENDED");
+      } else if (appointmentData.statusCode === 200 && paymentData.statusCode === 200) {
         const appointments: Appointment[] = appointmentData.result;
         const payments: PaymentProps[] = paymentData.result;
-        //("Fetched payments:", payments);
-
-        const unpaid = appointments.filter(
+        unpaid = appointments.filter(
           (appt) =>
             appt.status === "ENDED" &&
             !payments.some(
@@ -140,25 +186,20 @@ const GlobalPaymentReminder: React.FC = () => {
                 payment.paymentStatus === "PAID"
             )
         );
-
-        const overdue = unpaid.filter((appt) => isPastGracePeriod(appt.session.endTime));
-        const withinGrace = unpaid.filter((appt) => !isPastGracePeriod(appt.session.endTime));
-
-        //("Unpaid within grace:", withinGrace);
-        //console.log("Overdue appointments:", overdue);
-        setUnpaidAppointments(withinGrace);
-        setOverdueAppointments(overdue);
-
-        const restricted = overdue.length > 0;
-        setIsAccountRestricted(restricted);
-        sessionStorage.setItem("isAccountRestricted", JSON.stringify(restricted));
-
-        // Set default selectedAppointment (prefer overdue, then unpaid)
-        const allPending = [...overdue, ...withinGrace];
-        setSelectedAppointment(allPending.length > 0 ? allPending[0] : null);
       } else {
         throw new Error("Failed to fetch data");
       }
+      const overdue = unpaid.filter((appt) => isPastGracePeriod(appt.session.endTime));
+      const withinGrace = unpaid.filter((appt) => !isPastGracePeriod(appt.session.endTime));
+      setUnpaidAppointments(withinGrace);
+      setOverdueAppointments(overdue);
+
+      const restricted = overdue.length > 0;
+      setIsAccountRestricted(restricted);
+      sessionStorage.setItem("isAccountRestricted", JSON.stringify(restricted));
+
+      const allPending = [...overdue, ...withinGrace];
+      setSelectedAppointment(allPending.length > 0 ? allPending[0] : null);
     } catch (err) {
       console.error("Error fetching unpaid appointments:", err);
       setUnpaidAppointments([]);
@@ -175,7 +216,7 @@ const GlobalPaymentReminder: React.FC = () => {
 
   useEffect(() => {
     fetchUnpaidAppointments();
-    const interval = setInterval(fetchUnpaidAppointments, 300000); // Check every 5 minutes
+    const interval = setInterval(fetchUnpaidAppointments, 300000);
     return () => clearInterval(interval);
   }, []);
 
@@ -188,6 +229,10 @@ const GlobalPaymentReminder: React.FC = () => {
   const handleClosePaymentDialog = () => {
     setAppDialogOpen(false);
     setPaymentUrl("");
+  };
+
+  const handleToggleBanner = () => {
+    setIsBannerHidden((prev) => !prev);
   };
 
   const handleSubmitPayment = async () => {
@@ -204,11 +249,16 @@ const GlobalPaymentReminder: React.FC = () => {
     }
 
     const patient: Patient = JSON.parse(patientAccount);
+    const { discount } = getSubscriptionDiscount();
+    const discountedFee = selectedAppointment.totalFee * discount;
+    const discountedTherapistReceive =
+      (selectedAppointment.totalFee - selectedAppointment.platformFee) * discount;
+
     const paymentData: AppointmentPaymentRequest = {
       appointmentId: selectedAppointment.appointmentId,
       patientId: patient.patientId,
-      amount: selectedAppointment.totalFee,
-      therapistReceive: selectedAppointment.totalFee - selectedAppointment.platformFee,
+      amount: Math.round(discountedFee),
+      therapistReceive: Math.round(discountedTherapistReceive),
       paymentUrl: "",
     };
 
@@ -216,7 +266,6 @@ const GlobalPaymentReminder: React.FC = () => {
       setLoading(true);
       const response = await createAppPayment(paymentData);
       if (response.statusCode === 200) {
-        //console.log("Payment initiated for appointment:", selectedAppointment.appointmentId);
         sessionStorage.removeItem("appointment");
         const payOSURL = response.result;
         setPaymentUrl(payOSURL);
@@ -225,7 +274,6 @@ const GlobalPaymentReminder: React.FC = () => {
           setSnackbarMessage("Popup blocked. Please use the payment link.");
           setSnackbarOpen(true);
         }
-        // Optimistic update
         setUnpaidAppointments((prev) =>
           prev.filter((appt) => appt.appointmentId !== selectedAppointment.appointmentId)
         );
@@ -242,7 +290,7 @@ const GlobalPaymentReminder: React.FC = () => {
           JSON.stringify(allPending.some((appt) => isPastGracePeriod(appt.session.endTime)))
         );
         handleClosePaymentDialog();
-        await fetchUnpaidAppointments(); // Sync with server
+        await fetchUnpaidAppointments();
       } else {
         throw new Error("Failed to initiate payment");
       }
@@ -265,7 +313,18 @@ const GlobalPaymentReminder: React.FC = () => {
       : "Unknown Therapist";
     const date = new Date(appt.session.endTime).toLocaleDateString();
     const status = isPastGracePeriod(appt.session.endTime) ? " (Overdue)" : "";
-    return `${therapist} on ${date}${status}`;
+    const { packageName, discount } = getSubscriptionDiscount();
+    const discountedFee = appt.totalFee * discount;
+    return `${therapist} on ${date}${status} - ${formatPriceToVnd(discountedFee)}${packageName ? ` (${packageName})` : ""}`;
+  };
+
+  const formatPriceToVnd = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
   };
 
   const allPendingAppointments = [...overdueAppointments, ...unpaidAppointments];
@@ -273,7 +332,7 @@ const GlobalPaymentReminder: React.FC = () => {
 
   return (
     <>
-      <ReminderBanner isRestricted={isAccountRestricted}>
+      <ReminderBanner isRestricted={isAccountRestricted} isHidden={isBannerHidden}>
         <Typography variant="body1" color="#333333" sx={{ flex: "1 1 auto", fontSize: "18px" }}>
           {isAccountRestricted ? (
             <>
@@ -288,6 +347,16 @@ const GlobalPaymentReminder: React.FC = () => {
                 <>
                   {" Pay within "}
                   {getDaysRemaining(selectedAppointment.session.endTime)} days to avoid account restrictions.
+                  {(() => {
+                    const { packageName, discount } = getSubscriptionDiscount();
+                    return packageName && selectedAppointment.totalFee > 0 ? (
+                      <>
+                        {" "}
+                        {packageName} discount: {formatPriceToVnd(selectedAppointment.totalFee)} →{" "}
+                        {formatPriceToVnd(selectedAppointment.totalFee * discount)}
+                      </>
+                    ) : null;
+                  })()}
                 </>
               )}
             </>
@@ -319,21 +388,71 @@ const GlobalPaymentReminder: React.FC = () => {
         </PaymentButton>
       </ReminderBanner>
 
+      <ToggleButton
+        onClick={handleToggleBanner}
+        sx={{
+          bottom: "20px",
+          transition: "bottom 0.3s ease",
+        }}
+      >
+        {!isBannerHidden ? "↓" : "↑"}
+      </ToggleButton>
+
       <Dialog open={appDialogOpen} onClose={handleClosePaymentDialog}>
         <DialogTitle sx={{ fontWeight: "bold", color: "#0077b6" }}>
-          {isAccountRestricted ? "Account Restricted" : "Your Appointment Has Ended"}
+          {isAccountRestricted ? "Account Restricted" : "Complete Your Payment"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText color="#333333">
             {isAccountRestricted
               ? "Your account is restricted until all overdue payments are settled."
-              : "You’ll now be redirected to the Payment Section."}
+              : "Please review the payment details below."}
+          </DialogContentText>
+          {selectedAppointment && (
+            <Box sx={{ mt: 2 }}>
+              <Typography color="#333333">
+                Therapist: {selectedAppointment.therapist?.firstName}{" "}
+                {selectedAppointment.therapist?.lastName}
+              </Typography>
+              <Typography color="#333333">
+                Date: {new Date(selectedAppointment.session.endTime).toLocaleDateString()}
+              </Typography>
+              <Typography color="#333333">
+                Original Fee: {formatPriceToVnd(selectedAppointment.totalFee)}
+              </Typography>
+              <Typography color="#333333">
+                Platform Fee: {formatPriceToVnd(selectedAppointment.platformFee)}
+              </Typography>
+              {(() => {
+                const { packageName, discount } = getSubscriptionDiscount();
+                const discountedFee = selectedAppointment.totalFee * discount;
+                const discountPercentage = packageName === "MindMingle Premium" ? "30%" : packageName === "MindMingle Plus" ? "10%" : null;
+                return (
+                  <>
+                    {packageName && (
+                      <Typography color="#ff9800" sx={{ fontWeight: "bold" }}>
+                        Discount: {discountPercentage} off with {packageName}
+                      </Typography>
+                    )}
+                    <Typography color="#333333" sx={{ fontWeight: "bold" }}>
+                      Final Amount: {formatPriceToVnd(Math.round(discountedFee))}
+                    </Typography>
+                    <Typography color="#333333">
+                      Therapist Receives: {formatPriceToVnd(Math.round((selectedAppointment.totalFee - selectedAppointment.platformFee) * discount))}
+                    </Typography>
+                  </>
+                );
+              })()}
+            </Box>
+          )}
+          <DialogContentText color="#333333" sx={{ mt: 2 }}>
+            You’ll be redirected to the payment section.
           </DialogContentText>
           <DialogContentText color="#333333">---</DialogContentText>
           <Typography color="#ff9800">
             {isAccountRestricted
               ? "*Please complete the payment to restore full account access."
-              : "*You can cancel the payment if you wish. There will be a 7-day period for you to complete your payment before we soft-lock your account. Thank you!"}
+              : "*You can cancel if you can’t pay now. You have 7 days to complete payment before account restrictions apply."}
           </Typography>
           {paymentUrl !== "" && (
             <Box sx={{ mt: 2, textAlign: "center" }}>

@@ -371,6 +371,9 @@ const BookingAppointment: React.FC = () => {
                 <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
                   Platform Fee: {formatVnd(calculateFees(selectedSession, therapist.pricePerHour || 0).platformFee)}
                 </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                 *Note: This price doesn't include the discount from your Subscription. You can check that actual price later in the Appointment History
+                </Typography>
               </>
             )}
             </DialogContentText>

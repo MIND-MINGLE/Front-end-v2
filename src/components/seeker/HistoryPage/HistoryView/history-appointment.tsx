@@ -111,6 +111,15 @@ const ReviewBox = styled(Box)(() => ({
   borderLeft: "4px solid #0077b6",
 }));
 
+interface Subscription {
+  subscriptionId: string;
+  packageName: string;
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  isDisabled: boolean;
+}
+
 const HistoryAppointment: React.FC = () => {
   const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
   const [paymentList, setPaymentList] = useState<PaymentProps[]>([]);
@@ -140,8 +149,7 @@ const HistoryAppointment: React.FC = () => {
         const data: Patient = JSON.parse(patientAccount);
         const appointmentData = await getAppointmentByPatientId(data.patientId);
         if (appointmentData.statusCode === 200) {
-          const appointments: Appointment[] = appointmentData.result;
-          setAppointmentList(appointments);
+          setAppointmentList(appointmentData.result);
         } else {
           setError("Failed to fetch appointment history");
         }
@@ -180,6 +188,24 @@ const HistoryAppointment: React.FC = () => {
     }
   };
 
+  const getSubscriptionDiscount = () => {
+    const packageData = sessionStorage.getItem("package");
+    if (!packageData) return { packageName: null, discount: 1.0 };
+    try {
+      const subscription: Subscription = JSON.parse(packageData);
+      if (subscription.isDisabled) return { packageName: null, discount: 1.0 };
+      if (subscription.packageName === "MindMingle Premium") {
+        return { packageName: "MindMingle Premium", discount: 0.7 }; // 30% off
+      }
+      if (subscription.packageName === "MindMingle Plus") {
+        return { packageName: "MindMingle Plus", discount: 0.9 }; // 10% off
+      }
+      return { packageName: null, discount: 1.0 };
+    } catch {
+      return { packageName: null, discount: 1.0 };
+    }
+  };
+
   const gotoChat = () => {
     navigate(`/seeker/therapy-chat`);
   };
@@ -209,25 +235,32 @@ const HistoryAppointment: React.FC = () => {
   };
 
   const handleSubmitPayment = async () => {
-    setLoading(true)
+    setLoading(true);
     const patientAccount = sessionStorage.getItem("patient");
     if (!patientAccount) {
       setSnackbarMessage("No patient account found");
       setSnackbarOpen(true);
+      setLoading(false);
       return;
     }
     if (selectedAppointment === null) {
       setSnackbarMessage("No appointment selected");
       setSnackbarOpen(true);
+      setLoading(false);
       return;
     }
 
     const patient: Patient = JSON.parse(patientAccount);
+    const { discount } = getSubscriptionDiscount();
+    const discountedFee = selectedAppointment.totalFee * discount;
+    const discountedTherapistReceive =
+      (selectedAppointment.totalFee - selectedAppointment.platformFee) * discount;
+
     const paymentData: AppointmentPaymentRequest = {
       appointmentId: selectedAppointment.appointmentId,
       patientId: patient.patientId,
-      amount: selectedAppointment.totalFee,
-      therapistReceive: selectedAppointment.totalFee - selectedAppointment.platformFee,
+      amount: Math.round(discountedFee),
+      therapistReceive: Math.round(discountedTherapistReceive),
       paymentUrl: "",
     };
 
@@ -242,10 +275,7 @@ const HistoryAppointment: React.FC = () => {
           setSnackbarMessage("Popup blocked. Please use the payment link.");
           setSnackbarOpen(true);
         }
-        // Close dialog on success
         handleClosePaymentDialog();
-        
-        // Refresh payment list to reflect new payment
         await fetchPaymentList();
       } else {
         throw new Error("Failed to initiate payment");
@@ -254,13 +284,11 @@ const HistoryAppointment: React.FC = () => {
       setSnackbarMessage("Error initiating payment");
       setSnackbarOpen(true);
       console.error(err);
-    }
-    finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Review dialog handlers
   const handleOpenReviewDialog = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setReviewComment("");
@@ -296,7 +324,6 @@ const HistoryAppointment: React.FC = () => {
       if (response.statusCode === 200 && response.result) {
         setSnackbarMessage("Review submitted successfully!");
         setSnackbarOpen(true);
-        // Refresh appointments to sync with server
         await fetchAppointmentList();
       } else {
         throw new Error("Invalid response from server");
@@ -346,7 +373,6 @@ const HistoryAppointment: React.FC = () => {
                     <CardText>Started Date: {getStartedDate(appt.session)}</CardText>
                     <CardText>Total Fee: {formatPriceToVnd(appt.totalFee)}</CardText>
 
-                    {/* Payment and Review Buttons */}
                     {appt.status === "ENDED" && (
                       <Box sx={{ mt: 2, display: "flex", justifyContent: "flex-end", gap: 1 }}>
                         {isUnpaidAppointment(appt.appointmentId) && (
@@ -362,7 +388,6 @@ const HistoryAppointment: React.FC = () => {
                       </Box>
                     )}
 
-                    {/* Display Existing Review */}
                     {appt.ratings != null && (
                       <ReviewBox>
                         <Typography variant="subtitle2" color="#0077b6" sx={{ fontWeight: "bold" }}>
@@ -384,7 +409,6 @@ const HistoryAppointment: React.FC = () => {
           </Grid>
         )}
 
-        {/* Review Dialog */}
         <Dialog
           open={openReviewDialog}
           onClose={handleCloseReviewDialog}
@@ -442,23 +466,61 @@ const HistoryAppointment: React.FC = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Payment Dialog */}
         <Dialog open={appDialogOpen} onClose={handleClosePaymentDialog}>
-          <DialogTitle>Your Appointment Has Ended</DialogTitle>
+          <DialogTitle sx={{ fontWeight: "bold", color: "#0077b6" }}>
+            Complete Your Payment
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              You’ll now be redirected to the Payment Section.
+            <DialogContentText color="#333333">
+              Please review the payment details below.
             </DialogContentText>
-            <DialogContentText>---</DialogContentText>
-            <Typography color="warning.main">
-              *You can cancel the payment if you can't pay now. There will be a 7-day period for you to complete your payment before we soft-lock your account. Thank you!
+            {selectedAppointment && (
+              <Box sx={{ mt: 2 }}>
+                <Typography color="#333333">
+                  Therapist: {selectedAppointment.therapist?.firstName}{" "}
+                  {selectedAppointment.therapist?.lastName}
+                </Typography>
+                <Typography color="#333333">
+                  Date: {new Date(selectedAppointment.session.endTime).toLocaleDateString()}
+                </Typography>
+                <Typography color="#333333">
+                  Original Fee: {formatPriceToVnd(selectedAppointment.totalFee)}
+                </Typography>
+                <Typography color="#333333">
+                  Platform Fee: {formatPriceToVnd(selectedAppointment.platformFee)}
+                </Typography>
+                {(() => {
+                  const { packageName, discount } = getSubscriptionDiscount();
+                  const discountedFee = selectedAppointment.totalFee * discount;
+                  const discountPercentage = packageName === "MindMingle Premium" ? "30%" : packageName === "MindMingle Plus" ? "10%" : null;
+                  return (
+                    <>
+                      {packageName && (
+                        <Typography color="#ff9800" sx={{ fontWeight: "bold" }}>
+                          Discount: {discountPercentage} off with {packageName}
+                        </Typography>
+                      )}
+                      <Typography color="#333333" sx={{ fontWeight: "bold" }}>
+                        Final Amount: {formatPriceToVnd(Math.round(discountedFee))}
+                      </Typography>
+                    </>
+                  );
+                })()}
+              </Box>
+            )}
+            <DialogContentText color="#333333" sx={{ mt: 2 }}>
+              You’ll be redirected to the payment section.
+            </DialogContentText>
+            <DialogContentText color="#333333">---</DialogContentText>
+            <Typography color="#ff9800">
+              *You can cancel if you can’t pay now. You have 7 days to complete payment before account restrictions apply.
             </Typography>
             {paymentUrl !== "" && (
               <Box sx={{ mt: 2, textAlign: "center" }}>
-                <Typography color="warning.main">
+                <Typography color="#ff9800">
                   Popup blocked. Please use this link:
                 </Typography>
-                <Link href={paymentUrl} target="_blank">
+                <Link href={paymentUrl} target="_blank" sx={{ color: "#0077b6" }}>
                   Proceed to Payment
                 </Link>
               </Box>
@@ -470,11 +532,16 @@ const HistoryAppointment: React.FC = () => {
               onClick={handleSubmitPayment}
               disabled={loading}
               sx={{
-                backgroundColor: "#4caf50",
-                "&:hover": { backgroundColor: "#388e3c" },
+                background: "linear-gradient(to right, #4caf50, #388e3c)",
+                color: "#FFFFFF",
+                borderRadius: "20px",
+                textTransform: "none",
+                "&:hover": {
+                  background: "linear-gradient(to right, #43a047, #2e7d32)",
+                },
               }}
             >
-              Proceed to Payment
+              {loading ? "Processing..." : "Proceed to Payment"}
             </Button>
             <Button
               onClick={handleClosePaymentDialog}
@@ -486,7 +553,6 @@ const HistoryAppointment: React.FC = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Snackbar for Feedback */}
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={3000}
