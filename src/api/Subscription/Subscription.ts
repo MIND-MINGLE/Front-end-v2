@@ -12,7 +12,7 @@ export const getAllSubscription = async () => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else {
@@ -29,7 +29,7 @@ export const addPurchasedPackage = async (data:PurchasedPackagedRequest) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else {
@@ -46,7 +46,7 @@ export const getPurchasedPackageByPatientId = async (patientId:string) => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else {
@@ -62,7 +62,7 @@ export const PatchDisablePurchasedPackage = async (purchaseId:string) => {
     }
     const result = await axiosPatch(props)
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else {

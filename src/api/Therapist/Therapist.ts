@@ -15,7 +15,7 @@ export const getAllTherapist = async()=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -33,7 +33,7 @@ export const getTherapistById = async(accountId:string)=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -50,7 +50,7 @@ export const getTherapistByTherapistId = async(accountId:string)=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -67,7 +67,7 @@ export const updateTherapistProfile = async(therapistUpdate:TherapistUpdate)=> {
     }
     const result = await axiosUpdate(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{

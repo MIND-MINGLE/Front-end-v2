@@ -13,7 +13,7 @@ export const getGroupChatByAccountId = async (accountId: string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-        console.log("Group chats fetched successfully:", result.data);
+        //console.log("Group chats fetched successfully:", result.data);
         return result.data;
     } else {
         console.error("Error fetching group chats:", result.error);
@@ -30,7 +30,7 @@ export const getAllClientByChatGroupId = async (chatgroupId: string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-        console.log("Clients fetched successfully:", result.data);
+        //("Clients fetched successfully:", result.data);
         return result.data;
     } else {
         console.error("Error fetching Clients:", result.error);
@@ -48,7 +48,7 @@ export const createGroupChat = async (data: requestGroupChat) => {
     const result = await axiosCreate(props);
 
     if (result.success) {
-        console.log("Group chats fetched successfully:", result.data);
+        //console.log("Group chats fetched successfully:", result.data);
         return result.data;
     } else {
         console.error("Error fetching group chats:", result.error);
@@ -65,7 +65,7 @@ export const addUserInGroup = async (data: userInGroup) => {
     const result = await axiosCreate(props);
 
     if (result.success) {
-        console.log("Group chats fetched successfully:", result.data);
+        //("Group chats fetched successfully:", result.data);
         return result.data;
     } else {
         console.error("Error fetching group chats:", result.error);

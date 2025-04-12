@@ -69,7 +69,7 @@ const MusicPlaylist = ({ onClose }: MusicPlaylistProps) => {
   };
 
   const handleClose = () => {
-    console.log("Music continues in background");
+    //console.log("Music continues in background");
     onClose();
   };
 

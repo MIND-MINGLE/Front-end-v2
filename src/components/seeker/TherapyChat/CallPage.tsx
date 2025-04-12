@@ -73,7 +73,7 @@ const CallPage = ({ format: initialFormat, onFormatChange, groupId }: CallPagePr
         });
 
         await conn.invoke("JoinGroup", groupId);
-        console.log(`Joined group: ${groupId}`);
+        //console.log(`Joined group: ${groupId}`);
       } else {
         setError("Không thể kết nối SignalR");
       }

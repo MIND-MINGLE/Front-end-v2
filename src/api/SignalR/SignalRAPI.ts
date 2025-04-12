@@ -36,7 +36,7 @@ export const connectToChatHub = async (
 
     try {
         await connection.start();
-        console.log("Connected to SignalR chat hub");
+        //("Connected to SignalR chat hub");
         return connection;
     } catch (err) {
         console.error(" Error connecting to SignalR hub:", err);
@@ -62,7 +62,7 @@ export const sendMessage = async (chatMessageRequest: ChatMessageRequest): Promi
 export const disconnectFromChatHub = async (): Promise<void> => {
     if (connection) {
         await connection.stop();
-        console.log("Disconnected from SignalR chat hub");
+        //("Disconnected from SignalR chat hub");
     }
 };
 

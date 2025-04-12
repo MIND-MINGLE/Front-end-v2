@@ -12,6 +12,7 @@ import { TherapistProfile } from './TherapyProfile/viewtherapist'
 import BookAppointment from './TherapyProfile/bookAppointment'
 import NavigationRail from './NavBar'
 import SubscriptionPage from './subscription/subscriptionPage'
+import GlobalPaymentReminder from '../../services/globalPaymentCounter'
 export default function SeekerRoute() {
   const nav = useNavigate()
   useEffect(()=>{
@@ -25,6 +26,7 @@ export default function SeekerRoute() {
   },[])
   return (
     <>
+     <GlobalPaymentReminder />
     <NavigationRail />
     <Routes>
       <Route element={<ProtectedRoutes/>}>
@@ -33,14 +35,7 @@ export default function SeekerRoute() {
           <Route path='/history' element={<HistoryPage />} />
           <Route path='/profile' element={<ProfileSeekerPage />} />
           <Route path='/therapy-chat' element={<TherapyChatPage />} />
-          <Route path='/patient-summary' element={<SummaryPage formData={{
-            depression: '',
-            anxiety: '',
-            trauma: '',
-            concern: '',
-            interference: '',
-            urgency: ''
-          }} />} />
+          <Route path='/patient-summary' element={<SummaryPage/>} />
           <Route path='/subscription' element={<SubscriptionPage/>} />
           <Route path='/connector' element={<TherapistSelection/>} />
           <Route path='/therapist/:accountId' element={<TherapistProfile/>} />

@@ -138,7 +138,7 @@ export default function GlobalCounter() {
   }, [currentSub]);
   // Handle disabling the appointment
   const handleDisableAppointment = async () => {
-    console.log("get app", currentApp)
+    //console.log("get app", currentApp)
     if (!currentApp) return;
     setIsDisablingApp(true);
     try {

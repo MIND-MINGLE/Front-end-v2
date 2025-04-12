@@ -74,7 +74,7 @@ export default function AppointmentList() {
 
   // Pagination logic
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    console.log(event)
+    //console.log(event)
     setPage(value);
   };
 

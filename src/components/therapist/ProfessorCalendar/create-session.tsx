@@ -43,7 +43,7 @@ const SessionCreator: React.FC = () => {
       if (localAccount) {
         const account = JSON.parse(localAccount);
         const therapist = await getTherapist(account.UserId);
-        console.log("Therapist:", therapist);
+        //console.log("Therapist:", therapist);
         if (therapist) {
           setTherapist(therapist);
           const sessionData = await GetAllSessionByTherapistId(therapist.therapistId);

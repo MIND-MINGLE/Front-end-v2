@@ -13,7 +13,7 @@ const getGroupChatMessage = async (chatGroupId: string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-        console.log("Chat Messages fetched successfully:", result.data);
+        //console.log("Chat Messages fetched successfully:", result.data);
         return result.data;
     } else {
         console.error("Error fetching messages:", result.error);

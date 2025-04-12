@@ -23,7 +23,7 @@ const DynamicForm: React.FC = () => {
       setLoading(true);
       const fetchedQuestions = await GetAllQuestionCategory();
       if (Array.isArray(fetchedQuestions.result)) {
-        console.log(fetchedQuestions.result);
+        //console.log(fetchedQuestions.result);
         setCategories(fetchedQuestions.result);
       } else {
         console.error('GetAllQuestions did not return an array:', fetchedQuestions.result);
@@ -84,7 +84,7 @@ const DynamicForm: React.FC = () => {
         throw new Error('Failed to create patient survey');
       }
       const patientSurveyId = patientSurveyResponse.result.patientSurveyId;
-      console.log('Patient Survey Created:', patientSurveyResponse.result);
+      //console.log('Patient Survey Created:', patientSurveyResponse.result);
 
       // Step 2: Prepare and send responses
       const patientResponses: PatientResponseRequest[] = Object.entries(responses).map(([questionId, answerId]) => ({

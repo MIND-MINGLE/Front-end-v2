@@ -231,7 +231,7 @@ const BookingAppointment: React.FC = () => {
                 }
               }
               //After we got a group, set an appoitnment for that chatgroup
-              console.log("Appointment Request:",appointment);
+             //console.log("Appointment Request:",appointment);
               const response = await RegisterAppointment(appointment);
               if (response.statusCode === 200) {
               alert('Appointment booked successfully!');

@@ -41,7 +41,7 @@ export const RegisterPatientAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -58,7 +58,7 @@ export const RegisterDocAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -75,7 +75,7 @@ export const RegisterAgentAccount = async (data: AccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -92,7 +92,7 @@ export const GoogleLoginAccount = async (data: GoogleAccountRequestProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -109,7 +109,7 @@ export const LoginAccount = async (data: LoginProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -126,7 +126,7 @@ export const verifyAccount = async (data: VerifyProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-       // console.log(result.data)
+       // //console.log(result.data)
         return result.data
     }
     else {
@@ -165,7 +165,7 @@ export const updateUserAvatar = async (file: File, accountId: string) => {
 
         const result = await axiosUpdate(props)
         if (result.success) {
-        //    console.log(result.data)
+        //    //console.log(result.data)
             return result.data
         } else {
             console.log(result.error)
@@ -185,7 +185,7 @@ export const getAllAccount = async () => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-     //   console.log(result.data)
+     //   //console.log(result.data)
         return result.data
     }
     else {
@@ -202,7 +202,7 @@ export const getAccountById = async (accountId: string) => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-      //  console.log(result.data)
+      //  //console.log(result.data)
         return result.data
     }
     else {

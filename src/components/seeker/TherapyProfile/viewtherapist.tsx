@@ -119,10 +119,10 @@ export const TherapistProfile = () => {
           const therapist = therapistResponse.result
           setTherapist(therapistResponse.result);
           // Gọi API lấy credentials
-          const averageRatingResponse = await fetchAverageRating(therapist.therapistId);
-          console.log("Average Rating: ", averageRatingResponse)
+          
+          //console.log("Average Rating: ", averageRatingResponse)
           const credentialsResponse = await getCredentialByTherapistId(therapist.therapistId);
-          console.log("Your Credentials: ", credentialsResponse)
+          //console.log("Your Credentials: ", credentialsResponse)
           if (credentialsResponse != null && credentialsResponse.statusCode === 200) {
             const activeCredentials = credentialsResponse.result.filter(
               (cred: Credential) => cred.isDisabled === 0

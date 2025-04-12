@@ -13,7 +13,7 @@ export const getAllSpecialization = async () => {
   }
   const result = await axiosRead(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result.data)
     return result.data
   }
   else {
@@ -30,7 +30,7 @@ export const getSpecializationByTherapistId = async (therapistId: string) => {
   }
   const result = await axiosRead(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result.data)
     return result.data
   }
   else {
@@ -50,7 +50,7 @@ export const AddSpecializationToTherapistId = async (therapistId: string,special
   }
   const result = await axiosCreate(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result.data)
     return result.data
   }
   else {
@@ -66,7 +66,7 @@ export const DeleteSpecializationToTherapistId = async (therapistId: string,spec
   }
   const result = await axiosDelete(props)
   if (result.success) {
-    console.log(result.data)
+    //console.log(result.data)
     return result.data
   }
   else {

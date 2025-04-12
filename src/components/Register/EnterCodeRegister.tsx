@@ -30,7 +30,7 @@ const EnterCode = ({ onUpdateInfo }: { onUpdateInfo: () => void }): React.JSX.El
     setIsLoading(true)
     const response = await verifyAccount(verifyData)
     if(response){
-      console.log(response)
+      //console.log(response)
       alert("Account Verified")
        const role = localStorage.getItem("role")
           switch (role) {

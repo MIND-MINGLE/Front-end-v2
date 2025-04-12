@@ -169,7 +169,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
         if (connection && currentChat?.chatGroupId) {
           setHubConnection(connection);
           await connection.invoke("JoinGroup", currentChat.chatGroupId);
-          console.log(`Joined group: ${currentChat.chatGroupId}`);
+          //console.log(`Joined group: ${currentChat.chatGroupId}`);
           setError(null);
         } else if (!connection) {
           setError("Không thể kết nối SignalR");

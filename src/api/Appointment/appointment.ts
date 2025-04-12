@@ -1,5 +1,5 @@
 
-import { AppointmentRequest } from "../../interface/IAccount"
+import { AppointmentRequestOnline } from "../../interface/IAccount"
 import { axiosCreate, axiosPatch, axiosRead } from "../AxiosCRUD"
 import { baseUrl,headers } from "../Url"
 
@@ -14,7 +14,7 @@ export const getAllAppointment = async()=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data
     }
     else{
@@ -24,7 +24,7 @@ export const getAllAppointment = async()=> {
 
 }
 
-export const RegisterAppointment = async(data:AppointmentRequest)=> {
+export const RegisterAppointment = async(data:AppointmentRequestOnline)=> {
     const props = {
         data: data,
         url: appointmenttUrl,
@@ -32,7 +32,7 @@ export const RegisterAppointment = async(data:AppointmentRequest)=> {
     }
     const result = await axiosCreate(props)
     if(result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data
     }
     else{
@@ -48,7 +48,7 @@ export const RegisterAppointment = async(data:AppointmentRequest)=> {
         }
         const result = await axiosRead(props)
         if(result.success) {
-            console.log(result.data)
+            //console.log(result.data)
             return result.data
         }
         else{
@@ -65,7 +65,7 @@ export const getAppointmentByTherapistId = async(data:string)=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -83,7 +83,7 @@ export const getCurrentAppointment = async(therapistId:string,patientId:string)=
     console.log(appointmenttUrl+"/"+therapistId+"/"+patientId)
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -108,7 +108,7 @@ export const patchAppointmentStatus = async(status:"Canceled"|"Approved"|"Ended"
     }
     const result = await axiosPatch(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{

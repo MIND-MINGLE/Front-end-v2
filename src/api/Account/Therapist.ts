@@ -14,7 +14,7 @@ export const getTherapist = async(accountId:string)=> {
     }
     const result = await axiosRead(props)
     if(result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data.result
     }
     else{
@@ -32,7 +32,7 @@ export const AddTherapist = async(data:TherapistCreateProps)=> {
     }
     const result = await axiosCreate(props)
     if(result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data.result
     }
     else{

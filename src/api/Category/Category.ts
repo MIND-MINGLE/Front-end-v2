@@ -11,7 +11,7 @@ export const GetAllQuestionCategory = async () => {
     }
     const result = await axiosRead(props);
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else {

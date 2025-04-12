@@ -12,7 +12,7 @@ export const GetAllSessionByTherapistId = async(therapistId:string) =>{
     }
     const result = await axiosRead(props);
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data.result
     }
     else{
@@ -28,7 +28,7 @@ export const GetAllSessionById = async(therapistId:string) =>{
     }
     const result = await axiosRead(props);
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -45,7 +45,7 @@ export const deleteSessionById = async(sessionId:string) =>{
     }
     const result = await axiosDelete(props);
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -62,7 +62,7 @@ export const updateSessionById = async(data:any) =>{
     }
     const result = await axiosUpdate(props);
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
@@ -79,7 +79,7 @@ export const createSession = async(data:any) =>{
     }
     const result = await axiosCreate(props);
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{

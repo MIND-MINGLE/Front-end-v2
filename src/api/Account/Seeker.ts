@@ -14,7 +14,7 @@ export const RegisterPatientAccount = async (data: SeekerCreateProps) => {
     }
     const result = await axiosCreate(props)
     if (result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data
     }
     else {
@@ -32,7 +32,7 @@ export const getPatientByAccountId = async (accountId: string) => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data
     }
     else {
@@ -48,7 +48,7 @@ export const getAllPatient = async () => {
     }
     const result = await axiosRead(props)
     if (result.success) {
-        console.log(result.data)
+        ////console.log(result.data)
         return result.data
     }
     else {
@@ -65,7 +65,7 @@ export const updatePatientProfile = async (data: any) => {
     }
     const result = await axiosUpdate(props)
     if (result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
 }

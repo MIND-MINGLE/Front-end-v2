@@ -15,10 +15,10 @@ export const CreateSurveyResult = async (data: PatientSurveyRequest) => {
     const result = await axiosCreate(props);
 
     if (result.success) {
-        console.log("CreateSurveyResult fetched successfully:", result.data);
+        //console.log("CreateSurveyResult fetched successfully:", result.data);
         return result.data;
     } else {
-        console.error("Error fetching messages:", result.error);
+        console.error("Error fetching CreateSurveyResult:", result.error);
         return result.error;
     }
 };
@@ -32,10 +32,10 @@ export const getLatestPatientSurvey = async (patientId:string) => {
     const result = await axiosRead(props);
 
     if (result.success) {
-        console.log("Fetch SurveyResult successfully:", result.data);
+        //console.log("Fetch SurveyResult successfully:", result.data);
         return result.data;
     } else {
-        console.error("Error fetching messages:", result.error);
+        console.error("Error fetching CreateSurveyResult:", result.error);
         return result.error;
     }
 };
@@ -49,10 +49,10 @@ export const CreateResponseResult = async (data: PatientResponseRequest[]) => {
     const result = await axiosCreate(props);
 
     if (result.success) {
-        console.log("CreateResponseResult fetched successfully:", result.data);
+        //console.log("CreateResponseResult fetched successfully:", result.data);
         return result.data;
     } else {
-        console.error("Error fetching messages:", result.error);
+        console.error("Error fetching CreateSurveyResult:", result.error);
         return result.error;
     }
 };

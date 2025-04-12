@@ -15,7 +15,7 @@ export const createEmergencyEnd = async(data:EmergencyEndRequest)=> {
     }
     const result = await axiosCreate(props)
     if(result.success) {
-        console.log(result.data)
+        //console.log(result.data)
         return result.data
     }
     else{
