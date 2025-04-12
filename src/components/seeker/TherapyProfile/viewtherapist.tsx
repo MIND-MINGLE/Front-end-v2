@@ -28,7 +28,7 @@ import styles from "./viewthera.module.css"
 import { formatVnd } from "../../../services/common";
 import { getCredentialByTherapistId } from '../../../api/Credential/Credential';
 import { getSpecializationByTherapistId } from "../../../api/Specialization/Specialization";
-import { getAverageRatingByTherapistId, getRatingByTherapistId } from "../../../api/Rating/RatingAPI";
+import {  getRatingByTherapistId } from "../../../api/Rating/RatingAPI";
 import { AverageRating, Rating } from "../../../interface/IAccount";
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -78,7 +78,6 @@ export const TherapistProfile = () => {
     averageStar: 0,
     totalRatings: 0
   });
-  const [rating, setRating] = useState<Rating[]>([]);
   const [ratingDialog, setRatingDialog] = useState({
     open: false,
     ratings: [] as Rating[]
@@ -103,14 +102,6 @@ export const TherapistProfile = () => {
       console.error("Error fetching ratings:", error);
     }
   };
-  const fetchAverageRating = async (therapistId: string) => {
-    const response = await getAverageRatingByTherapistId(therapistId)
-    if (response.statusCode === 200) {
-      setAverageRating(response.result);
-      return response.result;
-    }
-
-  }
   const fetchTherapist = async () => {
     try {
       if (accountId) {

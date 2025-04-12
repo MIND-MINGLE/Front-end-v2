@@ -1,6 +1,6 @@
 
 import { baseUrl,headers } from "../Url"
-import { axiosRead, axiosUpdate } from "../AxiosCRUD"
+import { axiosPatch, axiosRead, axiosUpdate } from "../AxiosCRUD"
 import { TherapistUpdate } from "../../interface/IAccount"
 
 
@@ -66,6 +66,23 @@ export const updateTherapistProfile = async(therapistUpdate:TherapistUpdate)=> {
         headers: headers
     }
     const result = await axiosUpdate(props)
+    if(result.success) {
+        //console.log(result.data)
+        return result.data
+    }
+    else{
+        console.log(result.error)
+        return null
+    }
+    
+}
+export const updateTherapistAccount = async(accountId:string)=> {
+    const props = {
+        data: null,
+        url: therapistUrl+"/approve/"+accountId,
+        headers: headers
+    }
+    const result = await axiosPatch(props)
     if(result.success) {
         //console.log(result.data)
         return result.data
