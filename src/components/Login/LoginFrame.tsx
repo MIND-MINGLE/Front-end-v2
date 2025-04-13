@@ -32,28 +32,31 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [loading, setLoading] = useState(false);
   const [isSeeker, setIsSeeker] = useState(false);
   const nav = useNavigate();
+  useEffect(()=>{
+    checkUserRole();
+    const interval = setInterval(checkUserRole,1000)
+    return () => {
+      clearInterval(interval);
+    }
+  },[])
+  const checkUserRole = () => {
+    try {
+     const localRole = localStorage.getItem("role");
+      if (localRole === "seeker") {
+        setIsSeeker(true);
+      }else{
+        setIsSeeker(false);
+      }
+    } catch (error) {
+      console.error("Error checking user role:", error);
+    }
+  }
 
   const login = async () => {
     if (!account || !password) {
       setErrorMessage("Please enter both email and password");
       return;
     }
-    const checkUserRole = async () => {
-      try {
-       const localRole = localStorage.getItem("role");
-        if (localRole === "seeker") {
-          setIsSeeker(true);
-        }
-      } catch (error) {
-        console.error("Error checking user role:", error);
-        return false;
-      }
-    }
-    useEffect(()=>{
-      checkUserRole();
-      const interval = setInterval(checkUserRole, 3000);
-      return () => clearInterval(interval);
-    },[])
     setErrorMessage("");
     try {
       setLoading(true);
@@ -186,7 +189,7 @@ const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
           Forgot Password?
         </Button>
         {
-          isSeeker??(
+          isSeeker?(
           <>
         <Divider className={styles.divider}>
           <Typography className={styles.dividerText}>
@@ -213,7 +216,7 @@ const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
           </Button>
         </Box>
         </>
-        )
+        ):null
       }
       </Box>
     </>
