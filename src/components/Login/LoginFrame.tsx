@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -30,14 +30,33 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSeeker, setIsSeeker] = useState(false);
   const nav = useNavigate();
+  useEffect(()=>{
+    checkUserRole();
+    const interval = setInterval(checkUserRole,1000)
+    return () => {
+      clearInterval(interval);
+    }
+  },[])
+  const checkUserRole = () => {
+    try {
+     const localRole = localStorage.getItem("role");
+      if (localRole === "seeker") {
+        setIsSeeker(true);
+      }else{
+        setIsSeeker(false);
+      }
+    } catch (error) {
+      console.error("Error checking user role:", error);
+    }
+  }
 
   const login = async () => {
     if (!account || !password) {
       setErrorMessage("Please enter both email and password");
       return;
     }
-
     setErrorMessage("");
     try {
       setLoading(true);
@@ -187,7 +206,9 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
         >
           Forgot Password?
         </Button>
-
+        {
+          isSeeker?(
+          <>
         <Divider className={styles.divider}>
           <Typography className={styles.dividerText}>
             or continue with
@@ -226,6 +247,9 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
             Facebook
           </Button>
         </Box>
+        </>
+        ):null
+      }
       </Box>
     </>
   );

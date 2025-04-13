@@ -16,7 +16,7 @@ import { AccountProps } from "../interface/IAccount";
 const isAuthenticated = (): boolean => {
   const user = localStorage.getItem("token"); // Store user token in local. Don't worry it expired
   if(!user){
-    console.error("No account found");
+    //console.error("No account found");
     return false; 
   }
   else{
@@ -35,15 +35,15 @@ export default function ProtectedRoutes() {
 export function RoleProtectedRoute() {
   const data = sessionStorage.getItem("account");
   if (!data) {
-    console.error("No account found in Storage. DIRTY LITTLE HACKER");
-    return null; // Handle missing account case. DIRTY LITTLE HACKER
+    //console.error("No account found in Storage. DIRTY LITTLE HACKER");
+    return null; // Handle missing account case
   }
 
   try {
     const account:AccountProps = JSON.parse(data); // Convert string back to object
     return account.Role;
   } catch (error) {
-    console.error("Error parsing account data:", error);
+    //console.error("Error parsing account data:", error);
     return null;
   }
 }
