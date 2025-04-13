@@ -139,6 +139,13 @@
   border: 1px solid #FECACA;
 }
 
+.statusOverdue {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+
 .appointmentDetails {
   margin-bottom: 24px;
 }

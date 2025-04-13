@@ -184,6 +184,11 @@ export default function AppointmentList() {
       label: "Ended",
       count: formatCount(getStatusCount("ENDED"))
     },
+    {
+      id: "OVERDUE",
+      label: "Overdue",
+      count: formatCount(getStatusCount("OVERDUE"))
+    }
   ] as const;
 
   return (
