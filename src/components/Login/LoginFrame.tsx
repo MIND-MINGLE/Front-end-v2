@@ -61,42 +61,60 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
     setLoading(false);
   };
 
- const GoogleLogin = useGoogleLogin({
+  const isGoogleLoginAllowed = (role: string | null): boolean => {
+    return role === 'seeker';
+  };
+
+  const GoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
+      const currentRole = localStorage.getItem("role");
+
+      if (!isGoogleLoginAllowed(currentRole)) {
+        setErrorMessage("Google login is only available for patients");
+        return;
+      }
+
+      try {
         const { access_token } = tokenResponse;
-        var decodeData:GoogleAccountRequestProps = await GoogleAccountAuthen(access_token)
-        const currentRole = localStorage.getItem("role");
+        const decodeData: GoogleAccountRequestProps = await GoogleAccountAuthen(access_token);
+
         if (!currentRole) {
+          setErrorMessage("Please select a role first");
           return;
         }
-        decodeData={
+
+        const loginData = {
           ...decodeData,
           roleId: currentRole
-        }
-        await loginWithGoogle(decodeData);
+        };
+        await loginWithGoogle(loginData);
+      } catch (error) {
+        console.error("Google Login Error:", error);
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     },
     onError: (error) => {
-        alert("Login Failed! Your Mail is restrcited or not registered");
-        console.error('Google login failed:', error);
-       
+      alert("Login Failed! Your Mail is restricted or not registered");
+      console.error('Google login failed:', error);
     }
-})
-const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
-  try {
-    setLoading(true);
-    const res = await GoogleLoginAccount(data);
-    if (res.statusCode === 200) {
-      localStorage.setItem("token", JSON.stringify(res.result));
-      nav("/");
-    } else {
-      setErrorMessage(res.errorMessage || "Login failed. Please try again.");
+  });
+
+  const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
+    try {
+      setLoading(true);
+      const res = await GoogleLoginAccount(data);
+      if (res.statusCode === 200) {
+        localStorage.setItem("token", JSON.stringify(res.result));
+        nav("/");
+      } else {
+        setErrorMessage(res.errorMessage || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      setErrorMessage("Something went wrong. Please try again.");
     }
-  } catch (error) {
-    console.error("Google Login Error:", error);
-    setErrorMessage("Something went wrong. Please try again.");
+    setLoading(false);
   }
-  setLoading(false);
-}
 
   return (
     <>
@@ -177,16 +195,30 @@ const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
         </Divider>
 
         <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+          {isGoogleLoginAllowed(localStorage.getItem("role")) ? (
+            <Button
+              onClick={() => GoogleLogin()}
+              variant="outlined"
+              startIcon={<GoogleIcon />}
+              className={styles.googleButton}
+            >
+              Google
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              startIcon={<GoogleIcon />}
+              className={styles.googleButton}
+              onClick={() => {
+                alert("Google login is only available for patients");
+              }}
+              disabled
+            >
+              Google
+            </Button>
+          )}
           <Button
-          onClick={()=>{GoogleLogin()}}
-            variant="outlined"
-            startIcon={<GoogleIcon />}
-            className={styles.googleButton}
-          >
-            Google
-          </Button>
-          <Button
-          onClick={()=>{alert("Feature Under Contruction!")}}
+            onClick={() => { alert("Feature Under Construction!") }}
             variant="outlined"
             startIcon={<FacebookIcon />}
             className={styles.facebookButton}
