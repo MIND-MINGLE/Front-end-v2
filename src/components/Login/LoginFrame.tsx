@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -30,6 +30,7 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isSeeker, setIsSeeker] = useState(false);
   const nav = useNavigate();
 
   const login = async () => {
@@ -37,7 +38,22 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
       setErrorMessage("Please enter both email and password");
       return;
     }
-
+    const checkUserRole = async () => {
+      try {
+       const localRole = localStorage.getItem("role");
+        if (localRole === "seeker") {
+          setIsSeeker(true);
+        }
+      } catch (error) {
+        console.error("Error checking user role:", error);
+        return false;
+      }
+    }
+    useEffect(()=>{
+      checkUserRole();
+      const interval = setInterval(checkUserRole, 3000);
+      return () => clearInterval(interval);
+    },[])
     setErrorMessage("");
     try {
       setLoading(true);
@@ -169,7 +185,9 @@ const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
         >
           Forgot Password?
         </Button>
-
+        {
+          isSeeker??(
+          <>
         <Divider className={styles.divider}>
           <Typography className={styles.dividerText}>
             or continue with
@@ -194,6 +212,9 @@ const loginWithGoogle = async (data: GoogleAccountRequestProps) => {
             Facebook
           </Button>
         </Box>
+        </>
+        )
+      }
       </Box>
     </>
   );
