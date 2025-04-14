@@ -167,10 +167,10 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
               }}
             />
             <Typography variant="h6" color="#1E73BE" fontWeight="bold" gutterBottom>
-              Chưa có cuộc trò chuyện nào
+              No Appointment Available At The Moment
             </Typography>
             <Typography color="#666666" sx={{ maxWidth: "280px", marginBottom: "20px" }}>
-              Hãy bắt đầu một cuộc trò chuyện mới với chuyên gia tư vấn để được hỗ trợ!
+              Let's find a therapist for you. Click the button below to start your journey.
             </Typography>
             <Box
               onClick={() => nav("/seeker")}
@@ -185,7 +185,7 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
                 },
               }}
             >
-              <Typography>Tìm chuyên gia ngay</Typography>
+              <Typography>Start Now</Typography>
             </Box>
           </Box>
         )}

@@ -99,20 +99,20 @@ const TherapyChatPage: React.FC = () => {
           <SentimentSatisfiedAltIcon sx={{ fontSize: 40, color: "#1E73BE", transform: "rotate(10deg)" }} />
         </Box>
         <Typography variant="h4" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", marginBottom: 1 }}>
-          Chào mừng đến với Therapy Chat!
+          Welcome To Therapy Chat!
         </Typography>
         <Typography variant="body1" sx={{ color: "#666666", textAlign: "center", maxWidth: "500px", lineHeight: 1.6, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px" }}>
-          Hãy chọn một cuộc trò chuyện từ danh sách bên trái để bắt đầu. Các chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn!
+          Click on the therapist's name on the left to start a conversation.
         </Typography>
         <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1.5, backgroundColor: "#f8f9fa", padding: "15px", borderRadius: "15px", maxWidth: "500px", border: "1px solid #e0e0e0" }}>
           <Typography variant="h6" sx={{ color: "#1E73BE", fontWeight: "bold", textAlign: "center", fontSize: "1.1rem" }}>
-            Mẹo nhỏ để có trải nghiệm tốt nhất:
+            Tips for Effective Communication
           </Typography>
           <Box component="ul" sx={{ color: "#666666", m: 0, pl: 3, '& li': { marginBottom: '6px', '&:last-child': { marginBottom: 0 } } }}>
-            <li>Hãy mô tả rõ vấn đề bạn đang gặp phải</li>
-            <li>Đặt câu hỏi cụ thể để nhận được lời khuyên chính xác</li>
-            <li>Chia sẻ cảm xúc của bạn một cách chân thành</li>
-            <li>Lưu lại các lời khuyên hữu ích để tham khảo sau này</li>
+            <li>Describes clearly of your current sistuation Hãy mô tả rõ vấn đề bạn đang gặp phải</li>
+            <li>Ask question in the manner of utmost percision to ensure the best answer </li>
+            <li>Sincerely open up about your feelings for us to better understand you </li>
+            <li>Take note and enjoy!</li>
           </Box>
         </Box>
         <Box sx={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', background: 'linear-gradient(90deg, #1E73BE 0%, #90CAF9 100%)', opacity: 0.5 }} />
