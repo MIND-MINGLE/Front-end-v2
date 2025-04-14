@@ -30,7 +30,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 
 export default function AppointmentList() {
   const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
-  const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "DECLINED" | "CANCELLED" | "ENDED">("PENDING");
+  const [activeTab, setActiveTab] = useState<"PENDING" | "APPROVED" | "DECLINED" | "CANCELLED" |"ENDED"|"OVERDUE">("PENDING");
   const [isLoading, setIsLoading] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
@@ -149,11 +149,7 @@ export default function AppointmentList() {
 
   // Get count for each status
   const getStatusCount = (status: string) => {
-    return appointmentList.filter((appointment) => appointment.status === status).length;
-  };
-
-  // Thêm hàm format số lượng
-  const formatCount = (count: number) => {
+    var count = appointmentList.filter((appointment) => appointment.status === status).length;
     return count > 10 ? "10+" : count.toString();
   };
 
@@ -162,32 +158,32 @@ export default function AppointmentList() {
     {
       id: "PENDING",
       label: "Pending",
-      count: formatCount(getStatusCount("PENDING"))
+      count: getStatusCount("PENDING")
     },
     {
       id: "APPROVED",
       label: "Approved",
-      count: formatCount(getStatusCount("APPROVED"))
+      count: getStatusCount("APPROVED")
     },
     {
       id: "DECLINED",
       label: "Declined",
-      count: formatCount(getStatusCount("DECLINED"))
+      count: getStatusCount("DECLINED")
     },
     {
       id: "CANCELLED",
       label: "Cancelled",
-      count: formatCount(getStatusCount("CANCELLED"))
+      count: getStatusCount("CANCELLED")
     },
     {
       id: "ENDED",
       label: "Ended",
-      count: formatCount(getStatusCount("ENDED"))
+      count: getStatusCount("ENDED")
     },
     {
       id: "OVERDUE",
       label: "Overdue",
-      count: formatCount(getStatusCount("OVERDUE"))
+      count: getStatusCount("OVERDUE")
     }
   ] as const;
 
@@ -203,7 +199,6 @@ export default function AppointmentList() {
 
 
         <Header />
-
         <Box className={styles.contentWrapper}>
           <Box className={styles.titleContainer}>
             <Typography component="h1" className={styles.titleDecoration}>
@@ -234,7 +229,7 @@ export default function AppointmentList() {
 
           {filteredAppointments.length === 0 ? (
             <Box className={styles.emptyState}>
-              <Typography variant="h6" color="text.secondary">
+              <Typography variant="h5" color="primary">
                 No {activeTab.toLowerCase()} appointments found
               </Typography>
             </Box>
