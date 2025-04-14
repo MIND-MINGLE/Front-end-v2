@@ -29,10 +29,15 @@ const ChatProfileList = ({ setIsLoading, isSeeker, setCurrentChat }: ChatProfile
         const accountId = account.UserId;
         const response = await getGroupChatByAccountId(accountId);
         // Sort profiles: active chats (isDisabled === false) first
-        const sortedProfiles = response.result.sort((a: ChatProfile, b: ChatProfile) =>
-          a.isDisabled === b.isDisabled ? 0 : a.isDisabled ? 1 : -1
-        );
-        setProfiles(sortedProfiles);
+        if(response.statusCode !== 200){
+          setProfiles([]);
+        }
+        else{
+          const sortedProfiles = response.result.sort((a: ChatProfile, b: ChatProfile) =>
+            a.isDisabled === b.isDisabled ? 0 : a.isDisabled ? 1 : -1
+          );
+          setProfiles(sortedProfiles);
+        }
       }
       setIsLoading(false);
     };
