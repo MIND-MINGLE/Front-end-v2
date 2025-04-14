@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -97,11 +96,6 @@ export default function PaymentStatusCheck() {
             </>
           )}
         </Box>
-        {paymentId && (
-          <Typography variant="body1" color="#666" sx={{ mb: 3 }}>
-            Transaction ID: {paymentId}
-          </Typography>
-        )}
         <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
           {isSuccess ? (
             <SuccessButton onClick={handleReturn}>
