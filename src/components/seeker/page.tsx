@@ -135,7 +135,6 @@ const SeekerPage = (): JSX.Element => {
                     flexDirection: "column",
                     alignItems: "center",
                     alignContent: "center",
-                    padding: "20px",
                 }}
             >
                 <Box

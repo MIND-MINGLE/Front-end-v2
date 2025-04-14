@@ -1,17 +1,12 @@
 /* Container styles */
 .container {
     min-height: 100vh;
-    /* background: linear-gradient(180deg, rgb(27, 157, 240) 100%, rgb(0, 99, 162) 0%); */
     background: linear-gradient(0deg, rgb(0, 99, 162) 0%, rgb(27, 157, 240) 50%, rgb(255, 255, 255) 100% 100%);
-    padding-top: 1%;
   }
-
-  
   .wrapper {
     max-width: 1200px;
     margin: 0 auto;
   }
-  
   /* Header styles */
   .header {
     text-align: center;
