@@ -10,7 +10,6 @@ import {
   InputAdornment,
 } from "@mui/material";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { GoogleAccountAuthen, GoogleLoginAccount, LoginAccount } from "../../api/Account/Account";
@@ -238,14 +237,6 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
               Google
             </Button>
           )}
-          <Button
-            onClick={() => { alert("Feature Under Construction!") }}
-            variant="outlined"
-            startIcon={<FacebookIcon />}
-            className={styles.facebookButton}
-          >
-            Facebook
-          </Button>
         </Box>
         </>
         ):null
