@@ -442,14 +442,11 @@ const GlobalPaymentReminder: React.FC = () => {
               })()}
             </Box>
           )}
-          <DialogContentText color="#333333" sx={{ mt: 2 }}>
-            You’ll be redirected to the payment section.
-          </DialogContentText>
           <DialogContentText color="#333333">---</DialogContentText>
           <Typography color="#ff9800">
             {isAccountRestricted
               ? "*Please complete the payment to restore full account access."
-              : "*You can cancel if you can’t pay now. You have 7 days to complete payment before account restrictions apply."}
+              : "*You can cancel if you can’t pay now. You have 7 days since the appointment started to complete payment before the restrictions apply."}
           </Typography>
           {paymentUrl !== "" && (
             <Box sx={{ mt: 2, textAlign: "center" }}>
