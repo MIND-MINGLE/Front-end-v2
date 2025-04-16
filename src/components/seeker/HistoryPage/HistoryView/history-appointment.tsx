@@ -252,7 +252,7 @@ const HistoryAppointment: React.FC = () => {
 
     const patient: Patient = JSON.parse(patientAccount);
     const { discount } = getSubscriptionDiscount();
-    const discountedFee = selectedAppointment.totalFee * discount;
+    const discountedFee = (selectedAppointment.totalFee + selectedAppointment.platformFee) * discount;
     const discountedTherapistReceive =
       (selectedAppointment.totalFee - selectedAppointment.platformFee) * discount;
 
@@ -491,7 +491,7 @@ const HistoryAppointment: React.FC = () => {
                 </Typography>
                 {(() => {
                   const { packageName, discount } = getSubscriptionDiscount();
-                  const discountedFee = selectedAppointment.totalFee * discount;
+                  const discountedFee = (selectedAppointment.totalFee + selectedAppointment.platformFee) * discount ;
                   const discountPercentage = packageName === "MindMingle Premium" ? "30%" : packageName === "MindMingle Plus" ? "10%" : null;
                   return (
                     <>

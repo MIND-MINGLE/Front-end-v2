@@ -109,7 +109,7 @@ const TherapyChatPage: React.FC = () => {
             Tips for Effective Communication
           </Typography>
           <Box component="ul" sx={{ color: "#666666", m: 0, pl: 3, '& li': { marginBottom: '6px', '&:last-child': { marginBottom: 0 } } }}>
-            <li>Describes clearly of your current sistuation Hãy mô tả rõ vấn đề bạn đang gặp phải</li>
+            <li>Describes clearly of your current sistuation</li>
             <li>Ask question in the manner of utmost percision to ensure the best answer </li>
             <li>Sincerely open up about your feelings for us to better understand you </li>
             <li>Take note and enjoy!</li>

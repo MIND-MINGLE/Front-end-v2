@@ -250,7 +250,7 @@ const GlobalPaymentReminder: React.FC = () => {
 
     const patient: Patient = JSON.parse(patientAccount);
     const { discount } = getSubscriptionDiscount();
-    const discountedFee = selectedAppointment.totalFee * discount;
+    const discountedFee = (selectedAppointment.totalFee + selectedAppointment.platformFee) * discount;
     const discountedTherapistReceive =
       (selectedAppointment.totalFee - selectedAppointment.platformFee) * discount;
 
@@ -436,9 +436,6 @@ const GlobalPaymentReminder: React.FC = () => {
                     )}
                     <Typography color="#333333" sx={{ fontWeight: "bold" }}>
                       Final Amount: {formatPriceToVnd(Math.round(discountedFee))}
-                    </Typography>
-                    <Typography color="#333333">
-                      Therapist Receives: {formatPriceToVnd(Math.round((selectedAppointment.totalFee - selectedAppointment.platformFee) * discount))}
                     </Typography>
                   </>
                 );
