@@ -39,6 +39,7 @@ import { getPatientByAccountId } from "../../../api/Account/Seeker";
 import { useNavigate } from "react-router";
 import SubscriptionPopUp from "../../common/SubscriptionPopUp";
 import AppointmentTimer from "../../common/appointmentTimer";
+import { set } from "date-fns";
 
 interface RightComponentsProps {
   currentChat: ChatProps | null;
@@ -361,6 +362,7 @@ const RightComponents = ({ setIsLoading, currentChat }: RightComponentsProps) =>
             
             {showExtraComponent === "call" && (
               <CallPage
+              setShrink = {shrinkPage}
               format={format}
               onFormatChange={handleFormatChange}
               groupId={currentChat?.chatGroupId || ""} // Pass groupId
