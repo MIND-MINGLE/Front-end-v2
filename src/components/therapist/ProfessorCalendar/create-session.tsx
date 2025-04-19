@@ -1,5 +1,5 @@
-// src/pages/SessionCreator.tsx
 import React, { useEffect, useState } from 'react';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import styles from './calendar.module.css';
 import LoadingScreen from '../../common/LoadingScreen';
 import { getTherapist } from '../../../api/Account/Therapist';
@@ -9,21 +9,21 @@ import HeaderProf from '../ProfessorWorkshop/Header';
 interface Session {
   sessionId: string;
   therapistId: string;
-  startTime: string; // ISO string from C# DateTime (assumed UTC)
-  endTime: string; // ISO string from C# DateTime (assumed UTC)
+  startTime: string; // ISO string (UTC)
+  endTime: string; // ISO string (UTC)
   dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 }
 
 interface FormData {
   startHour: string; // e.g., "09:00"
-  endHour: string; // e.g., "10:00"
 }
 
 const SessionCreator: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
-  const [formData, setFormData] = useState<FormData>({ startHour: '', endHour: '' });
+  const [formData, setFormData] = useState<FormData>({ startHour: '' });
   const [error, setError] = useState<string | null>(null);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [editingSession, setEditingSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,13 +43,10 @@ const SessionCreator: React.FC = () => {
       if (localAccount) {
         const account = JSON.parse(localAccount);
         const therapist = await getTherapist(account.UserId);
-        //console.log("Therapist:", therapist);
         if (therapist) {
           setTherapist(therapist);
           const sessionData = await GetAllSessionByTherapistId(therapist.therapistId);
           if (sessionData) {
-            //why the hell you get the local time zone? Just UTC, man...
-            // Normalize C# DateTime (assumed UTC) to UTC ISO strings
             setSessions(sessionData.map((s: Session) => ({
               ...s,
               startTime: ensureUtc(s.startTime),
@@ -58,9 +55,11 @@ const SessionCreator: React.FC = () => {
           }
         } else {
           setError('Failed to fetch therapist data');
+          setErrorDialogOpen(true);
         }
       } else {
         setError('No account found in session storage');
+        setErrorDialogOpen(true);
       }
       setIsLoading(false);
     };
@@ -69,7 +68,7 @@ const SessionCreator: React.FC = () => {
 
   const ensureUtc = (isoString: string): string => {
     if (!isoString.endsWith('Z')) {
-      return isoString + 'Z'; // Assume UTC and append Z
+      return isoString + 'Z';
     }
     return isoString;
   };
@@ -113,8 +112,8 @@ const SessionCreator: React.FC = () => {
   // Handle date selection for new session
   const handleDateClick = (day: Date | null) => {
     if (day) {
-      setSelectedDate(new Date(day)); // Clone to avoid mutation
-      setFormData({ startHour: '', endHour: '' });
+      setSelectedDate(new Date(day));
+      setFormData({ startHour: '' });
       setEditingSession(null);
       setError(null);
     }
@@ -122,37 +121,55 @@ const SessionCreator: React.FC = () => {
 
   // Handle session edit click
   const handleSessionClick = (session: Session) => {
-    const start = new Date(session.startTime); // UTC assumed
-    const end = new Date(session.endTime);
+    const start = new Date(session.startTime);
     setSelectedDate(new Date(start));
     setFormData({
       startHour: `${start.getUTCHours().toString().padStart(2, '0')}:${start.getUTCMinutes().toString().padStart(2, '0')}`,
-      endHour: `${end.getUTCHours().toString().padStart(2, '0')}:${end.getUTCMinutes().toString().padStart(2, '0')}`,
     });
     setEditingSession(session);
     setError(null);
   };
 
-  // Handle form submission (create or update)
+  // Validate no overlapping sessions
+  const checkOverlap = (newSession: Session, excludeSessionId?: string): boolean => {
+    const newStart = new Date(newSession.startTime).getTime();
+    const newEnd = new Date(newSession.endTime).getTime();
+    const newDate = new Date(newSession.startTime);
+
+    return sessions.some((s) => {
+      if (excludeSessionId && s.sessionId === excludeSessionId) return false;
+      const sessionDate = new Date(s.startTime);
+      if (
+        sessionDate.getUTCFullYear() === newDate.getUTCFullYear() &&
+        sessionDate.getUTCMonth() === newDate.getUTCMonth() &&
+        sessionDate.getUTCDate() === newDate.getUTCDate()
+      ) {
+        const start = new Date(s.startTime).getTime();
+        const end = new Date(s.endTime).getTime();
+        return newStart < end && newEnd > start;
+      }
+      return false;
+    });
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!selectedDate) return;
+    if (!selectedDate || !formData.startHour) {
+      setError('Please select a date and start time');
+      setErrorDialogOpen(true);
+      return;
+    }
 
     const [startHour, startMinute] = formData.startHour.split(':').map(Number);
-    const [endHour, endMinute] = formData.endHour.split(':').map(Number);
-
-    // Validation
-    if (!formData.startHour || !formData.endHour) {
-      setError('Please fill in both start and end times');
-      return;
-    }
-    if (startHour > endHour || (startHour === endHour && startMinute >= endMinute)) {
-      setError('End time must be after start time');
+    if (isNaN(startHour) || isNaN(startMinute)) {
+      setError('Invalid start time format');
+      setErrorDialogOpen(true);
       return;
     }
 
-    // Create UTC dates
+    // Create UTC dates (1-hour session)
     const startTime = new Date(Date.UTC(
       selectedDate.getUTCFullYear(),
       selectedDate.getUTCMonth(),
@@ -161,22 +178,22 @@ const SessionCreator: React.FC = () => {
       startMinute || 0,
       0
     ));
-    const endTime = new Date(Date.UTC(
-      selectedDate.getUTCFullYear(),
-      selectedDate.getUTCMonth(),
-      selectedDate.getUTCDate(),
-      endHour,
-      endMinute || 0,
-      0
-    ));
+    const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // +1 hour
 
     const newSession: Session = {
       sessionId: editingSession ? editingSession.sessionId : '',
-      therapistId: therapist ? therapist.therapistId : "123test",
+      therapistId: therapist ? therapist.therapistId : '123test',
       startTime: startTime.toISOString(),
       endTime: endTime.toISOString(),
       dayOfWeek: daysOfWeek[startTime.getUTCDay()] as Session['dayOfWeek'],
     };
+
+    // Check for overlap
+    if (checkOverlap(newSession, editingSession?.sessionId)) {
+      setError('This session overlaps with another session on the same day');
+      setErrorDialogOpen(true);
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -189,24 +206,26 @@ const SessionCreator: React.FC = () => {
           alert('Session updated successfully!');
         } else {
           setError('Failed to update session. Please try again.');
+          setErrorDialogOpen(true);
         }
       } else {
         const response = await createSession(newSession);
         if (response.statusCode === 200) {
-          // Assuming BE returns the created session with sessionId
           const createdSession = { ...newSession, sessionId: response.data?.sessionId || '' };
           setSessions([...sessions, createdSession]);
           alert('Session created successfully!');
         } else {
           setError('Failed to create session. Please try again.');
+          setErrorDialogOpen(true);
         }
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
+      setErrorDialogOpen(true);
       console.error(err);
     } finally {
       setIsLoading(false);
-      setFormData({ startHour: '', endHour: '' });
+      setFormData({ startHour: '' });
       setSelectedDate(null);
       setEditingSession(null);
     }
@@ -221,14 +240,16 @@ const SessionCreator: React.FC = () => {
         if (response.statusCode === 200) {
           setSessions(sessions.filter((s) => s.sessionId !== editingSession.sessionId));
           alert('Session deleted successfully!');
-          setFormData({ startHour: '', endHour: '' });
+          setFormData({ startHour: '' });
           setSelectedDate(null);
           setEditingSession(null);
         } else {
           setError('Failed to delete session. Please try again.');
+          setErrorDialogOpen(true);
         }
       } catch (err) {
         setError('An error occurred during deletion.');
+        setErrorDialogOpen(true);
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -236,10 +257,19 @@ const SessionCreator: React.FC = () => {
     }
   };
 
+  // Calculate end time for display
+  const getEndTimeDisplay = (startHour: string): string => {
+    if (!startHour) return '';
+    const [hour, minute] = startHour.split(':').map(Number);
+    const endTime = new Date(Date.UTC(2000, 0, 1, hour, minute || 0));
+    endTime.setUTCHours(endTime.getUTCHours() + 1);
+    return `${endTime.getUTCHours().toString().padStart(2, '0')}:${endTime.getUTCMinutes().toString().padStart(2, '0')}`;
+  };
+
   return (
     <>
       {isLoading ? <LoadingScreen /> : null}
-      <HeaderProf/>
+      <HeaderProf />
       <div className={styles.calendarContainer}>
         <div className={styles.header}>
           <button onClick={handlePrevMonth} className={styles.navButton}>←</button>
@@ -266,15 +296,15 @@ const SessionCreator: React.FC = () => {
             >
               {day && <span>{day.getUTCDate()}</span>}
               {day &&
-                 sessions
-                 .filter((s) => {
-                   const sessionDate = new Date(s.startTime);
-                   return (
-                     sessionDate.getUTCDate() === day.getUTCDate() &&
-                     sessionDate.getUTCMonth() === day.getUTCMonth() &&
-                     sessionDate.getUTCFullYear() === day.getUTCFullYear()
-                   );
-                 })
+                sessions
+                  .filter((s) => {
+                    const sessionDate = new Date(s.startTime);
+                    return (
+                      sessionDate.getUTCDate() === day.getUTCDate() &&
+                      sessionDate.getUTCMonth() === day.getUTCMonth() &&
+                      sessionDate.getUTCFullYear() === day.getUTCFullYear()
+                    );
+                  })
                   .map((s, idx) => (
                     <div
                       key={idx}
@@ -308,15 +338,8 @@ const SessionCreator: React.FC = () => {
 
               <div className={styles.formGroup}>
                 <label>End Time (UTC):</label>
-                <input
-                  type="time"
-                  value={formData.endHour}
-                  onChange={(e) => setFormData({ ...formData, endHour: e.target.value })}
-                  required
-                />
+                <span>{getEndTimeDisplay(formData.startHour) || 'Select start time'}</span>
               </div>
-
-              {error && <p className={styles.error}>{error}</p>}
 
               <div className={styles.formButtons}>
                 <button type="submit">{editingSession ? 'Update' : 'Create'} Session</button>
@@ -328,6 +351,7 @@ const SessionCreator: React.FC = () => {
                 <button type="button" onClick={() => {
                   setSelectedDate(null);
                   setEditingSession(null);
+                  setFormData({ startHour: '' });
                 }}>
                   Cancel
                 </button>
@@ -335,6 +359,36 @@ const SessionCreator: React.FC = () => {
             </form>
           </div>
         )}
+
+        <Dialog
+          open={errorDialogOpen}
+          onClose={() => setErrorDialogOpen(false)}
+          sx={{
+            '& .MuiDialog-paper': {
+              backgroundColor: 'white',
+              border: '2px solid #0077b6',
+              borderRadius: '8px',
+              padding: '16px',
+            },
+          }}
+        >
+          <DialogTitle sx={{ color: '#0077b6', fontWeight: 'bold' }}>Error</DialogTitle>
+          <DialogContent>
+            <p style={{ color: '#333' }}>{error}</p>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setErrorDialogOpen(false)}
+              sx={{
+                backgroundColor: '#0077b6',
+                color: '#fff',
+                '&:hover': { backgroundColor: '#1b9df0' },
+              }}
+            >
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </>
   );
