@@ -11,6 +11,7 @@ const headers = {
   "Content-Type": "application/json",
   // Add headers such as Authorization if required
    'Authorization': getJwtToken(),
+   "ngrok-skip-browser-warning":"69420blazing"
 };
 
 
