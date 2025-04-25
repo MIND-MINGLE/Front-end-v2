@@ -6,11 +6,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RegisterAgentAccount, RegisterDocAccount, RegisterPatientAccount } from "../../api/Account/Account";
 import { AccountRequestProps } from "../../interface/IAccount";
 import LoadingScreen from "../common/LoadingScreen";
 import styles from './SignUpForm.module.css';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +22,9 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
     password: "",
     confirmPassword: "",
   });
+    const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+    const recaptchaRef = useRef(null);
+    const sitekey = import.meta.env.VITE_MINDMINGLE_GOOGLE_RECAPTCHA;
 
   // State for validation errors
   const [errors, setErrors] = useState({
@@ -101,6 +105,14 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
     }
     setIsLoading(false)
   }
+  const handleRecaptchaChange = (token:string|null) => {
+    // Token is generated when user completes reCAPTCHA
+    if (token) {
+      setRecaptchaVerified(true);
+    } else {
+      setRecaptchaVerified(false);
+    }
+  };
 
   return (
     <>
@@ -192,10 +204,16 @@ const SignUpForm = ({ onCreateAccount }: { onCreateAccount: () => void }) => {
             <span className={styles.termsLink}>Privacy Policy</span>
           </Typography>
         </Box>
+        <ReCAPTCHA
+          style={{alignSelf:"center"}}
+          ref={recaptchaRef}
+          sitekey={sitekey}
+          onChange={(token)=>handleRecaptchaChange(token)}
+        />
 
         <Button
           className={styles.submitButton}
-          disabled={!isFormValid}
+          disabled={!isFormValid || !recaptchaVerified} 
           variant="contained"
           onClick={onSubmit}
         >

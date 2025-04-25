@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
   TextField,
   Typography,
@@ -18,6 +17,7 @@ import LoadingScreen from "../common/LoadingScreen";
 import styles from './LoginFrame.module.css';
 import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleAccountRequestProps } from "../../interface/IAccount";
+import ReCAPTCHA from 'react-google-recaptcha';
 
 type LoginFrameProps = {
   onForgotPassword: () => void;
@@ -30,6 +30,9 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isSeeker, setIsSeeker] = useState(false);
+  const [recaptchaVerified, setRecaptchaVerified] = useState(false);
+  const recaptchaRef = useRef(null);
+  const sitekey = import.meta.env.VITE_MINDMINGLE_GOOGLE_RECAPTCHA;
   const nav = useNavigate();
   useEffect(()=>{
     checkUserRole();
@@ -38,6 +41,14 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
       clearInterval(interval);
     }
   },[])
+  const handleRecaptchaChange = (token:string|null) => {
+    // Token is generated when user completes reCAPTCHA
+    if (token) {
+      setRecaptchaVerified(true);
+    } else {
+      setRecaptchaVerified(false);
+    }
+  };
   const checkUserRole = () => {
     try {
      const localRole = localStorage.getItem("role");
@@ -183,17 +194,20 @@ const LoginFrame: React.FC<LoginFrameProps> = ({ onForgotPassword }) => {
           </Typography>
         )}
 
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Checkbox className={styles.checkbox} />
-          <Typography className={styles.termsLink}>
-            Remember Me!?
-          </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2,alignSelf:"center" }}>
+        <ReCAPTCHA
+          style={{alignSelf:"center"}}
+          ref={recaptchaRef}
+          sitekey={sitekey}
+          onChange={(token)=>handleRecaptchaChange(token)}
+        />
         </Box>
 
         <Button
           variant="contained"
           className={styles.signInButton}
           onClick={login}
+          disabled={!recaptchaVerified}
         >
           Sign in
         </Button>
